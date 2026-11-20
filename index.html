@@ -334,18 +334,18 @@
             <!-- Curso / Nivel -->
             <div>
               <label for="client-grade" class="block text-xs font-semibold text-slate-600 mb-1.5">Curso / Nivel</label>
-              <div class="relative">
-                <i class="fa-solid fa-graduation-cap absolute left-3.5 top-3 text-slate-400 text-sm no-print"></i>
-                <input type="text" id="client-grade" placeholder="Ej. 3° Básico, Pre-Kínder, 1° Medio"
-                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-              </div>
-            </div>
-
-            <!-- Fecha Requerida de Entrega -->
+            <!-- Fecha / Ciclo de Entrega Comprometida (3 Opciones Oficiales) -->
             <div class="sm:col-span-2">
-              <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1.5">Fecha Requerida de Entrega</label>
-              <input type="date" id="delivery-date" onchange="recalculateAll()"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1.5">Fecha / Ciclo de Entrega Solicitada *</label>
+              <div class="relative">
+                <i class="fa-solid fa-calendar-days absolute left-3.5 top-3 text-brand-600 text-sm no-print"></i>
+                <select id="delivery-date" onchange="onDeliveryStageChange()"
+                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                  <option value="lote1">1° Pedidos — Fines de Enero</option>
+                  <option value="lote2">2° Pedidos — Fines de Febrero a principios de Marzo</option>
+                  <option value="rezagados">3° Rezagados — Después del 15 de Marzo</option>
+                </select>
+              </div>
             </div>
 
             <!-- Texto Libre si elige 'Otro establecimiento' -->
@@ -640,11 +640,10 @@
               <i class="fa-solid fa-layer-group text-amber-600"></i>
               Ciclo de Entrega Programada (Campaña Escolar)
             </label>
-            <select id="delivery-wave" onchange="recalculateAll()" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-600 transition">
-              <option value="auto">Automático según fecha actual</option>
-              <option value="lote1">Pedidos 1 (Recibidos en Noviembre) → Fines de Enero</option>
-              <option value="lote2">Pedidos 2 (Segunda Etapa) → Fines de Febrero / Primeros días de Marzo</option>
-              <option value="express">Flujo Estándar / Reposición (Cálculo por capacidad diaria)</option>
+            <select id="delivery-wave" onchange="onDeliveryWaveChange()" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-600 transition">
+              <option value="lote1">1° Pedidos → Fines de Enero</option>
+              <option value="lote2">2° Pedidos → Fines de Febrero a principios de Marzo</option>
+              <option value="rezagados">3° Rezagados → Después del 15 de Marzo</option>
             </select>
           </div>
 
@@ -652,8 +651,8 @@
           <div id="high-season-banner" class="hidden mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
             <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-amber-900">
-              <p class="font-bold">Campaña Escolar Activa (Nov – Mar)</p>
-              <p id="lbl-wave-detail" class="mt-0.5 text-amber-800">Pedidos 1 (Noviembre): entrega fines de enero • Pedidos 2: fines de febrero / primeros días de marzo.</p>
+              <p class="font-bold">Campaña Escolar Activa</p>
+              <p id="lbl-wave-detail" class="mt-0.5 text-amber-800">1° Pedidos: fines de enero • 2° Pedidos: fines de febrero a principios de marzo • 3° Rezagados: después del 15 de marzo.</p>
             </div>
           </div>
 
@@ -923,6 +922,24 @@
       renderCart();
       recalculateAll();
       updateChecklistCount();
+    }
+
+    function onDeliveryStageChange() {
+      const stageEl = document.getElementById('delivery-date');
+      const waveEl = document.getElementById('delivery-wave');
+      if (stageEl && waveEl) {
+        waveEl.value = stageEl.value;
+      }
+      recalculateAll();
+    }
+
+    function onDeliveryWaveChange() {
+      const stageEl = document.getElementById('delivery-date');
+      const waveEl = document.getElementById('delivery-wave');
+      if (stageEl && waveEl) {
+        stageEl.value = waveEl.value;
+      }
+      recalculateAll();
     }
 
     function loadSavedLogo() {
@@ -1330,12 +1347,15 @@
     }
 
     function resolveActiveWave() {
-      const sel = document.getElementById('delivery-wave')?.value || 'auto';
-      if (sel !== 'auto') return sel;
-      const month = new Date().getMonth(); // 0=Ene, 10=Nov, 11=Dic
-      if (month === 10) return 'lote1';
-      if (month === 11 || month === 0 || month === 1) return 'lote2';
-      return 'express';
+      const stageEl = document.getElementById('delivery-date');
+      const waveEl = document.getElementById('delivery-wave');
+      return (stageEl && stageEl.value) || (waveEl && waveEl.value) || 'lote1';
+    }
+
+    function getStageHumanLabel(stageCode) {
+      if (stageCode === 'lote1') return '1° Pedidos — Fines de Enero';
+      if (stageCode === 'lote2') return '2° Pedidos — Fines de Febrero a principios de Marzo';
+      return '3° Rezagados — Después del 15 de Marzo';
     }
 
     function updateLeanPlanning(totalUnits) {
@@ -1353,73 +1373,40 @@
       const estDaysEl = document.getElementById('op-estimated-days');
       const estDateEl = document.getElementById('op-estimated-date');
       const statusPill = document.getElementById('lean-status-pill');
+      const warnBanner = document.getElementById('deadline-warning-banner');
+      if (warnBanner) warnBanner.classList.add('hidden');
 
       const now = new Date();
       const currentYear = now.getFullYear();
       const targetYear = now.getMonth() >= 9 ? currentYear + 1 : currentYear;
 
-      let committedWindowText = '';
-      let targetCutoffDate = null;
-
       if (wave === 'lote1') {
-        committedWindowText = `Fines de Enero ${targetYear}`;
-        waveBadge.textContent = 'Pedidos 1 (Noviembre) → Fines de Enero';
+        waveBadge.textContent = '1° Pedidos → Fines de Enero';
         estDaysEl.textContent = 'Fines de Enero';
         estDateEl.textContent = `Entrega programada: última semana de enero ${targetYear}`;
-        statusPill.textContent = 'Ciclo Pedidos 1';
+        statusPill.textContent = '1° Pedidos';
         seasonBadge.classList.remove('hidden');
         highSeasonBanner.classList.remove('hidden');
-        targetCutoffDate = new Date(targetYear, 0, 25);
       } else if (wave === 'lote2') {
-        committedWindowText = `Fines de Febrero / Inicios de Marzo ${targetYear}`;
-        waveBadge.textContent = 'Pedidos 2 → Fines Feb / Inicios Marzo';
-        estDaysEl.textContent = 'Fines Feb / Inicios Mar';
-        estDateEl.textContent = `Entrega programada: fines de febrero a primeros días de marzo ${targetYear}`;
-        statusPill.textContent = 'Ciclo Pedidos 2';
+        waveBadge.textContent = '2° Pedidos → Fines Febrero a principios de Marzo';
+        estDaysEl.textContent = 'Fines Feb / Principios Mar';
+        estDateEl.textContent = `Entrega programada: fines de febrero a principios de marzo ${targetYear}`;
+        statusPill.textContent = '2° Pedidos';
         seasonBadge.classList.remove('hidden');
         highSeasonBanner.classList.remove('hidden');
-        targetCutoffDate = new Date(targetYear, 1, 25);
       } else {
-        seasonBadge.classList.add('hidden');
-        highSeasonBanner.classList.add('hidden');
-        waveBadge.textContent = 'Flujo Estándar / Reposición';
-        statusPill.textContent = 'Flujo Estándar';
-
-        if (totalUnits === 0) {
-          estDaysEl.textContent = `${settings.minDays} días hábiles`;
-          estDateEl.textContent = 'Agrega prendas para calcular fecha';
-        } else {
-          const rawDays = Math.ceil(totalUnits / cap);
-          const estDays = Math.max(settings.minDays, rawDays);
-          const estDate = addBusinessDays(now, estDays);
-          committedWindowText = estDate.toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
-          estDaysEl.textContent = `${estDays} días hábiles`;
-          estDateEl.textContent = `Estimado: ${committedWindowText}`;
-          targetCutoffDate = estDate;
-        }
+        waveBadge.textContent = '3° Rezagados → Después del 15 de Marzo';
+        estDaysEl.textContent = 'Después del 15 de Marzo';
+        estDateEl.textContent = `Entrega programada: a partir del 16 de marzo ${targetYear}`;
+        statusPill.textContent = '3° Rezagados';
+        seasonBadge.classList.remove('hidden');
+        highSeasonBanner.classList.remove('hidden');
       }
 
       if (totalUnits > cap * 5) {
         weeklyBanner.classList.remove('hidden');
       } else {
         weeklyBanner.classList.add('hidden');
-      }
-
-      // Validar fecha requerida por cliente
-      const reqDateVal = document.getElementById('delivery-date')?.value;
-      const warnBanner = document.getElementById('deadline-warning-banner');
-      const warnText = document.getElementById('deadline-warning-text');
-
-      if (reqDateVal && targetCutoffDate && warnBanner && warnText) {
-        const reqDate = new Date(reqDateVal + 'T12:00:00');
-        if (reqDate < targetCutoffDate) {
-          warnBanner.classList.remove('hidden');
-          warnText.textContent = `El cliente solicitó entrega para el ${reqDate.toLocaleDateString('es-CL')}, pero el ciclo vigente entrega en ${committedWindowText}.`;
-        } else {
-          warnBanner.classList.add('hidden');
-        }
-      } else if (warnBanner) {
-        warnBanner.classList.add('hidden');
       }
     }
 
@@ -1450,9 +1437,9 @@
       const clientPhone = (document.getElementById('client-phone')?.value || '').trim();
       const mainSchool = getResolvedMainSchool();
       const grade = (document.getElementById('client-grade')?.value || '').trim();
-      const reqDate = document.getElementById('delivery-date')?.value;
+      const stageCode = resolveActiveWave();
+      const stageLabel = getStageHumanLabel(stageCode);
       const notes = (document.getElementById('order-notes')?.value || '').trim();
-      const waveText = document.getElementById('op-wave-badge')?.textContent || '';
       const totalText = document.getElementById('sum-total')?.textContent || 'Por definir';
 
       let lines = [
@@ -1463,8 +1450,7 @@
       if (clientPhone) lines.push(`Teléfono: ${clientPhone}`);
       lines.push(`Establecimiento: *${mainSchool}*`);
       if (grade) lines.push(`Curso / Nivel: ${grade}`);
-      if (reqDate) lines.push(`Fecha solicitada: ${new Date(reqDate + 'T12:00:00').toLocaleDateString('es-CL')}`);
-      lines.push(`Ciclo entrega: ${waveText}`);
+      lines.push(`Fecha / Ciclo entrega: *${stageLabel}*`);
       lines.push(``, `*DETALLE DE PRENDAS:*`);
 
       cart.forEach((item, index) => {
@@ -1527,10 +1513,14 @@
     function resetQuote() {
       const hadItems = cart.length > 0;
       cart = [];
-      ['client-name', 'client-phone', 'client-grade', 'delivery-date', 'custom-school-name', 'order-notes', 'meas-waist', 'meas-hip', 'meas-length'].forEach(id => {
+      ['client-name', 'client-phone', 'client-grade', 'custom-school-name', 'order-notes', 'meas-waist', 'meas-hip', 'meas-length'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+      const delDate = document.getElementById('delivery-date');
+      const delWave = document.getElementById('delivery-wave');
+      if (delDate) delDate.value = 'lote1';
+      if (delWave) delWave.value = 'lote1';
       document.querySelectorAll('.sop-check').forEach(cb => cb.checked = false);
       updateChecklistCount();
       if (hadItems) advanceCorrelativeSeq();
