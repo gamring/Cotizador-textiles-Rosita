@@ -382,7 +382,15 @@
               <label for="item-product" class="block text-xs font-semibold text-slate-600 mb-1.5">Prenda (Catálogo Textiles Rosita)</label>
               <select id="item-product" onchange="onProductOrSizeChange()"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-                <!-- 9 opciones cargadas por JS -->
+                <option value="buzo">A. Buzo (Polerón y Pantalón)</option>
+                <option value="buzo_completo">B. Buzo Completo (Pantalón, Polerón y Polera Deporte)</option>
+                <option value="polera_pique">C. Polera Piqué</option>
+                <option value="polera_nina_nino">D. Polera de Niña o Niño</option>
+                <option value="falda_talla">E. Falda por Talla</option>
+                <option value="falda_medida">F. Falda a Medida</option>
+                <option value="pantalon">G. Pantalón</option>
+                <option value="poleron">H. Polerón</option>
+                <option value="poleron_polar">I. Polerón de Polar</option>
               </select>
             </div>
 
@@ -769,7 +777,517 @@
     const CORRELATIVE_KEY = 'textiles_rosita_correlative_seq_v1';
     const LOGO_STORAGE_KEY = 'textiles_rosita_logo_data_v1';
     const TEXTILES_ROSITA_WHATSAPP = '56989510679';
-// ... existing code ... -->
+
+    const CATALOG_PRODUCTS = [
+      { id: 'buzo', name: 'A. Buzo (Polerón y Pantalón)', defaultChild: 22000, defaultAdult: 26000 },
+      { id: 'buzo_completo', name: 'B. Buzo Completo (Pantalón, Polerón y Polera Deporte)', defaultChild: 29000, defaultAdult: 34000 },
+      { id: 'polera_pique', name: 'C. Polera Piqué', defaultChild: 10000, defaultAdult: 12000 },
+      { id: 'polera_nina_nino', name: 'D. Polera de Niña o Niño', defaultChild: 8500, defaultAdult: 10500 },
+      { id: 'falda_talla', name: 'E. Falda por Talla', defaultChild: 14000, defaultAdult: 16500 },
+      { id: 'falda_medida', name: 'F. Falda a Medida', defaultChild: 16000, defaultAdult: 18500, requiresMeasurements: true },
+      { id: 'pantalon', name: 'G. Pantalón', defaultChild: 12000, defaultAdult: 14500 },
+      { id: 'poleron', name: 'H. Polerón', defaultChild: 13000, defaultAdult: 15500 },
+      { id: 'poleron_polar', name: 'I. Polerón de Polar', defaultChild: 14500, defaultAdult: 17000 }
+    ];
+
+    const ADULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+
+    const DEFAULT_SETTINGS = {
+      prices: {
+        buzo: { child: 22000, adult: 26000 },
+        buzo_completo: { child: 29000, adult: 34000 },
+        polera_pique: { child: 10000, adult: 12000 },
+        polera_nina_nino: { child: 8500, adult: 10500 },
+        falda_talla: { child: 14000, adult: 16500 },
+        falda_medida: { child: 16000, adult: 18500 },
+        pantalon: { child: 12000, adult: 14500 },
+        poleron: { child: 13000, adult: 15500 },
+        poleron_polar: { child: 14500, adult: 17000 }
+      },
+      dailyCapacity: 4.5,
+      minDays: 3,
+      highSeasonExtra: 2,
+      discTier1: 10,
+      discTier2: 18
+    };
+
+    let settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    let correlativeSeq = 1;
+    let cart = [];
+
+    function formatCLP(amount) {
+      return '$' + Math.round(amount || 0).toLocaleString('es-CL');
+    }
+
+    function showToast(title, desc, isError = false) {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-desc').textContent = desc;
+      icon.className = isError
+        ? 'fa-solid fa-circle-exclamation text-rose-400 text-lg'
+        : 'fa-solid fa-circle-check text-emerald-400 text-lg';
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3400);
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          settings = {
+            ...DEFAULT_SETTINGS,
+            ...parsed,
+            prices: { ...DEFAULT_SETTINGS.prices, ...(parsed.prices || {}) }
+          };
+        }
+      } catch (e) {
+        console.warn('Error cargando tarifas:', e);
+      }
+      document.getElementById('cfg-daily-capacity').value = settings.dailyCapacity;
+      document.getElementById('cfg-min-days').value = settings.minDays;
+      document.getElementById('cfg-high-season-extra').value = settings.highSeasonExtra;
+      document.getElementById('cfg-disc-tier1').value = settings.discTier1;
+      document.getElementById('cfg-disc-tier2').value = settings.discTier2;
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      } catch (e) {
+        console.warn('No se pudo guardar en localStorage:', e);
+      }
+    }
+
+    function loadCorrelativeSequence() {
+      try {
+        const saved = parseInt(localStorage.getItem(CORRELATIVE_KEY), 10);
+        if (!isNaN(saved) && saved >= 1) correlativeSeq = saved;
+      } catch (e) {}
+      updateCorrelativeUI();
+    }
+
+    function getFormattedQuoteId() {
+      return `ROS-${String(correlativeSeq).padStart(4, '0')}`;
+    }
+
+    function updateCorrelativeUI() {
+      const formatted = getFormattedQuoteId();
+      const uiEl = document.getElementById('ui-quote-id');
+      const printEl = document.getElementById('print-quote-id');
+      const cfgEl = document.getElementById('cfg-correlative-seq');
+      if (uiEl) uiEl.textContent = formatted;
+      if (printEl) printEl.textContent = formatted;
+      if (cfgEl) cfgEl.value = correlativeSeq;
+    }
+
+    function advanceCorrelativeSequence() {
+      correlativeSeq += 1;
+      try {
+        localStorage.setItem(CORRELATIVE_KEY, String(correlativeSeq));
+      } catch (e) {}
+      updateCorrelativeUI();
+    }
+
+    function updateCorrelativeFromUI() {
+      const val = parseInt(document.getElementById('cfg-correlative-seq').value, 10);
+      if (!isNaN(val) && val >= 1) {
+        correlativeSeq = val;
+        try {
+          localStorage.setItem(CORRELATIVE_KEY, String(correlativeSeq));
+        } catch (e) {}
+        updateCorrelativeUI();
+        showToast('Folio actualizado', `Próximo pedido será ${getFormattedQuoteId()}`);
+      }
+    }
+
+    function applyCustomLogo(dataUrl) {
+      const hdrImg = document.getElementById('header-custom-logo');
+      const hdrBadge = document.getElementById('header-vector-badge');
+      const prtImg = document.getElementById('print-custom-logo');
+      const prtBadge = document.getElementById('print-vector-badge');
+      if (dataUrl) {
+        hdrImg.src = dataUrl;
+        hdrImg.classList.remove('hidden');
+        hdrBadge.classList.add('hidden');
+        prtImg.src = dataUrl;
+        prtImg.classList.remove('hidden');
+        prtBadge.classList.add('hidden');
+      } else {
+        hdrImg.classList.add('hidden');
+        hdrBadge.classList.remove('hidden');
+        prtImg.classList.add('hidden');
+        prtBadge.classList.remove('hidden');
+      }
+    }
+
+    function loadSavedLogo() {
+      try {
+        const saved = localStorage.getItem(LOGO_STORAGE_KEY);
+        if (saved) applyCustomLogo(saved);
+      } catch (e) {}
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const result = e.target?.result;
+        if (result) {
+          try {
+            localStorage.setItem(LOGO_STORAGE_KEY, result);
+          } catch (err) {}
+          applyCustomLogo(result);
+          showToast('Etiqueta actualizada', 'Logo guardado en el navegador');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function populateProductSelect() {
+      const select = document.getElementById('item-product');
+      if (!select) return;
+      const currentVal = select.value || CATALOG_PRODUCTS[0].id;
+      select.innerHTML = CATALOG_PRODUCTS.map(
+        p => `<option value="${p.id}">${p.name}</option>`
+      ).join('');
+      select.value = CATALOG_PRODUCTS.some(p => p.id === currentVal) ? currentVal : CATALOG_PRODUCTS[0].id;
+    }
+
+    function renderConfigPriceTable() {
+      const tbody = document.getElementById('config-prices-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = CATALOG_PRODUCTS.map(p => {
+        const pr = settings.prices[p.id] || { child: p.defaultChild, adult: p.defaultAdult };
+        return `
+          <tr>
+            <td class="py-2 pr-2 font-medium text-slate-200">${p.name}</td>
+            <td class="py-2 px-2 text-right">
+              <input type="number" min="0" step="100" value="${pr.child}"
+                onchange="updateProductPrice('${p.id}', 'child', this.value)"
+                class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-white font-semibold focus:outline-none focus:border-amber-400">
+            </td>
+            <td class="py-2 pl-2 text-right">
+              <input type="number" min="0" step="100" value="${pr.adult}"
+                onchange="updateProductPrice('${p.id}', 'adult', this.value)"
+                class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-white font-semibold focus:outline-none focus:border-amber-400">
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateProductPrice(productId, tier, val) {
+      const num = Math.max(0, Number(val) || 0);
+      if (!settings.prices[productId]) settings.prices[productId] = { child: 0, adult: 0 };
+      settings.prices[productId][tier] = num;
+      saveSettings();
+      onProductOrSizeChange();
+      showToast('Tarifa guardada', 'Precio actualizado correctamente');
+    }
+
+    function updateSettingsFromUI() {
+      settings.dailyCapacity = Math.max(0.5, Number(document.getElementById('cfg-daily-capacity').value) || 4.5);
+      settings.minDays = Math.max(1, parseInt(document.getElementById('cfg-min-days').value, 10) || 3);
+      settings.highSeasonExtra = Math.max(0, parseInt(document.getElementById('cfg-high-season-extra').value, 10) || 0);
+      settings.discTier1 = Math.max(0, Math.min(80, Number(document.getElementById('cfg-disc-tier1').value) || 0));
+      settings.discTier2 = Math.max(0, Math.min(80, Number(document.getElementById('cfg-disc-tier2').value) || 0));
+      saveSettings();
+      updateHeaderMetrics();
+      recalculateAll();
+      showToast('Parámetros guardados', 'Capacidad y descuentos actualizados');
+    }
+
+    function restoreDefaultSettings() {
+      settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      saveSettings();
+      loadSettings();
+      renderConfigPriceTable();
+      updateHeaderMetrics();
+      onProductOrSizeChange();
+      recalculateAll();
+      showToast('Tarifas restauradas', 'Se restablecieron los valores base');
+    }
+
+    function toggleConfigPanel() {
+      const panel = document.getElementById('config-panel');
+      panel.classList.toggle('hidden');
+    }
+
+    function updateHeaderMetrics() {
+      document.getElementById('hdr-capacity').textContent = `${String(settings.dailyCapacity).replace('.', ',')} prendas/día`;
+      document.getElementById('hdr-meta').textContent = `≤ ${settings.minDays} días hábiles`;
+      const month = new Date().getMonth() + 1;
+      const badge = document.getElementById('hdr-season-badge');
+      badge.classList.toggle('hidden', ![11, 12, 1, 2, 3, 4].includes(month));
+    }
+
+    function getEffectiveMainSchool() {
+      const sel = document.getElementById('client-school').value;
+      if (sel === 'Otro / Particular') {
+        const custom = document.getElementById('custom-school-name').value.trim();
+        return custom || 'Otro / Particular';
+      }
+      return sel;
+    }
+
+    function onMainSchoolChange() {
+      const sel = document.getElementById('client-school').value;
+      const customWrap = document.getElementById('custom-school-wrapper');
+      customWrap.classList.toggle('hidden', sel !== 'Otro / Particular');
+      syncItemSchoolDefault();
+    }
+
+    function syncItemSchoolDefault() {
+      const mainSel = document.getElementById('client-school').value;
+      const itemSel = document.getElementById('item-school');
+      if (itemSel) itemSel.value = mainSel;
+    }
+
+    function onProductOrSizeChange() {
+      const prodId = document.getElementById('item-product').value;
+      const sizeSelect = document.getElementById('item-size');
+      let sizeVal = sizeSelect.value;
+
+      // Si elige F. Falda a Medida, fijar talla "A medida" automáticamente
+      if (prodId === 'falda_medida' && sizeVal !== 'A medida') {
+        sizeSelect.value = 'A medida';
+        sizeVal = 'A medida';
+      }
+
+      const needsMeasures = prodId === 'falda_medida' || sizeVal === 'A medida';
+      document.getElementById('custom-measurements-box').classList.toggle('hidden', !needsMeasures);
+
+      const isAdult = ADULT_SIZES.includes(sizeVal);
+      const tierBadge = document.getElementById('size-tier-indicator');
+      if (needsMeasures) {
+        tierBadge.textContent = 'Confección a Medida (cm)';
+        tierBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200';
+      } else if (isAdult) {
+        tierBadge.textContent = 'Tarifa Adulto (S–XXL)';
+        tierBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100';
+      } else {
+        tierBadge.textContent = 'Tarifa Infantil / Juvenil (3–16)';
+        tierBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-brand-700 border border-blue-100';
+      }
+
+      const priceObj = settings.prices[prodId] || { child: 10000, adult: 12000 };
+      const unitPrice = isAdult ? priceObj.adult : priceObj.child;
+      document.getElementById('item-price').value = unitPrice;
+    }
+
+    function addItemToCart() {
+      const prodId = document.getElementById('item-product').value;
+      const product = CATALOG_PRODUCTS.find(p => p.id === prodId) || CATALOG_PRODUCTS[0];
+      const size = document.getElementById('item-size').value;
+      const qty = Math.max(1, parseInt(document.getElementById('item-qty').value, 10) || 1);
+      const price = Math.max(0, Number(document.getElementById('item-price').value) || 0);
+
+      let school = document.getElementById('item-school').value;
+      if (school === 'Otro / Particular') {
+        const customName = document.getElementById('custom-school-name').value.trim();
+        if (customName) school = customName;
+      }
+
+      const needsMeasures = prodId === 'falda_medida' || size === 'A medida';
+      let measurements = null;
+      if (needsMeasures) {
+        const waist = Number(document.getElementById('meas-waist').value);
+        const hip = Number(document.getElementById('meas-hip').value);
+        const length = Number(document.getElementById('meas-length').value);
+        if (!waist || !hip || !length) {
+          showToast('Faltan medidas', 'Ingresa Cintura, Cadera y Largo (cm) para la falda a medida', true);
+          return;
+        }
+        measurements = { waist, hip, length };
+      }
+
+      // Agrupar si es idéntico (mismo producto, talla, colegio, precio y sin medidas personalizadas)
+      const existingIdx = !measurements
+        ? cart.findIndex(item => item.productId === prodId && item.size === size && item.school === school && item.price === price && !item.measurements)
+        : -1;
+
+      if (existingIdx >= 0) {
+        cart[existingIdx].qty += qty;
+      } else {
+        cart.push({
+          uid: Date.now() + Math.random(),
+          productId: prodId,
+          productName: product.name,
+          size,
+          school,
+          qty,
+          price,
+          measurements
+        });
+      }
+
+      document.getElementById('item-qty').value = 1;
+      if (needsMeasures) {
+        document.getElementById('meas-waist').value = '';
+        document.getElementById('meas-hip').value = '';
+        document.getElementById('meas-length').value = '';
+      }
+
+      renderCart();
+      recalculateAll();
+      showToast('Prenda agregada', `${qty}x ${product.name} (Talla ${size})`);
+    }
+
+    function updateCartItemQty(index, delta) {
+      if (!cart[index]) return;
+      const nextQty = cart[index].qty + delta;
+      if (nextQty <= 0) {
+        removeCartItem(index);
+        return;
+      }
+      cart[index].qty = nextQty;
+      renderCart();
+      recalculateAll();
+    }
+
+    function removeCartItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+      recalculateAll();
+    }
+
+    function renderCart() {
+      const emptyState = document.getElementById('empty-cart-state');
+      const container = document.getElementById('cart-items-container');
+      const tbody = document.getElementById('cart-table-body');
+      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
+
+      document.getElementById('badge-total-units').textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
+
+      if (cart.length === 0) {
+        emptyState.classList.remove('hidden');
+        container.classList.add('hidden');
+        tbody.innerHTML = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      tbody.innerHTML = cart.map((item, idx) => {
+        const measHtml = item.measurements
+          ? `<span class="inline-block mt-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+               Medidas: Cintura ${item.measurements.waist}cm • Cadera ${item.measurements.hip}cm • Largo ${item.measurements.length}cm
+             </span>`
+          : '';
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 pr-2">
+              <p class="font-semibold text-slate-900 leading-snug">${item.productName}</p>
+              <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-brand-100 text-brand-800">Talla ${item.size}</span>
+                <span class="text-[11px] text-slate-500"><i class="fa-solid fa-school mr-1 text-slate-400"></i>${item.school}</span>
+              </div>
+              ${measHtml}
+            </td>
+            <td class="py-3 px-2 text-center">
+              <div class="inline-flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
+                <button onclick="updateCartItemQty(${idx}, -1)" class="w-6 h-6 rounded-md hover:bg-white text-slate-700 font-bold text-xs cursor-pointer no-print">-</button>
+                <span class="w-7 text-center font-bold text-slate-900 text-xs">${item.qty}</span>
+                <button onclick="updateCartItemQty(${idx}, 1)" class="w-6 h-6 rounded-md hover:bg-white text-slate-700 font-bold text-xs cursor-pointer no-print">+</button>
+              </div>
+            </td>
+            <td class="py-3 px-2 text-right font-medium text-slate-700 whitespace-nowrap">${formatCLP(item.price)}</td>
+            <td class="py-3 pl-2 text-right font-bold text-slate-900 whitespace-nowrap">${formatCLP(item.qty * item.price)}</td>
+            <td class="py-3 pl-2 text-right no-print">
+              <button onclick="removeCartItem(${idx})" title="Eliminar línea" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg transition cursor-pointer">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function addBusinessDays(startDate, daysToAdd) {
+      const result = new Date(startDate);
+      let added = 0;
+      while (added < daysToAdd) {
+        result.setDate(result.getDate() + 1);
+        const day = result.getDay();
+        if (day !== 0 && day !== 6) added++;
+      }
+      return result;
+    }
+
+    function updateChecklistCount() {
+      const checks = document.querySelectorAll('.sop-check');
+      const checked = Array.from(checks).filter(c => c.checked).length;
+      document.getElementById('checklist-progress').textContent = `${checked}/${checks.length} listos`;
+    }
+
+    function resetQuote() {
+      const hadItems = cart.length > 0;
+      cart = [];
+      document.getElementById('client-name').value = '';
+      document.getElementById('client-phone').value = '';
+      document.getElementById('client-grade').value = '';
+      document.getElementById('delivery-date').value = '';
+      document.getElementById('order-notes').value = '';
+      document.querySelectorAll('.sop-check').forEach(c => (c.checked = false));
+      updateChecklistCount();
+      renderCart();
+      recalculateAll();
+      if (hadItems) {
+        advanceCorrelativeSequence();
+        showToast('Nuevo pedido listo', `Folio actualizado a ${getFormattedQuoteId()}`);
+      } else {
+        showToast('Formulario limpio', 'Listo para ingresar un nuevo pedido');
+      }
+    }
+
+    function copyWhatsAppQuote() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega al menos una prenda antes de copiar', true);
+        return;
+      }
+      const text = buildWhatsAppMessage();
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Cotización copiada', 'Lista para pegar en WhatsApp');
+      } catch (e) {
+        showToast('No se pudo copiar', 'Intenta con el botón Enviar Directo', true);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function sendWhatsAppDirect() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega al menos una prenda para enviar por WhatsApp', true);
+        return;
+      }
+      const text = buildWhatsAppMessage();
+      const url = `https://wa.me/${TEXTILES_ROSITA_WHATSAPP}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      advanceCorrelativeSequence();
+      showToast('Abriendo WhatsApp', `Pedido enviado • Próximo folio ${getFormattedQuoteId()}`);
+    }
+
+    function printQuote() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega prendas antes de imprimir o guardar PDF', true);
+        return;
+      }
+      window.print();
+    }
+
     function initApp() {
       loadSettings();
       loadCorrelativeSequence();
@@ -799,221 +1317,7 @@
       recalculateAll();
     }
 // ... existing code ... -->
-    function getDeliveryPlanInfo(totalUnits) {
-      const today = new Date();
-      const currentMonth = today.getMonth() + 1;
-      const year = today.getFullYear();
-      const waveChoice = document.getElementById('delivery-wave')?.value || 'auto';
-
-      let effectiveWave = waveChoice;
-      if (waveChoice === 'auto') {
-        if (currentMonth === 11) effectiveWave = 'lote1';
-        else if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) effectiveWave = 'lote2';
-        else effectiveWave = 'express';
-      }
-
-      const workDaysNeeded = totalUnits > 0
-        ? Math.max(settings.minDays, Math.ceil(totalUnits / settings.dailyCapacity))
-        : 0;
-
-      if (effectiveWave === 'lote1') {
-        const targetYear = currentMonth >= 11 ? year + 1 : year;
-        const targetDate = new Date(targetYear, 0, 29); // 29 de Enero
-        return {
-          wave: 'lote1',
-          waveTitle: 'Pedidos 1 (Recibidos en Noviembre)',
-          windowLabel: 'Fines de Enero ' + targetYear,
-          detailText: `Entrega programada: Fines de enero ${targetYear} (~${workDaysNeeded} días hábiles de taller)`,
-          targetDate,
-          workDaysNeeded,
-          isCampaign: true
-        };
-      }
-
-      if (effectiveWave === 'lote2') {
-        const targetYear = currentMonth >= 11 ? year + 1 : year;
-        const targetDate = new Date(targetYear, 2, 3); // 3 de Marzo (ventana fines feb / primeros días mar)
-        return {
-          wave: 'lote2',
-          waveTitle: 'Pedidos 2 (Segunda Etapa)',
-          windowLabel: `Fines Feb / Primeros días Mar ${targetYear}`,
-          detailText: `Entrega programada: Fines de febrero / primeros días de marzo ${targetYear} (~${workDaysNeeded} días hábiles de taller)`,
-          targetDate,
-          workDaysNeeded,
-          isCampaign: true
-        };
-      }
-
-      // Flujo estándar fuera de campaña
-      const isHighSeason = [11, 12, 1, 2, 3, 4].includes(currentMonth);
-      const totalDays = totalUnits > 0 ? workDaysNeeded + (isHighSeason ? settings.highSeasonExtra : 0) : 0;
-      const targetDate = addBusinessDays(today, totalDays);
-      return {
-        wave: 'express',
-        waveTitle: 'Flujo Estándar / Reposición',
-        windowLabel: totalUnits > 0 ? `${totalDays} días hábiles` : '0 días hábiles',
-        detailText: totalUnits > 0
-          ? `Fecha estimada: ${targetDate.toLocaleDateString('es-CL', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })}`
-          : 'Agrega prendas para calcular',
-        targetDate,
-        workDaysNeeded: totalDays,
-        isCampaign: false
-      };
-    }
-
-    function recalculateAll() {
-      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
-      const subtotalNeto = cart.reduce((acc, item) => acc + (item.qty * item.price), 0);
-
-      // Descuento
-      const discountEnabled = document.getElementById('toggle-discount').checked;
-      const discountMode = document.getElementById('discount-mode').value;
-      const manualInput = document.getElementById('manual-discount-pct');
-      manualInput.classList.toggle('hidden', discountMode !== 'manual');
-
-      let discountPct = 0;
-      if (discountEnabled && totalUnits > 0) {
-        if (discountMode === 'auto') {
-          if (totalUnits >= 30) discountPct = settings.discTier2;
-          else if (totalUnits >= 10) discountPct = settings.discTier1;
-        } else {
-          discountPct = Math.max(0, Math.min(80, Number(manualInput.value) || 0));
-        }
-      }
-
-      const discountAmount = Math.round(subtotalNeto * (discountPct / 100));
-      const netoFinal = Math.max(0, subtotalNeto - discountAmount);
-
-      // IVA 19%
-      const includeIva = document.getElementById('toggle-iva').checked;
-      const ivaAmount = includeIva ? Math.round(netoFinal * 0.19) : 0;
-      const totalFinal = netoFinal + ivaAmount;
-
-      // Abono y Saldo
-      const depositPct = Math.max(0, Math.min(100, Number(document.getElementById('deposit-pct').value) || 0));
-      const depositAmount = Math.round(totalFinal * (depositPct / 100));
-      const balanceAmount = Math.max(0, totalFinal - depositAmount);
-
-      // Actualizar UI Financiera
-      document.getElementById('sum-count').textContent = totalUnits;
-      document.getElementById('sum-subtotal').textContent = formatCLP(subtotalNeto);
-      document.getElementById('sum-discount-badge').textContent = `${discountPct}%`;
-      document.getElementById('sum-discount-amount').textContent = `-${formatCLP(discountAmount)}`;
-      document.getElementById('sum-neto').textContent = formatCLP(netoFinal);
-      document.getElementById('sum-iva').textContent = formatCLP(ivaAmount);
-      document.getElementById('row-neto').classList.toggle('hidden', !includeIva);
-      document.getElementById('row-iva').classList.toggle('hidden', !includeIva);
-      document.getElementById('lbl-tax-status').textContent = includeIva ? 'IVA 19% incluido (Pesos Chilenos)' : 'Valores Netos (Pesos Chilenos)';
-      document.getElementById('sum-total').textContent = formatCLP(totalFinal);
-      document.getElementById('print-deposit-pct').textContent = depositPct;
-      document.getElementById('sum-deposit').textContent = formatCLP(depositAmount);
-      document.getElementById('sum-balance').textContent = formatCLP(balanceAmount);
-
-      // Planificación Lean con Ciclos Pedidos 1 (Nov -> Fines Enero) y Pedidos 2 (-> Fines Feb / Primeros días Mar)
-      const plan = getDeliveryPlanInfo(totalUnits);
-      document.getElementById('op-total-units').textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
-      document.getElementById('op-capacity-rate').textContent = `${String(settings.dailyCapacity).replace('.', ',')} prendas / día`;
-      document.getElementById('op-wave-badge').textContent = plan.waveTitle;
-      document.getElementById('op-estimated-days').textContent = plan.windowLabel;
-      document.getElementById('op-estimated-date').textContent = totalUnits > 0 ? plan.detailText : 'Agrega prendas para calcular';
-
-      const pill = document.getElementById('lean-status-pill');
-      const highBanner = document.getElementById('high-season-banner');
-      const weeklyBanner = document.getElementById('weekly-capacity-banner');
-      const deadlineBanner = document.getElementById('deadline-warning-banner');
-
-      if (plan.isCampaign) {
-        pill.textContent = plan.wave === 'lote1' ? 'Pedidos 1 • Fines Enero' : 'Pedidos 2 • Fines Feb / Inicios Mar';
-        pill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300';
-        highBanner.classList.remove('hidden');
-      } else {
-        pill.textContent = 'Flujo Estándar';
-        pill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
-        highBanner.classList.add('hidden');
-      }
-
-      const weeklyCap = settings.dailyCapacity * 5;
-      weeklyBanner.classList.toggle('hidden', totalUnits <= weeklyCap);
-
-      // Validar fecha requerida del cliente vs fecha comprometida del ciclo
-      const reqDateVal = document.getElementById('delivery-date').value;
-      if (reqDateVal && totalUnits > 0) {
-        const reqDate = new Date(reqDateVal + 'T12:00:00');
-        if (reqDate < plan.targetDate) {
-          deadlineBanner.classList.remove('hidden');
-          document.getElementById('deadline-warning-text').textContent =
-            `El cliente solicita entrega el ${reqDate.toLocaleDateString('es-CL')}, pero ${plan.waveTitle} tiene ventana de entrega para ${plan.windowLabel}.`;
-        } else {
-          deadlineBanner.classList.add('hidden');
-        }
-      } else {
-        deadlineBanner.classList.add('hidden');
-      }
-
-      return {
-        totalUnits,
-        subtotalNeto,
-        discountPct,
-        discountAmount,
-        netoFinal,
-        includeIva,
-        ivaAmount,
-        totalFinal,
-        depositPct,
-        depositAmount,
-        balanceAmount,
-        plan
-      };
-    }
-// ... existing code ... -->
-    function buildWhatsAppMessage() {
-      const summary = recalculateAll();
-      const quoteId = getFormattedQuoteId();
-      const clientName = document.getElementById('client-name').value.trim() || 'Cliente / Apoderado';
-      const clientPhone = document.getElementById('client-phone').value.trim();
-      const school = getEffectiveMainSchool();
-      const grade = document.getElementById('client-grade').value.trim();
-      const reqDate = document.getElementById('delivery-date').value;
-      const notes = document.getElementById('order-notes').value.trim();
-
-      const lines = [
-        `*TEXTILES ROSITA — COTIZACIÓN Y PEDIDO*`,
-        `*N° Pedido:* ${quoteId}`,
-        `*Cliente:* ${clientName}`,
-        clientPhone ? `*Tel. Cliente:* ${clientPhone}` : null,
-        `*Establecimiento:* ${school}`,
-        grade ? `*Curso / Nivel:* ${grade}` : null,
-        `*Ciclo de Entrega:* ${summary.plan.waveTitle}`,
-        `*Entrega Comprometida:* ${summary.plan.windowLabel}`,
-        reqDate ? `*Fecha Solicitada:* ${new Date(reqDate + 'T12:00:00').toLocaleDateString('es-CL')}` : null,
-        ``,
-        `*DETALLE DE PRENDAS (${summary.totalUnits} un.):*`
-      ].filter(Boolean);
-
-      cart.forEach((item, idx) => {
-        const measStr = item.measurements
-          ? ` [Cintura: ${item.measurements.waist}cm, Cadera: ${item.measurements.hip}cm, Largo: ${item.measurements.length}cm]`
-          : '';
-        lines.push(`${idx + 1}. ${item.qty}x ${item.productName} — Talla ${item.size}${measStr} (${item.school}) = ${formatCLP(item.qty * item.price)}`);
-      });
-
-      lines.push(``);
-      lines.push(`*Subtotal:* ${formatCLP(summary.subtotalNeto)}`);
-      if (summary.discountAmount > 0) {
-        lines.push(`*Descuento (${summary.discountPct}%):* -${formatCLP(summary.discountAmount)}`);
-      }
-      if (summary.includeIva) {
-        lines.push(`*Neto:* ${formatCLP(summary.netoFinal)}`);
-        lines.push(`*IVA (19%):* ${formatCLP(summary.ivaAmount)}`);
-      }
-      lines.push(`*TOTAL FINAL:* ${formatCLP(summary.totalFinal)}`);
-      lines.push(`*Abono (${summary.depositPct}%):* ${formatCLP(summary.depositAmount)} | *Saldo:* ${formatCLP(summary.balanceAmount)}`);
-      if (notes) {
-        lines.push(`*Obs:* ${notes}`);
-      }
-      lines.push(``);
-      lines.push(`_Textiles Rosita • Creación, costuras y confección • WhatsApp +56 9 8951 0679_`);
-
-      return lines.join('\n');
-    }
-// ... existing code ... -->
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
