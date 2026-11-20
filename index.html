@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotizador y Planificador de Pedidos — Textiles CAS</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              800: '#1e3a8a',
+              900: '#0f2347',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .print-break-inside {
+        break-inside: avoid;
+      }
+      table {
+        width: 100% !important;
+        border-collapse: collapse;
+      }
+      th, td {
+        border-bottom: 1px solid #e5e7eb !important;
+        padding: 7px 5px !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-600 selection:text-white min-h-screen flex flex-col">
+
+  <!-- Toast Flotante -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none no-print">
+    <div class="bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+      <div>
+        <p id="toast-title" class="text-sm font-semibold">Acción completada</p>
+        <p id="toast-desc" class="text-xs text-slate-300">Detalle</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCABEZADO INSTITUCIONAL + INDICADORES LEAN -->
+  <header class="bg-brand-900 text-white shadow-md sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
+        <!-- Identidad Corporativa -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-inner border border-blue-400/30 shrink-0">
+            <i class="fa-solid fa-scissors text-white text-lg"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">Textiles CAS — Confección de Uniformes Escolares</h1>
+              <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30">María Pinto • Melipilla • Bollenar</span>
+              <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 hover:bg-emerald-500/30 transition">
+                <i class="fa-brands fa-whatsapp text-emerald-400"></i>
+                <span>Pedidos: +56 9 8951 0679</span>
+              </a>
+            </div>
+            <!-- Indicador Operativo Lean -->
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-blue-200/90">
+              <span class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-gauge-high text-emerald-400"></i>
+                Capacidad Lean: <strong id="hdr-capacity" class="text-white">4,5 prendas/día</strong>
+              </span>
+              <span class="inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt text-amber-300"></i>
+                Meta estándar: <strong id="hdr-meta" class="text-white">≤ 3 días hábiles</strong>
+              </span>
+              <span id="hdr-season-badge" class="hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 font-semibold">
+                <i class="fa-solid fa-fire-flame-curved"></i> Temporada Alta (Dic–Abr)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles superiores -->
+        <div class="flex items-center gap-2.5 self-start lg:self-auto">
+          <button onclick="toggleConfigPanel()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white/10 hover:bg-white/15 text-white border border-white/15 transition cursor-pointer">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Tarifas y Capacidad</span>
+          </button>
+          <button onclick="resetQuote()" title="Limpiar pedido actual" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/20 transition cursor-pointer">
+            <i class="fa-solid fa-broom"></i>
+            <span>Limpiar Pedido</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PANEL DESPLEGABLE DE TARIFAS Y CAPACIDAD (GUARDADO EN LOCALSTORAGE) -->
+  <section id="config-panel" class="hidden bg-slate-900 text-slate-200 border-b border-slate-700 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
+        <div>
+          <h2 class="font-display font-bold text-base sm:text-lg text-white flex items-center gap-2">
+            <i class="fa-solid fa-tags text-blue-400"></i>
+            Tarifario Base por Rango de Talla y Capacidad Taller (Guardado Automático)
+          </h2>
+          <p class="text-xs text-slate-400">Configura precios en CLP para Tallas Niños (3–16) y Adultos (S–XXL). Se guardan automáticamente en este navegador.</p>
+        </div>
+        <button onclick="toggleConfigPanel()" class="text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Tabla de Precios de los 9 Productos -->
+        <div class="lg:col-span-8 bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-700 text-slate-400 uppercase">
+                <th class="pb-2.5 pr-2">Prenda del Catálogo (9 ítems)</th>
+                <th class="pb-2.5 px-2 text-right w-32">Niños (3 – 16)</th>
+                <th class="pb-2.5 pl-2 text-right w-32">Adultos (S – XXL)</th>
+              </tr>
+            </thead>
+            <tbody id="config-prices-tbody" class="divide-y divide-slate-700/60">
+              <!-- Generado por JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Capacidad Lean & Descuentos Volumen -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">Capacidad Taller (Lean)</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-1">Prendas/día (equipo)</label>
+                <input type="number" id="cfg-daily-capacity" min="1" max="50" step="0.5" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-1">Meta estándar (días)</label>
+                <input type="number" id="cfg-min-days" min="1" max="30" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-1">Holgura Temporada Alta Dic–Abr (+días hábiles)</label>
+              <input type="number" id="cfg-high-season-extra" min="0" max="15" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+
+          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Descuentos por Volumen</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-1">Desde 10 un. (%)</label>
+                <input type="number" id="cfg-disc-tier1" min="0" max="50" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-1">Desde 30 un. (%)</label>
+                <input type="number" id="cfg-disc-tier2" min="0" max="60" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+              </div>
+            </div>
+            <button onclick="restoreDefaultSettings()" class="w-full py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-medium text-slate-200 transition cursor-pointer">
+              Restaurar Tarifas de Fábrica
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Encabezado exclusivo Impresión / PDF -->
+    <div class="hidden print-only mb-5 pb-4 border-b-2 border-brand-900">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-2xl font-bold text-brand-900">TEXTILES CAS</h1>
+          <p class="text-sm font-medium text-slate-700">Confección de Uniformes Escolares</p>
+          <p class="text-xs text-slate-500 mt-0.5">Sector María Pinto • Melipilla • Bollenar (Región Metropolitana)</p>
+          <p class="text-xs font-semibold text-emerald-700 mt-0.5">WhatsApp Recepción de Pedidos: +56 9 8951 0679</p>
+        </div>
+        <div class="text-right">
+          <span class="inline-block px-3 py-1 bg-slate-100 rounded-lg font-bold text-sm text-brand-900 border border-slate-300">ORDEN / PRESUPUESTO <span id="print-quote-id">CAS-101</span></span>
+          <p class="text-xs text-slate-600 mt-1">Emisión: <span id="print-issue-date"></span></p>
+          <p class="text-xs text-slate-500">Validez: 15 días corridos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- COLUMNA IZQUIERDA (7 cols): Ficha Cliente/Colegio + Constructor Prendas + Tabla Pedido -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- 1. FICHA DEL CLIENTE Y ESTABLECIMIENTO EDUCACIONAL -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 print-break-inside">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">1</span>
+              Datos del Cliente y Establecimiento
+            </h2>
+            <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg no-print">Folio #<span id="ui-quote-id">CAS-101</span></span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="client-name" class="block text-xs font-semibold text-slate-600 mb-1.5">Nombre Apoderado, Cliente o Directiva *</label>
+              <div class="relative">
+                <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-400 text-sm no-print"></i>
+                <input type="text" id="client-name" placeholder="Ej. María González / Directiva 3° Básico"
+                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              </div>
+            </div>
+
+            <div>
+              <label for="client-phone" class="block text-xs font-semibold text-slate-600 mb-1.5">Teléfono / WhatsApp de Contacto</label>
+              <div class="relative">
+                <i class="fa-brands fa-whatsapp absolute left-3.5 top-3 text-emerald-600 text-base no-print"></i>
+                <input type="tel" id="client-phone" placeholder="+56 9 8765 4321"
+                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              </div>
+            </div>
+
+            <!-- Selector de Establecimiento / Colegio Exacto -->
+            <div>
+              <label for="client-school" class="block text-xs font-semibold text-slate-600 mb-1.5">Establecimiento / Colegio *</label>
+              <div class="relative">
+                <i class="fa-solid fa-school absolute left-3.5 top-3 text-brand-600 text-sm no-print"></i>
+                <select id="client-school" onchange="onMainSchoolChange()"
+                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                  <option value="Chorombo Alto">1. Chorombo Alto</option>
+                  <option value="Chorombo Bajo">2. Chorombo Bajo</option>
+                  <option value="Las Mercedes">3. Las Mercedes</option>
+                  <option value="Los Rulos">4. Los Rulos</option>
+                  <option value="Santa Emilia">5. Santa Emilia</option>
+                  <option value="Polivalente María Pinto">6. Polivalente María Pinto</option>
+                  <option value="Colegio y Jardín Flores de Bollenar">7. Colegio y Jardín Flores de Bollenar</option>
+                  <option value="Otro / Particular">8. Otro establecimiento / Particular</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Curso / Nivel -->
+            <div>
+              <label for="client-grade" class="block text-xs font-semibold text-slate-600 mb-1.5">Curso / Nivel</label>
+              <div class="relative">
+                <i class="fa-solid fa-graduation-cap absolute left-3.5 top-3 text-slate-400 text-sm no-print"></i>
+                <input type="text" id="client-grade" placeholder="Ej. 3° Básico, Pre-Kínder, 1° Medio"
+                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              </div>
+            </div>
+
+            <!-- Fecha Requerida de Entrega -->
+            <div class="sm:col-span-2">
+              <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1.5">Fecha Requerida de Entrega</label>
+              <input type="date" id="delivery-date" onchange="recalculateAll()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+
+            <!-- Texto Libre si elige 'Otro establecimiento' -->
+            <div id="custom-school-wrapper" class="hidden sm:col-span-2">
+              <label for="custom-school-name" class="block text-xs font-semibold text-brand-700 mb-1.5">Nombre del Otro Establecimiento / Particular</label>
+              <input type="text" id="custom-school-name" placeholder="Escribe el nombre del colegio, jardín o empresa..." oninput="syncItemSchoolDefault()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-brand-300 bg-brand-50/30 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+
+            <!-- Observaciones Generales del Pedido -->
+            <div class="sm:col-span-2">
+              <label for="order-notes" class="block text-xs font-semibold text-slate-600 mb-1.5">Observaciones Generales del Pedido</label>
+              <input type="text" id="order-notes" placeholder="Ej. Insignia bordada lado izquierdo, entrega en taller o retiro acordado..."
+                class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CONSTRUCTOR DE PRENDAS (9 ÍTEMS + 13 TALLAS + FALDA A MEDIDA) -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">2</span>
+              Agregar Prendas al Pedido
+            </h2>
+            <span id="size-tier-indicator" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-brand-700 border border-blue-100">
+              Tarifa Infantil / Juvenil (3–16)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            <!-- Catálogo de 9 Prendas -->
+            <div class="sm:col-span-7">
+              <label for="item-product" class="block text-xs font-semibold text-slate-600 mb-1.5">Prenda (Catálogo Textiles CAS)</label>
+              <select id="item-product" onchange="onProductOrSizeChange()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                <!-- 9 opciones cargadas por JS -->
+              </select>
+            </div>
+
+            <!-- Selector de Tallas Exactas (3..16 y S..XXL + A medida) -->
+            <div class="sm:col-span-5">
+              <label for="item-size" class="block text-xs font-semibold text-slate-600 mb-1.5">Talla</label>
+              <select id="item-size" onchange="onProductOrSizeChange()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                <optgroup label="Infantiles / Juveniles (3 a 16)">
+                  <option value="3">Talla 3</option>
+                  <option value="4">Talla 4</option>
+                  <option value="6">Talla 6</option>
+                  <option value="8">Talla 8</option>
+                  <option value="10" selected>Talla 10</option>
+                  <option value="12">Talla 12</option>
+                  <option value="14">Talla 14</option>
+                  <option value="16">Talla 16</option>
+                </optgroup>
+                <optgroup label="Adultos (S a XXL)">
+                  <option value="S">Talla S</option>
+                  <option value="M">Talla M</option>
+                  <option value="L">Talla L</option>
+                  <option value="XL">Talla XL</option>
+                  <option value="XXL">Talla XXL</option>
+                </optgroup>
+                <optgroup label="Confección Especial">
+                  <option value="A medida">A medida (Personalizada)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Campos Dinámicos de Medidas (Solo visible si elige '6. Falda a Medida' o talla 'A medida') -->
+            <div id="custom-measurements-box" class="hidden sm:col-span-12 p-4 rounded-xl bg-amber-50/90 border border-amber-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-ruler-combined text-amber-600"></i>
+                  Medidas Personalizadas — Falda a Medida (en centímetros)
+                </span>
+                <span class="text-[11px] text-amber-700 font-medium">Obligatorio para corte</span>
+              </div>
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label for="meas-waist" class="block text-[11px] font-semibold text-amber-900 mb-1">Cintura (cm) *</label>
+                  <input type="number" id="meas-waist" min="30" max="180" step="0.5" placeholder="Ej. 68"
+                    class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-sm font-semibold text-center focus:outline-none focus:border-amber-600">
+                </div>
+                <div>
+                  <label for="meas-hip" class="block text-[11px] font-semibold text-amber-900 mb-1">Cadera (cm) *</label>
+                  <input type="number" id="meas-hip" min="40" max="200" step="0.5" placeholder="Ej. 88"
+                    class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-sm font-semibold text-center focus:outline-none focus:border-amber-600">
+                </div>
+                <div>
+                  <label for="meas-length" class="block text-[11px] font-semibold text-amber-900 mb-1">Largo (cm) *</label>
+                  <input type="number" id="meas-length" min="20" max="120" step="0.5" placeholder="Ej. 48"
+                    class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-sm font-semibold text-center focus:outline-none focus:border-amber-600">
+                </div>
+              </div>
+            </div>
+
+            <!-- Colegio asociado a la línea (por defecto toma el principal, editable si mezcla hermanos de distintos colegios) -->
+            <div class="sm:col-span-5">
+              <label for="item-school" class="block text-xs font-semibold text-slate-600 mb-1.5">Colegio de esta prenda</label>
+              <select id="item-school"
+                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                <option value="Chorombo Alto">Chorombo Alto</option>
+                <option value="Chorombo Bajo">Chorombo Bajo</option>
+                <option value="Las Mercedes">Las Mercedes</option>
+                <option value="Los Rulos">Los Rulos</option>
+                <option value="Santa Emilia">Santa Emilia</option>
+                <option value="Polivalente María Pinto">Polivalente María Pinto</option>
+                <option value="Colegio y Jardín Flores de Bollenar">Colegio y Jardín Flores de Bollenar</option>
+                <option value="Otro / Particular">Otro / Particular</option>
+              </select>
+            </div>
+
+            <!-- Cantidad -->
+            <div class="sm:col-span-3">
+              <label for="item-qty" class="block text-xs font-semibold text-slate-600 mb-1.5">Cantidad</label>
+              <input type="number" id="item-qty" min="1" max="500" value="1"
+                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-center focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+
+            <!-- Precio Unitario CLP (Automático + Editable) -->
+            <div class="sm:col-span-4">
+              <label for="item-price" class="block text-xs font-semibold text-slate-600 mb-1.5">Precio Unit. (CLP)</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-2.5 text-slate-400 text-sm font-bold">$</span>
+                <input type="number" id="item-price" min="0" step="100"
+                  class="w-full pl-8 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p class="text-xs text-slate-500">
+              <i class="fa-solid fa-circle-info text-brand-500 mr-1"></i>
+              El precio cambia automáticamente según talla niño (3–16) o adulto (S–XXL).
+            </p>
+            <button onclick="addItemToCart()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold text-sm px-5 py-3 rounded-xl shadow-sm shadow-brand-600/20 transition cursor-pointer">
+              <i class="fa-solid fa-plus"></i>
+              <span>Agregar al Pedido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 3. DETALLE DEL PEDIDO (TABLA INTERACTIVA) -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">3</span>
+              Detalle de Prendas del Pedido
+            </h2>
+            <span id="badge-total-units" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700">0 prendas</span>
+          </div>
+
+          <!-- Estado Vacío -->
+          <div id="empty-cart-state" class="text-center py-10 px-4 border-2 border-dashed border-slate-200 rounded-2xl">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <i class="fa-solid fa-shirt text-xl"></i>
+            </div>
+            <p class="text-sm font-semibold text-slate-700">El pedido aún no tiene prendas agregadas</p>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Selecciona una prenda del catálogo (Buzo, Polera Piqué, Falda a medida, Polerón de Polar, etc.) y agrégala arriba.</p>
+          </div>
+
+          <!-- Tabla de Líneas -->
+          <div id="cart-items-container" class="hidden overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th class="pb-3 pr-2">Prenda / Colegio / Talla</th>
+                  <th class="pb-3 px-2 text-center">Cant.</th>
+                  <th class="pb-3 px-2 text-right">Unit. CLP</th>
+                  <th class="pb-3 pl-2 text-right">Subtotal</th>
+                  <th class="pb-3 pl-2 text-right no-print"></th>
+                </tr>
+              </thead>
+              <tbody id="cart-table-body" class="divide-y divide-slate-100 text-sm">
+                <!-- Filas dinámicas -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- COLUMNA DERECHA (5 cols): Resumen Financiero + Simulador Abono + Planificación Lean + Checklist SOP + Exportar -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+
+        <!-- RESUMEN FINANCIERO EN CLP ($) Y SIMULADOR DE ABONO -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 print-break-inside">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900">Resumen Financiero (CLP)</h2>
+
+            <!-- Toggle IVA 19% -->
+            <label class="inline-flex items-center gap-2 cursor-pointer select-none no-print">
+              <span class="text-xs font-medium text-slate-600">IVA 19%</span>
+              <input type="checkbox" id="toggle-iva" checked onchange="recalculateAll()" class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600 relative"></div>
+            </label>
+          </div>
+
+          <!-- Control de Descuento por Volumen (Automático o Manual) -->
+          <div class="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2 no-print">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="toggle-discount" checked onchange="recalculateAll()" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+              <label for="toggle-discount" class="text-xs font-semibold text-slate-700 cursor-pointer">Descuento Volumen</label>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <select id="discount-mode" onchange="recalculateAll()" class="text-xs bg-white border border-slate-200 rounded-lg px-2 py-1 font-medium text-slate-700 focus:outline-none">
+                <option value="auto">Auto (10% ≥10 / 18% ≥30)</option>
+                <option value="manual">Manual %</option>
+              </select>
+              <input type="number" id="manual-discount-pct" min="0" max="80" value="0" oninput="recalculateAll()" class="hidden w-14 text-xs text-right bg-white border border-slate-200 rounded-lg px-2 py-1 font-bold">
+            </div>
+          </div>
+
+          <div class="space-y-2.5 text-sm">
+            <div class="flex justify-between text-slate-600">
+              <span>Subtotal Neto (<span id="sum-count">0</span> un.)</span>
+              <span id="sum-subtotal" class="font-semibold text-slate-800">$0</span>
+            </div>
+
+            <div class="flex justify-between items-center text-emerald-700">
+              <div class="flex items-center gap-1.5">
+                <span>Descuento aplicado</span>
+                <span id="sum-discount-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">0%</span>
+              </div>
+              <span id="sum-discount-amount" class="font-semibold">-$0</span>
+            </div>
+
+            <div id="row-neto" class="flex justify-between text-slate-600 pt-2 border-t border-slate-100">
+              <span>Total Neto</span>
+              <span id="sum-neto" class="font-semibold text-slate-800">$0</span>
+            </div>
+
+            <div id="row-iva" class="flex justify-between text-slate-600">
+              <span>IVA (19%)</span>
+              <span id="sum-iva" class="font-semibold text-slate-800">$0</span>
+            </div>
+
+            <div class="pt-3 border-t-2 border-slate-900 flex items-baseline justify-between">
+              <div>
+                <span class="font-display font-bold text-base text-slate-900">TOTAL FINAL</span>
+                <p id="lbl-tax-status" class="text-[11px] text-slate-500">IVA incluido (Pesos Chilenos)</p>
+              </div>
+              <span id="sum-total" class="font-display font-extrabold text-2xl sm:text-3xl text-brand-700">$0</span>
+            </div>
+          </div>
+
+          <!-- Simulador de Abono (50% estándar) y Saldo Contra Entrega -->
+          <div class="mt-4 pt-3.5 border-t border-slate-200 bg-brand-50/60 rounded-xl p-3.5 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-hand-holding-dollar text-brand-600"></i>
+                Abono inicial (
+                <input type="number" id="deposit-pct" min="0" max="100" value="50" oninput="recalculateAll()" class="w-11 text-center font-bold bg-white border border-slate-300 rounded px-1 py-0.5 text-brand-800 no-print">
+                <span id="print-deposit-pct" class="hidden print-only font-bold">50</span>%):
+              </span>
+              <span id="sum-deposit" class="font-bold text-brand-800 text-sm">$0</span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-600">
+              <span>Saldo contra entrega:</span>
+              <span id="sum-balance" class="font-bold text-slate-800 text-sm">$0</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- PLANIFICACIÓN OPERACIONAL LEAN -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 print-break-inside">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-check text-brand-600"></i>
+              Planificación Lean de Taller
+            </h2>
+            <span id="lean-status-pill" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Flujo Estándar
+            </span>
+          </div>
+
+          <!-- Alerta Temporada Alta (Dic - Abr) -->
+          <div id="high-season-banner" class="hidden mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm"></i>
+            <div class="text-xs text-amber-900">
+              <p class="font-bold">Temporada Alta Escolar (Dic – Abr)</p>
+              <p class="mt-0.5 text-amber-800">Se suman <span id="lbl-extra-days" class="font-semibold">+2 días hábiles</span> de resguardo por alta demanda de uniformes.</p>
+            </div>
+          </div>
+
+          <!-- Alerta Capacidad Semanal (> 22.5 unidades) -->
+          <div id="weekly-capacity-banner" class="hidden mb-3 p-3 rounded-xl bg-indigo-50 border border-indigo-200 flex items-start gap-2.5">
+            <i class="fa-solid fa-layer-group text-indigo-600 mt-0.5 text-sm"></i>
+            <div class="text-xs text-indigo-900">
+              <p class="font-bold">Pedido supera capacidad semanal (5 días)</p>
+              <p class="mt-0.5 text-indigo-800">Planificar corte por lotes y confirmar entrega parcial si el cliente lo requiere.</p>
+            </div>
+          </div>
+
+          <!-- Alerta Fecha Requerida vs Estimada -->
+          <div id="deadline-warning-banner" class="hidden mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 no-print">
+            <i class="fa-solid fa-clock text-rose-600 mt-0.5 text-sm"></i>
+            <div class="text-xs text-rose-900">
+              <p class="font-bold">Fecha requerida muy ajustada</p>
+              <p id="deadline-warning-text" class="mt-0.5 text-rose-800"></p>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200/70 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Carga total del pedido:</span>
+              <span id="op-total-units" class="font-bold text-slate-800">0 prendas</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Ritmo base taller:</span>
+              <span id="op-capacity-rate" class="font-semibold text-slate-700">4,5 prendas / día</span>
+            </div>
+            <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-700">Plazo Estimado de Entrega</p>
+                <p id="op-estimated-date" class="text-[11px] text-slate-500">Agrega prendas para calcular</p>
+              </div>
+              <span id="op-estimated-days" class="font-display font-extrabold text-xl text-brand-700">0 días hábiles</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHECKLIST SOP PRE-PRODUCCIÓN -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-emerald-600"></i>
+              Checklist SOP Pre-Producción
+            </h2>
+            <span id="checklist-progress" class="text-xs font-bold text-slate-500">0/4 listos</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
+              <span class="text-slate-700 font-medium">Verificar stock de tela por colegio (franela, piqué, polar, casimir)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
+              <span class="text-slate-700 font-medium">Confirmar tallas (3–XXL) y medidas de falda (cintura/cadera/largo)</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
+              <span class="text-slate-700 font-medium">Revisar matriz insignia / bordado del establecimiento</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
+              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
+              <span class="text-slate-700 font-medium">Confirmar abono inicial recibido para iniciar corte</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- BOTONES DE EXPORTACIÓN Y CIERRE -->
+        <div class="space-y-3 no-print">
+          <button onclick="sendWhatsAppDirect()" class="w-full inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm px-4 py-3.5 rounded-2xl shadow-md shadow-emerald-600/25 transition cursor-pointer">
+            <i class="fa-brands fa-whatsapp text-xl"></i>
+            <span>Enviar Pedido por WhatsApp (+56 9 8951 0679)</span>
+          </button>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="copyWhatsAppQuote()" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 active:scale-[0.99] text-emerald-900 border border-emerald-200 font-semibold text-xs sm:text-sm px-4 py-3 rounded-2xl transition cursor-pointer">
+              <i class="fa-regular fa-copy text-base"></i>
+              <span>Copiar Texto para WhatsApp</span>
+            </button>
+
+            <button onclick="printQuote()" class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold text-xs sm:text-sm px-4 py-3 rounded-2xl shadow-sm transition cursor-pointer">
+              <i class="fa-solid fa-file-pdf text-base"></i>
+              <span>Imprimir / Guardar PDF</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pie de página formal para Impresión -->
+    <div class="hidden print-only mt-8 pt-4 border-t border-slate-300 text-xs text-slate-500 flex justify-between">
+      <div>
+        <p class="font-bold text-slate-700">Textiles CAS — Confección de Uniformes Escolares</p>
+        <p>María Pinto • Melipilla • Bollenar — WhatsApp Pedidos: +56 9 8951 0679</p>
+      </div>
+      <div class="text-right">
+        <p>Abono requerido para iniciar confección • Saldo contra entrega.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER WEB -->
+  <footer class="bg-white border-t border-slate-200 mt-10 py-4 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <p>© <span id="footer-year"></span> <strong>Textiles CAS</strong> — WhatsApp Recepción Pedidos: <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-700 hover:underline">+56 9 8951 0679</a>.</p>
+      <p>Chorombo Alto • Chorombo Bajo • Las Mercedes • Los Rulos • Santa Emilia • Polivalente María Pinto • Flores de Bollenar</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    // =========================================================================
+    // 1. CONFIGURACIÓN, CATÁLOGO DE 9 PRENDAS Y PERSISTENCIA (LOCALSTORAGE)
+    // =========================================================================
+    const STORAGE_KEY = 'textiles_cas_settings_v2';
+    const TEXTILES_CAS_WHATSAPP = '56989510679';
+
+    const DEFAULT_SETTINGS = {
+      dailyCapacity: 4.5,
+      minDays: 3,
+      highSeasonExtraDays: 2,
+      discTier1: 10,
+      discTier2: 18,
+      products: [
+        { id: 'buzo', name: '1. Buzo (Polerón y Pantalón)', childPrice: 24900, adultPrice: 28900 },
+        { id: 'buzo_completo', name: '2. Buzo Completo (Pantalón, Polerón y Polera Deporte)', childPrice: 31900, adultPrice: 36900 },
+        { id: 'polera_pique', name: '3. Polera Piqué', childPrice: 9900, adultPrice: 11900 },
+        { id: 'polera_nino_nina', name: '4. Polera de Niña o Niño', childPrice: 7900, adultPrice: 9500 },
+        { id: 'falda_talla', name: '5. Falda por Talla', childPrice: 14900, adultPrice: 17900 },
+        { id: 'falda_medida', name: '6. Falda a Medida', childPrice: 17900, adultPrice: 20900 },
+        { id: 'pantalon', name: '7. Pantalón', childPrice: 13900, adultPrice: 15900 },
+        { id: 'poleron', name: '8. Polerón', childPrice: 14900, adultPrice: 16900 },
+        { id: 'poleron_polar', name: '9. Polerón de Polar', childPrice: 15900, adultPrice: 18500 }
+      ]
+    };
+
+    const CHILD_SIZES = ['3', '4', '6', '8', '10', '12', '14', '16'];
+    const ADULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+
+    let settings = loadSettings();
+    let cart = [];
+    let quoteNumber = 'CAS-' + Math.floor(100 + Math.random() * 900);
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.products) && parsed.products.length === 9) {
+            return { ...DEFAULT_SETTINGS, ...parsed };
+          }
+        }
+      } catch (e) {
+        console.warn('No se pudo leer localStorage, usando valores por defecto.', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      } catch (e) {
+        console.warn('No se pudo guardar en localStorage.', e);
+      }
+    }
+
+    function formatCLP(amount) {
+      const rounded = Math.round(Number(amount) || 0);
+      return '$' + rounded.toLocaleString('es-CL');
+    }
+
+    function showToast(title, desc, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-desc').textContent = desc;
+
+      icon.className = 'fa-solid text-lg ' + (
+        type === 'warning' ? 'fa-triangle-exclamation text-amber-400' :
+        type === 'info' ? 'fa-circle-info text-blue-400' :
+        'fa-circle-check text-emerald-400'
+      );
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // =========================================================================
+    // 2. INICIALIZACIÓN DE LA APLICACIÓN
+    // =========================================================================
+    function initApp() {
+      document.getElementById('footer-year').textContent = new Date().getFullYear();
+      document.getElementById('ui-quote-id').textContent = quoteNumber;
+      document.getElementById('print-quote-id').textContent = quoteNumber;
+      document.getElementById('print-issue-date').textContent = new Date().toLocaleDateString('es-CL');
+
+      populateProductSelect();
+      renderConfigPanel();
+      syncHeaderIndicators();
+      onProductOrSizeChange();
+      onMainSchoolChange();
+      updateChecklistCount();
+      recalculateAll();
+    }
+
+    function populateProductSelect() {
+      const select = document.getElementById('item-product');
+      const currentVal = select.value;
+      select.innerHTML = settings.products.map(p =>
+        `<option value="${p.id}">${p.name}</option>`
+      ).join('');
+      if (currentVal && settings.products.some(p => p.id === currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    // =========================================================================
+    // 3. PANEL DE TARIFAS Y CAPACIDAD LEAN
+    // =========================================================================
+    function toggleConfigPanel() {
+      const panel = document.getElementById('config-panel');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        renderConfigPanel();
+      }
+    }
+
+    function renderConfigPanel() {
+      const tbody = document.getElementById('config-prices-tbody');
+      tbody.innerHTML = settings.products.map((p, idx) => `
+        <tr>
+          <td class="py-2 pr-2 font-medium text-slate-200">${p.name}</td>
+          <td class="py-2 px-2 text-right">
+            <input type="number" min="0" step="500" value="${p.childPrice}"
+              onchange="updateProductPrice(${idx}, 'childPrice', this.value)"
+              class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-xs font-bold text-white focus:outline-none focus:border-blue-500">
+          </td>
+          <td class="py-2 pl-2 text-right">
+            <input type="number" min="0" step="500" value="${p.adultPrice}"
+              onchange="updateProductPrice(${idx}, 'adultPrice', this.value)"
+              class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-xs font-bold text-white focus:outline-none focus:border-blue-500">
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('cfg-daily-capacity').value = settings.dailyCapacity;
+      document.getElementById('cfg-min-days').value = settings.minDays;
+      document.getElementById('cfg-high-season-extra').value = settings.highSeasonExtraDays;
+      document.getElementById('cfg-disc-tier1').value = settings.discTier1;
+      document.getElementById('cfg-disc-tier2').value = settings.discTier2;
+    }
+
+    function updateProductPrice(index, field, val) {
+      const num = Math.max(0, parseInt(val, 10) || 0);
+      settings.products[index][field] = num;
+      saveSettings();
+      onProductOrSizeChange();
+      showToast('Tarifa actualizada', `${settings.products[index].name}: ${formatCLP(num)}`);
+    }
+
+    function updateSettingsFromUI() {
+      settings.dailyCapacity = Math.max(0.5, parseFloat(document.getElementById('cfg-daily-capacity').value) || 4.5);
+      settings.minDays = Math.max(1, parseInt(document.getElementById('cfg-min-days').value, 10) || 3);
+      settings.highSeasonExtraDays = Math.max(0, parseInt(document.getElementById('cfg-high-season-extra').value, 10) || 0);
+      settings.discTier1 = Math.max(0, Math.min(80, parseInt(document.getElementById('cfg-disc-tier1').value, 10) || 0));
+      settings.discTier2 = Math.max(0, Math.min(80, parseInt(document.getElementById('cfg-disc-tier2').value, 10) || 0));
+      saveSettings();
+      syncHeaderIndicators();
+      recalculateAll();
+      showToast('Parámetros guardados', 'Capacidad Lean y descuentos actualizados.');
+    }
+
+    function restoreDefaultSettings() {
+      settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      saveSettings();
+      renderConfigPanel();
+      syncHeaderIndicators();
+      onProductOrSizeChange();
+      recalculateAll();
+      showToast('Tarifas restauradas', 'Se restablecieron los valores de fábrica.', 'info');
+    }
+
+    function syncHeaderIndicators() {
+      const capStr = settings.dailyCapacity.toString().replace('.', ',');
+      document.getElementById('hdr-capacity').textContent = `${capStr} prendas/día`;
+      document.getElementById('hdr-meta').textContent = `≤ ${settings.minDays} días hábiles`;
+      document.getElementById('op-capacity-rate').textContent = `${capStr} prendas / día`;
+      document.getElementById('lbl-extra-days').textContent = `+${settings.highSeasonExtraDays} días hábiles`;
+    }
+
+    // =========================================================================
+    // 4. LÓGICA DE SELECCIÓN DE COLEGIO, PRENDA, TALLA Y MEDIDAS
+    // =========================================================================
+    function getActiveMainSchoolName() {
+      const select = document.getElementById('client-school');
+      if (select.value === 'Otro / Particular') {
+        const custom = document.getElementById('custom-school-name').value.trim();
+        return custom || 'Otro / Particular';
+      }
+      return select.value;
+    }
+
+    function onMainSchoolChange() {
+      const select = document.getElementById('client-school');
+      const customWrapper = document.getElementById('custom-school-wrapper');
+      if (select.value === 'Otro / Particular') {
+        customWrapper.classList.remove('hidden');
+      } else {
+        customWrapper.classList.add('hidden');
+      }
+      syncItemSchoolDefault();
+    }
+
+    function syncItemSchoolDefault() {
+      const mainVal = document.getElementById('client-school').value;
+      const itemSchoolSelect = document.getElementById('item-school');
+      if ([...itemSchoolSelect.options].some(o => o.value === mainVal)) {
+        itemSchoolSelect.value = mainVal;
+      }
+    }
+
+    function onProductOrSizeChange() {
+      const prodId = document.getElementById('item-product').value;
+      const sizeSelect = document.getElementById('item-size');
+      const measBox = document.getElementById('custom-measurements-box');
+      const tierIndicator = document.getElementById('size-tier-indicator');
+
+      // Si selecciona "6. Falda a Medida", forzar talla "A medida"
+      if (prodId === 'falda_medida' && sizeSelect.value !== 'A medida') {
+        sizeSelect.value = 'A medida';
+      }
+
+      const sizeVal = sizeSelect.value;
+      const needsMeasurements = prodId === 'falda_medida' || sizeVal === 'A medida';
+
+      if (needsMeasurements) {
+        measBox.classList.remove('hidden');
+      } else {
+        measBox.classList.add('hidden');
+      }
+
+      const product = settings.products.find(p => p.id === prodId) || settings.products[0];
+      const isAdult = ADULT_SIZES.includes(sizeVal) || sizeVal === 'A medida';
+
+      if (isAdult) {
+        tierIndicator.textContent = sizeVal === 'A medida'
+          ? 'Tarifa Confección a Medida'
+          : 'Tarifa Adultos / Juvenil (S–XXL)';
+        document.getElementById('item-price').value = product.adultPrice;
+      } else {
+        tierIndicator.textContent = 'Tarifa Infantil / Juvenil (3–16)';
+        document.getElementById('item-price').value = product.childPrice;
+      }
+    }
+
+    // =========================================================================
+    // 5. CARRITO DE PRENDAS (AGREGAR, EDITAR CANTIDAD, ELIMINAR)
+    // =========================================================================
+    function addItemToCart() {
+      const prodId = document.getElementById('item-product').value;
+      const product = settings.products.find(p => p.id === prodId);
+      const sizeVal = document.getElementById('item-size').value;
+      const qty = Math.max(1, parseInt(document.getElementById('item-qty').value, 10) || 1);
+      const unitPrice = Math.max(0, parseInt(document.getElementById('item-price').value, 10) || 0);
+
+      let schoolName = document.getElementById('item-school').value;
+      if (schoolName === 'Otro / Particular') {
+        const customName = document.getElementById('custom-school-name').value.trim();
+        if (customName) schoolName = customName;
+      }
+
+      const needsMeasurements = prodId === 'falda_medida' || sizeVal === 'A medida';
+      let measurements = null;
+
+      if (needsMeasurements) {
+        const waist = parseFloat(document.getElementById('meas-waist').value);
+        const hip = parseFloat(document.getElementById('meas-hip').value);
+        const length = parseFloat(document.getElementById('meas-length').value);
+
+        if (!waist || !hip || !length || waist <= 0 || hip <= 0 || length <= 0) {
+          showToast('Faltan medidas', 'Ingresa Cintura, Cadera y Largo en cm para la confección a medida.', 'warning');
+          return;
+        }
+        measurements = { waist, hip, length };
+      }
+
+      const sizeLabel = sizeVal === 'A medida' ? 'A medida' : `Talla ${sizeVal}`;
+
+      // Agrupar si es exactamente la misma prenda, talla, colegio, precio y sin medidas personalizadas
+      const existingIdx = !measurements ? cart.findIndex(item =>
+        item.prodId === prodId &&
+        item.size === sizeLabel &&
+        item.school === schoolName &&
+        item.unitPrice === unitPrice &&
+        !item.measurements
+      ) : -1;
+
+      if (existingIdx >= 0) {
+        cart[existingIdx].qty += qty;
+      } else {
+        cart.push({
+          uid: Date.now() + Math.random(),
+          prodId,
+          name: product.name,
+          size: sizeLabel,
+          school: schoolName,
+          qty,
+          unitPrice,
+          measurements
+        });
+      }
+
+      // Reset cantidad y medidas
+      document.getElementById('item-qty').value = 1;
+      if (measurements) {
+        document.getElementById('meas-waist').value = '';
+        document.getElementById('meas-hip').value = '';
+        document.getElementById('meas-length').value = '';
+      }
+
+      renderCart();
+      recalculateAll();
+      showToast('Prenda agregada', `${qty}x ${product.name} (${sizeLabel})`);
+    }
+
+    function changeItemQty(index, delta) {
+      if (!cart[index]) return;
+      const nextQty = cart[index].qty + delta;
+      if (nextQty <= 0) {
+        removeCartItem(index);
+        return;
+      }
+      cart[index].qty = nextQty;
+      renderCart();
+      recalculateAll();
+    }
+
+    function removeCartItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+      recalculateAll();
+    }
+
+    function renderCart() {
+      const emptyState = document.getElementById('empty-cart-state');
+      const tableContainer = document.getElementById('cart-items-container');
+      const tbody = document.getElementById('cart-table-body');
+
+      if (cart.length === 0) {
+        emptyState.classList.remove('hidden');
+        tableContainer.classList.add('hidden');
+        tbody.innerHTML = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      tableContainer.classList.remove('hidden');
+
+      tbody.innerHTML = cart.map((item, idx) => {
+        const subtotal = item.qty * item.unitPrice;
+        const measBadge = item.measurements
+          ? `<span class="inline-block mt-1 text-[11px] font-medium px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+               Cintura: ${item.measurements.waist}cm • Cadera: ${item.measurements.hip}cm • Largo: ${item.measurements.length}cm
+             </span>`
+          : '';
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 pr-2">
+              <p class="font-semibold text-slate-900 text-xs sm:text-sm">${item.name}</p>
+              <div class="flex flex-wrap items-center gap-1.5 mt-0.5 text-xs text-slate-500">
+                <span class="font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md">${item.size}</span>
+                <span>• ${item.school}</span>
+              </div>
+              ${measBadge}
+            </td>
+            <td class="py-3 px-2 text-center">
+              <div class="inline-flex items-center border border-slate-200 rounded-lg bg-white">
+                <button onclick="changeItemQty(${idx}, -1)" class="px-2 py-1 text-slate-500 hover:text-slate-900 no-print cursor-pointer">-</button>
+                <span class="px-2.5 py-1 text-xs font-bold text-slate-800">${item.qty}</span>
+                <button onclick="changeItemQty(${idx}, 1)" class="px-2 py-1 text-slate-500 hover:text-slate-900 no-print cursor-pointer">+</button>
+              </div>
+            </td>
+            <td class="py-3 px-2 text-right text-xs font-medium text-slate-600">${formatCLP(item.unitPrice)}</td>
+            <td class="py-3 pl-2 text-right font-bold text-slate-900 text-xs sm:text-sm">${formatCLP(subtotal)}</td>
+            <td class="py-3 pl-2 text-right no-print">
+              <button onclick="removeCartItem(${idx})" title="Eliminar línea" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg transition cursor-pointer">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. CÁLCULO FINANCIERO CLP, ABONO Y PLANIFICACIÓN LEAN
+    // =========================================================================
+    function addBusinessDays(startDate, daysToAdd) {
+      const date = new Date(startDate.getTime());
+      let added = 0;
+      while (added < daysToAdd) {
+        date.setDate(date.getDate() + 1);
+        const day = date.getDay();
+        if (day !== 0 && day !== 6) {
+          added++;
+        }
+      }
+      return date;
+    }
+
+    function recalculateAll() {
+      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
+      const subtotalNeto = cart.reduce((acc, item) => acc + (item.qty * item.unitPrice), 0);
+
+      document.getElementById('badge-total-units').textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
+      document.getElementById('sum-count').textContent = totalUnits;
+      document.getElementById('op-total-units').textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
+
+      // Descuentos por volumen
+      const discountEnabled = document.getElementById('toggle-discount').checked;
+      const discountMode = document.getElementById('discount-mode').value;
+      const manualInput = document.getElementById('manual-discount-pct');
+
+      if (discountMode === 'manual') {
+        manualInput.classList.remove('hidden');
+      } else {
+        manualInput.classList.add('hidden');
+      }
+
+      let discountPct = 0;
+      if (discountEnabled && totalUnits > 0) {
+        if (discountMode === 'manual') {
+          discountPct = Math.max(0, Math.min(80, parseFloat(manualInput.value) || 0));
+        } else {
+          if (totalUnits >= 30) discountPct = settings.discTier2;
+          else if (totalUnits >= 10) discountPct = settings.discTier1;
+        }
+      }
+
+      const discountAmount = Math.round(subtotalNeto * (discountPct / 100));
+      const totalNeto = Math.max(0, subtotalNeto - discountAmount);
+
+      const includeIVA = document.getElementById('toggle-iva').checked;
+      const ivaAmount = includeIVA ? Math.round(totalNeto * 0.19) : 0;
+      const grandTotal = totalNeto + ivaAmount;
+
+      document.getElementById('sum-subtotal').textContent = formatCLP(subtotalNeto);
+      document.getElementById('sum-discount-badge').textContent = `${discountPct}%`;
+      document.getElementById('sum-discount-amount').textContent = `-${formatCLP(discountAmount)}`;
+      document.getElementById('sum-neto').textContent = formatCLP(totalNeto);
+      document.getElementById('sum-iva').textContent = formatCLP(ivaAmount);
+      document.getElementById('sum-total').textContent = formatCLP(grandTotal);
+
+      document.getElementById('row-iva').style.opacity = includeIVA ? '1' : '0.45';
+      document.getElementById('lbl-tax-status').textContent = includeIVA
+        ? 'IVA incluido (Pesos Chilenos)'
+        : 'Valores Netos (Sin IVA)';
+
+      // Simulador Abono y Saldo
+      const depositPct = Math.max(0, Math.min(100, parseFloat(document.getElementById('deposit-pct').value) || 0));
+      document.getElementById('print-deposit-pct').textContent = depositPct;
+      const depositAmount = Math.round(grandTotal * (depositPct / 100));
+      const balanceAmount = Math.max(0, grandTotal - depositAmount);
+
+      document.getElementById('sum-deposit').textContent = formatCLP(depositAmount);
+      document.getElementById('sum-balance').textContent = formatCLP(balanceAmount);
+
+      // Planificación Operacional Lean
+      const today = new Date();
+      const month = today.getMonth(); // 0=Ene .. 11=Dic
+      const isHighSeason = month === 11 || month <= 3; // Dic (11) a Abr (3)
+
+      const hdrSeasonBadge = document.getElementById('hdr-season-badge');
+      const highSeasonBanner = document.getElementById('high-season-banner');
+      if (isHighSeason) {
+        hdrSeasonBadge.classList.remove('hidden');
+        highSeasonBanner.classList.remove('hidden');
+      } else {
+        hdrSeasonBadge.classList.add('hidden');
+        highSeasonBanner.classList.add('hidden');
+      }
+
+      const weeklyBanner = document.getElementById('weekly-capacity-banner');
+      const weeklyCap = settings.dailyCapacity * 5;
+      if (totalUnits > weeklyCap) {
+        weeklyBanner.classList.remove('hidden');
+      } else {
+        weeklyBanner.classList.add('hidden');
+      }
+
+      const leanPill = document.getElementById('lean-status-pill');
+      const deadlineBanner = document.getElementById('deadline-warning-banner');
+
+      if (totalUnits === 0) {
+        document.getElementById('op-estimated-days').textContent = '0 días hábiles';
+        document.getElementById('op-estimated-date').textContent = 'Agrega prendas para calcular';
+        leanPill.textContent = 'En espera';
+        leanPill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200';
+        deadlineBanner.classList.add('hidden');
+        return;
+      }
+
+      const rawDays = Math.ceil(totalUnits / settings.dailyCapacity);
+      const extraDays = isHighSeason ? settings.highSeasonExtraDays : 0;
+      const estimatedDays = Math.max(settings.minDays, rawDays) + extraDays;
+      const estimatedDate = addBusinessDays(today, estimatedDays);
+      const formattedEstDate = estimatedDate.toLocaleDateString('es-CL', { weekday: 'short', day: '2-digit', month: 'short' });
+
+      document.getElementById('op-estimated-days').textContent = `${estimatedDays} días hábiles`;
+      document.getElementById('op-estimated-date').textContent = `Entrega estimada: ${formattedEstDate}`;
+
+      if (estimatedDays <= settings.minDays) {
+        leanPill.textContent = 'Meta Lean ≤ ' + settings.minDays + 'd';
+        leanPill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+      } else {
+        leanPill.textContent = 'Lote Programado';
+        leanPill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+      }
+
+      // Validar fecha solicitada por el cliente
+      const reqDateVal = document.getElementById('delivery-date').value;
+      if (reqDateVal) {
+        const reqDate = new Date(reqDateVal + 'T12:00:00');
+        const estCompare = new Date(estimatedDate.getFullYear(), estimatedDate.getMonth(), estimatedDate.getDate(), 12, 0, 0);
+        if (reqDate < estCompare) {
+          deadlineBanner.classList.remove('hidden');
+          document.getElementById('deadline-warning-text').textContent =
+            `El cliente pide entrega para el ${reqDate.toLocaleDateString('es-CL')}, pero según capacidad actual (${settings.dailyCapacity} prendas/día) se estiman ${estimatedDays} días hábiles (${formattedEstDate}).`;
+        } else {
+          deadlineBanner.classList.add('hidden');
+        }
+      } else {
+        deadlineBanner.classList.add('hidden');
+      }
+    }
+
+    function updateChecklistCount() {
+      const checks = document.querySelectorAll('.sop-check');
+      const checkedCount = [...checks].filter(c => c.checked).length;
+      document.getElementById('checklist-progress').textContent = `${checkedCount}/${checks.length} listos`;
+    }
+
+    // =========================================================================
+    // 7. EXPORTAR WHATSAPP (+56 9 8951 0679), IMPRIMIR / PDF Y LIMPIAR PEDIDO
+    // =========================================================================
+    function buildWhatsAppMessage() {
+      const clientName = document.getElementById('client-name').value.trim() || 'Apoderado / Cliente';
+      const clientPhone = document.getElementById('client-phone').value.trim();
+      const clientGrade = document.getElementById('client-grade').value.trim();
+      const mainSchool = getActiveMainSchoolName();
+      const deliveryDateVal = document.getElementById('delivery-date').value;
+      const includeIVA = document.getElementById('toggle-iva').checked;
+      const estDays = document.getElementById('op-estimated-days').textContent;
+      const depositPct = document.getElementById('deposit-pct').value;
+      const notes = document.getElementById('order-notes').value.trim();
+
+      let lines = [];
+      lines.push(`🧵 *PEDIDO / COTIZACIÓN TEXTILES CAS* (${quoteNumber})`);
+      lines.push(`_Confección de Uniformes Escolares — WhatsApp Taller: +56 9 8951 0679_`);
+      lines.push(`-----------------------------------`);
+      lines.push(`👤 *Cliente / Apoderado:* ${clientName}`);
+      if (clientPhone) lines.push(`📱 *Teléfono Cliente:* ${clientPhone}`);
+      lines.push(`🏫 *Colegio:* ${mainSchool}`);
+      if (clientGrade) lines.push(`🎓 *Curso / Nivel:* ${clientGrade}`);
+      if (deliveryDateVal) lines.push(`📆 *Fecha solicitada:* ${deliveryDateVal}`);
+      lines.push(`📅 *Fecha emisión:* ${new Date().toLocaleDateString('es-CL')}`);
+      lines.push(``);
+      lines.push(`📋 *DETALLE DEL PEDIDO:*`);
+
+      cart.forEach((item, i) => {
+        const sub = formatCLP(item.qty * item.unitPrice);
+        lines.push(`${i + 1}. *${item.qty}x ${item.name}*`);
+        let detail = `   • ${item.size} | ${item.school}`;
+        if (item.measurements) {
+          detail += ` | Medidas: Cintura ${item.measurements.waist}cm, Cadera ${item.measurements.hip}cm, Largo ${item.measurements.length}cm`;
+        }
+        lines.push(detail);
+        lines.push(`   • Unit: ${formatCLP(item.unitPrice)} → *${sub}*`);
+      });
+
+      lines.push(``);
+      lines.push(`💰 *RESUMEN ECONÓMICO (CLP):*`);
+      lines.push(`• Subtotal Neto: ${document.getElementById('sum-subtotal').textContent}`);
+
+      const discBadge = document.getElementById('sum-discount-badge').textContent;
+      if (discBadge !== '0%') {
+        lines.push(`• Descuento (${discBadge}): ${document.getElementById('sum-discount-amount').textContent}`);
+      }
+
+      if (includeIVA) {
+        lines.push(`• Neto: ${document.getElementById('sum-neto').textContent}`);
+        lines.push(`• IVA (19%): ${document.getElementById('sum-iva').textContent}`);
+        lines.push(`✅ *TOTAL (IVA incluido): ${document.getElementById('sum-total').textContent}*`);
+      } else {
+        lines.push(`✅ *TOTAL NETO: ${document.getElementById('sum-total').textContent}*`);
+      }
+
+      lines.push(`• Abono inicial (${depositPct}%): *${document.getElementById('sum-deposit').textContent}*`);
+      lines.push(`• Saldo contra entrega: ${document.getElementById('sum-balance').textContent}`);
+      lines.push(``);
+      lines.push(`⏱️ *Plazo estimado entrega:* ${estDays}`);
+      if (notes) lines.push(`📝 *Obs:* ${notes}`);
+      lines.push(`-----------------------------------`);
+      lines.push(`_Para confirmar pedido y corte de tela se solicita el abono acordado. ¡Gracias por preferir Textiles CAS!_`);
+
+      return lines.join('\n');
+    }
+
+    function sendWhatsAppDirect() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega al menos una prenda antes de enviar por WhatsApp.', 'warning');
+        return;
+      }
+      const message = buildWhatsAppMessage();
+      const waUrl = `https://wa.me/${TEXTILES_CAS_WHATSAPP}?text=${encodeURIComponent(message)}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      showToast('Abriendo WhatsApp', 'Enviando pedido al +56 9 8951 0679.');
+    }
+
+    function copyWhatsAppQuote() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega al menos una prenda antes de copiar para WhatsApp.', 'warning');
+        return;
+      }
+
+      const textToCopy = buildWhatsAppMessage();
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = textToCopy;
+      tempTextArea.style.position = 'fixed';
+      tempTextArea.style.left = '-9999px';
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('¡Resumen copiado!', 'Listo para pegar y enviar por WhatsApp.');
+      } catch (err) {
+        showToast('Error al copiar', 'No se pudo acceder al portapapeles.', 'warning');
+      }
+      document.body.removeChild(tempTextArea);
+    }
+
+    function printQuote() {
+      if (cart.length === 0) {
+        showToast('Pedido vacío', 'Agrega prendas antes de imprimir o guardar PDF.', 'warning');
+        return;
+      }
+      window.print();
+    }
+
+    function resetQuote() {
+      cart = [];
+      document.getElementById('client-name').value = '';
+      document.getElementById('client-phone').value = '';
+      document.getElementById('client-grade').value = '';
+      document.getElementById('custom-school-name').value = '';
+      document.getElementById('order-notes').value = '';
+      document.querySelectorAll('.sop-check').forEach(c => c.checked = false);
+      updateChecklistCount();
+
+      quoteNumber = 'CAS-' + Math.floor(100 + Math.random() * 900);
+      document.getElementById('ui-quote-id').textContent = quoteNumber;
+      document.getElementById('print-quote-id').textContent = quoteNumber;
+
+      renderCart();
+      recalculateAll();
+      showToast('Pedido limpio', `Listo para nueva cotización (${quoteNumber}).`, 'info');
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
