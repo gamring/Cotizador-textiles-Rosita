@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cotizador y Planificador de Pedidos — Textiles CAS</title>
+  <title>Cotizador y Planificador de Pedidos — Textiles Rosita</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Plus Jakarta Sans -->
@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Google Fonts adicionales para identidad Textiles Rosita -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Playfair+Display:ital,wght@1,700;1,800&family=Caveat:wght@700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -20,16 +22,24 @@
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             display: ['Plus Jakarta Sans', 'sans-serif'],
+            serifbrand: ['Cinzel', 'serif'],
+            scriptbrand: ['Playfair Display', 'serif'],
+            tagline: ['Caveat', 'cursive'],
           },
           colors: {
             brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#2563eb',
-              600: '#1d4ed8',
-              700: '#1e40af',
-              800: '#1e3a8a',
-              900: '#0f2347',
+              50: '#fffbeb',
+              100: '#fef3c7',
+              500: '#d97706',
+              600: '#b45309',
+              700: '#92400e',
+              800: '#78350f',
+              900: '#1c1917',
+            },
+            gold: {
+              light: '#f3d06b',
+              DEFAULT: '#c59226',
+              dark: '#8c6210',
             }
           }
         }
@@ -38,6 +48,17 @@
   </script>
 
   <style>
+    .rosita-stitch-card {
+      background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
+      border: 1.5px solid #d4a338;
+      box-shadow: 0 4px 14px rgba(140, 98, 16, 0.16), inset 0 0 0 3px #ffffff, inset 0 0 0 4.5px #d4a338;
+    }
+    .rosita-gold-text {
+      background: linear-gradient(180deg, #e5b94c 0%, #b88218 55%, #8a5e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0px 1px 0px rgba(0, 0, 0, 0.25));
+    }
     @media print {
       body {
         background-color: #ffffff !important;
@@ -64,7 +85,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-600 selection:text-white min-h-screen flex flex-col">
+<body class="bg-stone-50 text-slate-800 antialiased selection:bg-amber-600 selection:text-white min-h-screen flex flex-col">
 
   <!-- Toast Flotante -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none no-print">
@@ -77,26 +98,43 @@
     </div>
   </div>
 
-  <!-- ENCABEZADO INSTITUCIONAL + INDICADORES LEAN -->
-  <header class="bg-brand-900 text-white shadow-md sticky top-0 z-30 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+  <!-- ENCABEZADO INSTITUCIONAL + TARJETA VISUAL TEXTILES ROSITA -->
+  <header class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-white shadow-md sticky top-0 z-30 border-b-2 border-amber-500/60 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
-        <!-- Identidad Corporativa -->
-        <div class="flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-inner border border-blue-400/30 shrink-0">
-            <i class="fa-solid fa-scissors text-white text-lg"></i>
-          </div>
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <h1 class="font-display font-bold text-lg sm:text-xl tracking-tight text-white">Textiles CAS — Confección de Uniformes Escolares</h1>
-              <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/30">María Pinto • Melipilla • Bollenar</span>
-              <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 hover:bg-emerald-500/30 transition">
-                <i class="fa-brands fa-whatsapp text-emerald-400"></i>
-                <span>Pedidos: +56 9 8951 0679</span>
+        <!-- Tarjeta Etiqueta Textiles Rosita + Indicadores -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <!-- Etiqueta Bordada Textiles Rosita (replica exacta de la tarjeta o imagen subida) -->
+          <div class="rosita-stitch-card rounded-2xl px-4 py-2.5 flex items-center gap-3 shrink-0 relative overflow-hidden">
+            <img id="header-custom-logo" src="" alt="Logo Textiles Rosita" class="hidden max-h-16 w-auto object-contain rounded-lg" />
+            <div id="header-vector-badge" class="flex flex-col items-center text-center leading-none select-none">
+              <div class="flex items-center gap-1.5">
+                <span class="font-serifbrand font-extrabold text-base sm:text-lg tracking-widest rosita-gold-text">TEXTILES</span>
+              </div>
+              <div class="flex items-center gap-1.5 -mt-0.5">
+                <span class="font-scriptbrand italic font-extrabold text-2xl sm:text-[26px] rosita-gold-text pr-0.5">Rosita</span>
+                <i class="fa-solid fa-heart text-red-600 text-sm drop-shadow-sm"></i>
+              </div>
+              <div class="w-full border-t border-b border-amber-500/60 my-1 py-0.5 px-2 bg-white/90">
+                <span class="font-tagline font-bold text-stone-900 text-sm sm:text-base tracking-wide block leading-none">Creación, costuras y confección</span>
+              </div>
+              <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-0.5 hover:opacity-85 transition">
+                <span class="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] ring-1 ring-amber-500">
+                  <i class="fa-brands fa-whatsapp"></i>
+                </span>
+                <span class="font-sans font-extrabold text-xs sm:text-sm tracking-tight rosita-gold-text">+56 9 8951 0679</span>
               </a>
             </div>
+          </div>
+
+          <!-- Contexto y Métricas Lean -->
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="font-display font-bold text-base sm:text-lg tracking-tight text-white">Cotizador y Planificador de Uniformes Escolares</h1>
+              <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30">María Pinto • Melipilla • Bollenar</span>
+            </div>
             <!-- Indicador Operativo Lean -->
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-blue-200/90">
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-stone-300">
               <span class="inline-flex items-center gap-1.5">
                 <i class="fa-solid fa-gauge-high text-emerald-400"></i>
                 Capacidad Lean: <strong id="hdr-capacity" class="text-white">4,5 prendas/día</strong>
@@ -194,7 +232,11 @@
             </div>
             <div>
               <label class="block text-[11px] text-slate-300 mb-1">Folio Correlativo Actual (N° Pedido)</label>
-              <input type="number" id="cfg-correlative-seq" min="1" max="999999" onchange="updateCorrelativeFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm font-bold text-blue-300 focus:outline-none focus:border-blue-500">
+              <input type="number" id="cfg-correlative-seq" min="1" max="999999" onchange="updateCorrelativeFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm font-bold text-amber-300 focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-1">Logo / Etiqueta Personalizada (Opcional)</label>
+              <input type="file" id="cfg-logo-upload" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-xs text-slate-300 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500 cursor-pointer">
             </div>
             <button onclick="restoreDefaultSettings()" class="w-full py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-medium text-slate-200 transition cursor-pointer">
               Restaurar Tarifas de Fábrica
@@ -209,17 +251,28 @@
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- Encabezado exclusivo Impresión / PDF -->
-    <div class="hidden print-only mb-5 pb-4 border-b-2 border-brand-900">
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="text-2xl font-bold text-brand-900">TEXTILES CAS</h1>
-          <p class="text-sm font-medium text-slate-700">Confección de Uniformes Escolares</p>
-          <p class="text-xs text-slate-500 mt-0.5">Sector María Pinto • Melipilla • Bollenar (Región Metropolitana)</p>
-          <p class="text-xs font-semibold text-emerald-700 mt-0.5">WhatsApp Recepción de Pedidos: +56 9 8951 0679</p>
+    <div class="hidden print-only mb-5 pb-4 border-b-2 border-amber-600">
+      <div class="flex justify-between items-center gap-4">
+        <div class="rosita-stitch-card rounded-2xl px-5 py-3 inline-flex items-center gap-3">
+          <img id="print-custom-logo" src="" alt="Logo Textiles Rosita" class="hidden max-h-20 w-auto object-contain" />
+          <div id="print-vector-badge" class="flex flex-col items-center text-center leading-none">
+            <span class="font-serifbrand font-extrabold text-xl tracking-widest text-amber-700">TEXTILES</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-scriptbrand italic font-extrabold text-3xl text-amber-700">Rosita</span>
+              <i class="fa-solid fa-heart text-red-600 text-base"></i>
+            </div>
+            <div class="border-t border-b border-amber-600 my-1 py-0.5 px-3">
+              <span class="font-tagline font-bold text-stone-900 text-lg">Creación, costuras y confección</span>
+            </div>
+            <p class="font-sans font-extrabold text-sm text-amber-800 mt-0.5">
+              <i class="fa-brands fa-whatsapp text-emerald-600 mr-1"></i>+56 9 8951 0679
+            </p>
+          </div>
         </div>
         <div class="text-right">
-          <span class="inline-block px-3 py-1 bg-slate-100 rounded-lg font-bold text-sm text-brand-900 border border-slate-300">ORDEN / PRESUPUESTO <span id="print-quote-id">CAS-101</span></span>
-          <p class="text-xs text-slate-600 mt-1">Emisión: <span id="print-issue-date"></span></p>
+          <span class="inline-block px-3 py-1 bg-amber-50 rounded-lg font-bold text-sm text-stone-900 border border-amber-400">ORDEN / PRESUPUESTO <span id="print-quote-id">ROS-0001</span></span>
+          <p class="text-xs text-slate-600 mt-1.5">Emisión: <span id="print-issue-date"></span></p>
+          <p class="text-xs text-slate-500">Sector María Pinto • Melipilla • Bollenar</p>
           <p class="text-xs text-slate-500">Validez: 15 días corridos</p>
         </div>
       </div>
@@ -237,7 +290,7 @@
               <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">1</span>
               Datos del Cliente y Establecimiento
             </h2>
-            <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg no-print">Folio #<span id="ui-quote-id">CAS-101</span></span>
+            <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg no-print">Folio #<span id="ui-quote-id">ROS-0001</span></span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -326,7 +379,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
             <!-- Catálogo de 9 Prendas -->
             <div class="sm:col-span-7">
-              <label for="item-product" class="block text-xs font-semibold text-slate-600 mb-1.5">Prenda (Catálogo Textiles CAS)</label>
+              <label for="item-product" class="block text-xs font-semibold text-slate-600 mb-1.5">Prenda (Catálogo Textiles Rosita)</label>
               <select id="item-product" onchange="onProductOrSizeChange()"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
                 <!-- 9 opciones cargadas por JS -->
@@ -569,12 +622,26 @@
             </span>
           </div>
 
+          <!-- Selector de Ciclo / Campaña de Entrega Escolar -->
+          <div class="mb-3 p-3 rounded-xl bg-amber-50/70 border border-amber-200/90 no-print">
+            <label for="delivery-wave" class="block text-xs font-bold text-amber-950 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-layer-group text-amber-600"></i>
+              Ciclo de Entrega Programada (Campaña Escolar)
+            </label>
+            <select id="delivery-wave" onchange="recalculateAll()" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-600 transition">
+              <option value="auto">Automático según fecha actual</option>
+              <option value="lote1">Pedidos 1 (Recibidos en Noviembre) → Fines de Enero</option>
+              <option value="lote2">Pedidos 2 (Segunda Etapa) → Fines de Febrero / Primeros días de Marzo</option>
+              <option value="express">Flujo Estándar / Reposición (Cálculo por capacidad diaria)</option>
+            </select>
+          </div>
+
           <!-- Alerta Temporada Alta (Dic - Abr) -->
           <div id="high-season-banner" class="hidden mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
             <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-amber-900">
-              <p class="font-bold">Temporada Alta Escolar (Dic – Abr)</p>
-              <p class="mt-0.5 text-amber-800">Se suman <span id="lbl-extra-days" class="font-semibold">+2 días hábiles</span> de resguardo por alta demanda de uniformes.</p>
+              <p class="font-bold">Campaña Escolar Activa (Nov – Mar)</p>
+              <p id="lbl-wave-detail" class="mt-0.5 text-amber-800">Pedidos 1 (Noviembre): entrega fines de enero • Pedidos 2: fines de febrero / primeros días de marzo.</p>
             </div>
           </div>
 
@@ -583,7 +650,7 @@
             <i class="fa-solid fa-layer-group text-indigo-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-indigo-900">
               <p class="font-bold">Pedido supera capacidad semanal (5 días)</p>
-              <p class="mt-0.5 text-indigo-800">Planificar corte por lotes y confirmar entrega parcial si el cliente lo requiere.</p>
+              <p class="mt-0.5 text-indigo-800">Planificar corte por lotes dentro de la ventana de campaña comprometida.</p>
             </div>
           </div>
 
@@ -591,7 +658,7 @@
           <div id="deadline-warning-banner" class="hidden mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 no-print">
             <i class="fa-solid fa-clock text-rose-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-rose-900">
-              <p class="font-bold">Fecha requerida muy ajustada</p>
+              <p class="font-bold">Fecha requerida anterior al ciclo comprometido</p>
               <p id="deadline-warning-text" class="mt-0.5 text-rose-800"></p>
             </div>
           </div>
@@ -605,12 +672,16 @@
               <span class="text-slate-500">Ritmo base taller:</span>
               <span id="op-capacity-rate" class="font-semibold text-slate-700">4,5 prendas / día</span>
             </div>
-            <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500">Ciclo asignado:</span>
+              <span id="op-wave-badge" class="font-bold text-amber-800">Pedidos 1 (Nov) → Fines de Enero</span>
+            </div>
+            <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
               <div>
-                <p class="text-xs font-semibold text-slate-700">Plazo Estimado de Entrega</p>
-                <p id="op-estimated-date" class="text-[11px] text-slate-500">Agrega prendas para calcular</p>
+                <p class="text-xs font-semibold text-slate-700">Ventana / Plazo de Entrega</p>
+                <p id="op-estimated-date" class="text-[11px] font-medium text-slate-600">Agrega prendas para calcular</p>
               </div>
-              <span id="op-estimated-days" class="font-display font-extrabold text-xl text-brand-700">0 días hábiles</span>
+              <span id="op-estimated-days" class="font-display font-extrabold text-base sm:text-lg text-brand-700 text-right">Fines de Enero</span>
             </div>
           </div>
         </section>
@@ -671,7 +742,7 @@
     <!-- Pie de página formal para Impresión -->
     <div class="hidden print-only mt-8 pt-4 border-t border-slate-300 text-xs text-slate-500 flex justify-between">
       <div>
-        <p class="font-bold text-slate-700">Textiles CAS — Confección de Uniformes Escolares</p>
+        <p class="font-bold text-slate-700">Textiles Rosita — Confección de Uniformes Escolares</p>
         <p>María Pinto • Melipilla • Bollenar — WhatsApp Pedidos: +56 9 8951 0679</p>
       </div>
       <div class="text-right">
@@ -684,7 +755,7 @@
   <!-- FOOTER WEB -->
   <footer class="bg-white border-t border-slate-200 mt-10 py-4 no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-      <p>© <span id="footer-year"></span> <strong>Textiles CAS</strong> — WhatsApp Recepción Pedidos: <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-700 hover:underline">+56 9 8951 0679</a>.</p>
+      <p>© <span id="footer-year"></span> <strong>Textiles Rosita</strong> — WhatsApp Recepción Pedidos: <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="font-semibold text-emerald-700 hover:underline">+56 9 8951 0679</a>.</p>
       <p>Chorombo Alto • Chorombo Bajo • Las Mercedes • Los Rulos • Santa Emilia • Polivalente María Pinto • Flores de Bollenar</p>
     </div>
   </footer>
@@ -694,117 +765,255 @@
     // =========================================================================
     // 1. CONFIGURACIÓN, CATÁLOGO DE 9 PRENDAS Y PERSISTENCIA (LOCALSTORAGE)
     // =========================================================================
-    const STORAGE_KEY = 'textiles_cas_settings_v2';
-    const CORRELATIVE_KEY = 'textiles_cas_correlative_seq_v1';
-    const TEXTILES_CAS_WHATSAPP = '56989510679';
+    const STORAGE_KEY = 'textiles_rosita_settings_v2';
+    const CORRELATIVE_KEY = 'textiles_rosita_correlative_seq_v1';
+    const LOGO_STORAGE_KEY = 'textiles_rosita_logo_data_v1';
+    const TEXTILES_ROSITA_WHATSAPP = '56989510679';
 // ... existing code ... -->
-    const CHILD_SIZES = ['3', '4', '6', '8', '10', '12', '14', '16'];
-    const ADULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
-
-    let settings = loadSettings();
-    let cart = [];
-    let currentSequence = loadCorrelativeSequence();
-    let quoteNumber = formatCorrelativeNumber(currentSequence);
-
-    function loadCorrelativeSequence() {
-      try {
-        const saved = parseInt(localStorage.getItem(CORRELATIVE_KEY), 10);
-        if (!isNaN(saved) && saved >= 1) {
-          return saved;
-        }
-      } catch (e) {
-        console.warn('No se pudo leer el correlativo desde localStorage.', e);
-      }
-      return 1;
-    }
-
-    function saveCorrelativeSequence(seq) {
-      currentSequence = Math.max(1, parseInt(seq, 10) || 1);
-      quoteNumber = formatCorrelativeNumber(currentSequence);
-      try {
-        localStorage.setItem(CORRELATIVE_KEY, String(currentSequence));
-      } catch (e) {
-        console.warn('No se pudo guardar el correlativo en localStorage.', e);
-      }
-      syncQuoteNumberUI();
-    }
-
-    function formatCorrelativeNumber(seq) {
-      return 'CAS-' + String(seq).padStart(4, '0');
-    }
-
-    function syncQuoteNumberUI() {
-      const uiEl = document.getElementById('ui-quote-id');
-      const printEl = document.getElementById('print-quote-id');
-      const cfgEl = document.getElementById('cfg-correlative-seq');
-      if (uiEl) uiEl.textContent = quoteNumber;
-      if (printEl) printEl.textContent = quoteNumber;
-      if (cfgEl) cfgEl.value = currentSequence;
-    }
-
-    function updateCorrelativeFromUI() {
-      const val = parseInt(document.getElementById('cfg-correlative-seq').value, 10);
-      if (!isNaN(val) && val >= 1) {
-        saveCorrelativeSequence(val);
-        showToast('Folio actualizado', `El pedido actual ahora es ${quoteNumber}.`);
-      }
-    }
-
-    function loadSettings() {
-// ... existing code ... -->
-    // =========================================================================
-    // 2. INICIALIZACIÓN DE LA APLICACIÓN
-    // =========================================================================
     function initApp() {
-      document.getElementById('footer-year').textContent = new Date().getFullYear();
-      syncQuoteNumberUI();
-      document.getElementById('print-issue-date').textContent = new Date().toLocaleDateString('es-CL');
-
+      loadSettings();
+      loadCorrelativeSequence();
+      loadSavedLogo();
       populateProductSelect();
-// ... existing code ... -->
-      document.getElementById('cfg-disc-tier1').value = settings.discTier1;
-      document.getElementById('cfg-disc-tier2').value = settings.discTier2;
-      document.getElementById('cfg-correlative-seq').value = currentSequence;
-    }
+      renderConfigPriceTable();
+      updateHeaderMetrics();
+      const today = new Date();
+      document.getElementById('footer-year').textContent = today.getFullYear();
+      document.getElementById('print-issue-date').textContent = today.toLocaleDateString('es-CL');
 
-    function updateProductPrice(index, field, val) {
-// ... existing code ... -->
-    function sendWhatsAppDirect() {
-      if (cart.length === 0) {
-        showToast('Pedido vacío', 'Agrega al menos una prenda antes de enviar por WhatsApp.', 'warning');
-        return;
-      }
-      const sentFolio = quoteNumber;
-      const message = buildWhatsAppMessage();
-      const waUrl = `https://wa.me/${TEXTILES_CAS_WHATSAPP}?text=${encodeURIComponent(message)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-      saveCorrelativeSequence(currentSequence + 1);
-      showToast('Abriendo WhatsApp', `Pedido ${sentFolio} enviado. Siguiente folio: ${quoteNumber}.`);
-    }
-
-    function copyWhatsAppQuote() {
-// ... existing code ... -->
-    function resetQuote() {
-      const hadItems = cart.length > 0;
-      cart = [];
-      document.getElementById('client-name').value = '';
-      document.getElementById('client-phone').value = '';
-      document.getElementById('client-grade').value = '';
-      document.getElementById('custom-school-name').value = '';
-      document.getElementById('order-notes').value = '';
-      document.querySelectorAll('.sop-check').forEach(c => c.checked = false);
-      updateChecklistCount();
-
-      if (hadItems) {
-        saveCorrelativeSequence(currentSequence + 1);
+      // Asignar por defecto el ciclo vigente según mes actual
+      const waveSelect = document.getElementById('delivery-wave');
+      if (waveSelect) {
+        const currentMonth = today.getMonth() + 1; // 1..12
+        if (currentMonth === 11) {
+          waveSelect.value = 'lote1';
+        } else if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
+          waveSelect.value = 'lote2';
+        } else {
+          waveSelect.value = 'express';
+        }
       }
 
-      renderCart();
+      onProductOrSizeChange();
+      onMainSchoolChange();
       recalculateAll();
-      showToast('Pedido limpio', `Listo para nueva cotización (${quoteNumber}).`, 'info');
+    }
+// ... existing code ... -->
+    function getDeliveryPlanInfo(totalUnits) {
+      const today = new Date();
+      const currentMonth = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const waveChoice = document.getElementById('delivery-wave')?.value || 'auto';
+
+      let effectiveWave = waveChoice;
+      if (waveChoice === 'auto') {
+        if (currentMonth === 11) effectiveWave = 'lote1';
+        else if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) effectiveWave = 'lote2';
+        else effectiveWave = 'express';
+      }
+
+      const workDaysNeeded = totalUnits > 0
+        ? Math.max(settings.minDays, Math.ceil(totalUnits / settings.dailyCapacity))
+        : 0;
+
+      if (effectiveWave === 'lote1') {
+        const targetYear = currentMonth >= 11 ? year + 1 : year;
+        const targetDate = new Date(targetYear, 0, 29); // 29 de Enero
+        return {
+          wave: 'lote1',
+          waveTitle: 'Pedidos 1 (Recibidos en Noviembre)',
+          windowLabel: 'Fines de Enero ' + targetYear,
+          detailText: `Entrega programada: Fines de enero ${targetYear} (~${workDaysNeeded} días hábiles de taller)`,
+          targetDate,
+          workDaysNeeded,
+          isCampaign: true
+        };
+      }
+
+      if (effectiveWave === 'lote2') {
+        const targetYear = currentMonth >= 11 ? year + 1 : year;
+        const targetDate = new Date(targetYear, 2, 3); // 3 de Marzo (ventana fines feb / primeros días mar)
+        return {
+          wave: 'lote2',
+          waveTitle: 'Pedidos 2 (Segunda Etapa)',
+          windowLabel: `Fines Feb / Primeros días Mar ${targetYear}`,
+          detailText: `Entrega programada: Fines de febrero / primeros días de marzo ${targetYear} (~${workDaysNeeded} días hábiles de taller)`,
+          targetDate,
+          workDaysNeeded,
+          isCampaign: true
+        };
+      }
+
+      // Flujo estándar fuera de campaña
+      const isHighSeason = [11, 12, 1, 2, 3, 4].includes(currentMonth);
+      const totalDays = totalUnits > 0 ? workDaysNeeded + (isHighSeason ? settings.highSeasonExtra : 0) : 0;
+      const targetDate = addBusinessDays(today, totalDays);
+      return {
+        wave: 'express',
+        waveTitle: 'Flujo Estándar / Reposición',
+        windowLabel: totalUnits > 0 ? `${totalDays} días hábiles` : '0 días hábiles',
+        detailText: totalUnits > 0
+          ? `Fecha estimada: ${targetDate.toLocaleDateString('es-CL', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })}`
+          : 'Agrega prendas para calcular',
+        targetDate,
+        workDaysNeeded: totalDays,
+        isCampaign: false
+      };
     }
 
-    window.addEventListener('DOMContentLoaded', initApp);
-  </script>
-</body>
-</html>
+    function recalculateAll() {
+      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
+      const subtotalNeto = cart.reduce((acc, item) => acc + (item.qty * item.price), 0);
+
+      // Descuento
+      const discountEnabled = document.getElementById('toggle-discount').checked;
+      const discountMode = document.getElementById('discount-mode').value;
+      const manualInput = document.getElementById('manual-discount-pct');
+      manualInput.classList.toggle('hidden', discountMode !== 'manual');
+
+      let discountPct = 0;
+      if (discountEnabled && totalUnits > 0) {
+        if (discountMode === 'auto') {
+          if (totalUnits >= 30) discountPct = settings.discTier2;
+          else if (totalUnits >= 10) discountPct = settings.discTier1;
+        } else {
+          discountPct = Math.max(0, Math.min(80, Number(manualInput.value) || 0));
+        }
+      }
+
+      const discountAmount = Math.round(subtotalNeto * (discountPct / 100));
+      const netoFinal = Math.max(0, subtotalNeto - discountAmount);
+
+      // IVA 19%
+      const includeIva = document.getElementById('toggle-iva').checked;
+      const ivaAmount = includeIva ? Math.round(netoFinal * 0.19) : 0;
+      const totalFinal = netoFinal + ivaAmount;
+
+      // Abono y Saldo
+      const depositPct = Math.max(0, Math.min(100, Number(document.getElementById('deposit-pct').value) || 0));
+      const depositAmount = Math.round(totalFinal * (depositPct / 100));
+      const balanceAmount = Math.max(0, totalFinal - depositAmount);
+
+      // Actualizar UI Financiera
+      document.getElementById('sum-count').textContent = totalUnits;
+      document.getElementById('sum-subtotal').textContent = formatCLP(subtotalNeto);
+      document.getElementById('sum-discount-badge').textContent = `${discountPct}%`;
+      document.getElementById('sum-discount-amount').textContent = `-${formatCLP(discountAmount)}`;
+      document.getElementById('sum-neto').textContent = formatCLP(netoFinal);
+      document.getElementById('sum-iva').textContent = formatCLP(ivaAmount);
+      document.getElementById('row-neto').classList.toggle('hidden', !includeIva);
+      document.getElementById('row-iva').classList.toggle('hidden', !includeIva);
+      document.getElementById('lbl-tax-status').textContent = includeIva ? 'IVA 19% incluido (Pesos Chilenos)' : 'Valores Netos (Pesos Chilenos)';
+      document.getElementById('sum-total').textContent = formatCLP(totalFinal);
+      document.getElementById('print-deposit-pct').textContent = depositPct;
+      document.getElementById('sum-deposit').textContent = formatCLP(depositAmount);
+      document.getElementById('sum-balance').textContent = formatCLP(balanceAmount);
+
+      // Planificación Lean con Ciclos Pedidos 1 (Nov -> Fines Enero) y Pedidos 2 (-> Fines Feb / Primeros días Mar)
+      const plan = getDeliveryPlanInfo(totalUnits);
+      document.getElementById('op-total-units').textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
+      document.getElementById('op-capacity-rate').textContent = `${String(settings.dailyCapacity).replace('.', ',')} prendas / día`;
+      document.getElementById('op-wave-badge').textContent = plan.waveTitle;
+      document.getElementById('op-estimated-days').textContent = plan.windowLabel;
+      document.getElementById('op-estimated-date').textContent = totalUnits > 0 ? plan.detailText : 'Agrega prendas para calcular';
+
+      const pill = document.getElementById('lean-status-pill');
+      const highBanner = document.getElementById('high-season-banner');
+      const weeklyBanner = document.getElementById('weekly-capacity-banner');
+      const deadlineBanner = document.getElementById('deadline-warning-banner');
+
+      if (plan.isCampaign) {
+        pill.textContent = plan.wave === 'lote1' ? 'Pedidos 1 • Fines Enero' : 'Pedidos 2 • Fines Feb / Inicios Mar';
+        pill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300';
+        highBanner.classList.remove('hidden');
+      } else {
+        pill.textContent = 'Flujo Estándar';
+        pill.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+        highBanner.classList.add('hidden');
+      }
+
+      const weeklyCap = settings.dailyCapacity * 5;
+      weeklyBanner.classList.toggle('hidden', totalUnits <= weeklyCap);
+
+      // Validar fecha requerida del cliente vs fecha comprometida del ciclo
+      const reqDateVal = document.getElementById('delivery-date').value;
+      if (reqDateVal && totalUnits > 0) {
+        const reqDate = new Date(reqDateVal + 'T12:00:00');
+        if (reqDate < plan.targetDate) {
+          deadlineBanner.classList.remove('hidden');
+          document.getElementById('deadline-warning-text').textContent =
+            `El cliente solicita entrega el ${reqDate.toLocaleDateString('es-CL')}, pero ${plan.waveTitle} tiene ventana de entrega para ${plan.windowLabel}.`;
+        } else {
+          deadlineBanner.classList.add('hidden');
+        }
+      } else {
+        deadlineBanner.classList.add('hidden');
+      }
+
+      return {
+        totalUnits,
+        subtotalNeto,
+        discountPct,
+        discountAmount,
+        netoFinal,
+        includeIva,
+        ivaAmount,
+        totalFinal,
+        depositPct,
+        depositAmount,
+        balanceAmount,
+        plan
+      };
+    }
+// ... existing code ... -->
+    function buildWhatsAppMessage() {
+      const summary = recalculateAll();
+      const quoteId = getFormattedQuoteId();
+      const clientName = document.getElementById('client-name').value.trim() || 'Cliente / Apoderado';
+      const clientPhone = document.getElementById('client-phone').value.trim();
+      const school = getEffectiveMainSchool();
+      const grade = document.getElementById('client-grade').value.trim();
+      const reqDate = document.getElementById('delivery-date').value;
+      const notes = document.getElementById('order-notes').value.trim();
+
+      const lines = [
+        `*TEXTILES ROSITA — COTIZACIÓN Y PEDIDO*`,
+        `*N° Pedido:* ${quoteId}`,
+        `*Cliente:* ${clientName}`,
+        clientPhone ? `*Tel. Cliente:* ${clientPhone}` : null,
+        `*Establecimiento:* ${school}`,
+        grade ? `*Curso / Nivel:* ${grade}` : null,
+        `*Ciclo de Entrega:* ${summary.plan.waveTitle}`,
+        `*Entrega Comprometida:* ${summary.plan.windowLabel}`,
+        reqDate ? `*Fecha Solicitada:* ${new Date(reqDate + 'T12:00:00').toLocaleDateString('es-CL')}` : null,
+        ``,
+        `*DETALLE DE PRENDAS (${summary.totalUnits} un.):*`
+      ].filter(Boolean);
+
+      cart.forEach((item, idx) => {
+        const measStr = item.measurements
+          ? ` [Cintura: ${item.measurements.waist}cm, Cadera: ${item.measurements.hip}cm, Largo: ${item.measurements.length}cm]`
+          : '';
+        lines.push(`${idx + 1}. ${item.qty}x ${item.productName} — Talla ${item.size}${measStr} (${item.school}) = ${formatCLP(item.qty * item.price)}`);
+      });
+
+      lines.push(``);
+      lines.push(`*Subtotal:* ${formatCLP(summary.subtotalNeto)}`);
+      if (summary.discountAmount > 0) {
+        lines.push(`*Descuento (${summary.discountPct}%):* -${formatCLP(summary.discountAmount)}`);
+      }
+      if (summary.includeIva) {
+        lines.push(`*Neto:* ${formatCLP(summary.netoFinal)}`);
+        lines.push(`*IVA (19%):* ${formatCLP(summary.ivaAmount)}`);
+      }
+      lines.push(`*TOTAL FINAL:* ${formatCLP(summary.totalFinal)}`);
+      lines.push(`*Abono (${summary.depositPct}%):* ${formatCLP(summary.depositAmount)} | *Saldo:* ${formatCLP(summary.balanceAmount)}`);
+      if (notes) {
+        lines.push(`*Obs:* ${notes}`);
+      }
+      lines.push(``);
+      lines.push(`_Textiles Rosita • Creación, costuras y confección • WhatsApp +56 9 8951 0679_`);
+
+      return lines.join('\n');
+    }
+// ... existing code ... -->
