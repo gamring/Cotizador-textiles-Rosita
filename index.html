@@ -242,13 +242,26 @@
               <label class="block text-[11px] text-slate-300 mb-0.5">Descuento ≥10 (%)</label>
               <input type="number" id="cfg-disc-1" min="0" max="100" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
             </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">PIN Administrador</label>
-              <input type="text" id="cfg-admin-pin" maxlength="8" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-amber-300 font-bold">
-            </div>
-            <div class="col-span-2">
+            <div class="col-span-2 sm:col-span-3">
               <label class="block text-[11px] text-slate-300 mb-0.5">Subir Imagen Logo Personalizado</label>
               <input type="file" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-600 file:text-white file:font-semibold">
+            </div>
+          </div>
+
+          <!-- Cambiar Contraseña de Administrador -->
+          <div class="pt-3 mt-2 border-t border-slate-700/80">
+            <label class="block text-[11px] font-bold text-amber-300 mb-1.5">
+              <i class="fa-solid fa-key mr-1"></i> Cambiar Contraseña de Administrador
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="password" id="cfg-current-pin" placeholder="Contraseña actual" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+              <input type="password" id="cfg-new-pin" placeholder="Nueva contraseña" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+              <input type="password" id="cfg-confirm-pin" placeholder="Confirmar nueva" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
+            </div>
+            <div class="mt-2 flex justify-end">
+              <button type="button" onclick="changeAdminPassword()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-check"></i> Guardar Nueva Contraseña
+              </button>
             </div>
           </div>
         </div>
@@ -1849,7 +1862,38 @@
       setVal('cfg-correlative', getCorrelativeSeq());
       setVal('cfg-capacity', settings.capacityPerDay);
       setVal('cfg-disc-1', settings.discountTier1);
-      setVal('cfg-admin-pin', settings.adminPin);
+      setVal('cfg-current-pin', '');
+      setVal('cfg-new-pin', '');
+      setVal('cfg-confirm-pin', '');
+    }
+
+    function changeAdminPassword() {
+      const currentVal = document.getElementById('cfg-current-pin')?.value.trim() || '';
+      const newVal = document.getElementById('cfg-new-pin')?.value.trim() || '';
+      const confirmVal = document.getElementById('cfg-confirm-pin')?.value.trim() || '';
+      const activePin = settings.adminPin || '1234';
+
+      if (!currentVal) {
+        showToast('Contraseña actual requerida', 'Ingresa tu contraseña actual para autorizar el cambio.', 'error');
+        return;
+      }
+      if (currentVal !== activePin) {
+        showToast('Contraseña actual incorrecta', 'La contraseña actual ingresada no coincide.', 'error');
+        return;
+      }
+      if (newVal.length < 4) {
+        showToast('Contraseña muy corta', 'La nueva contraseña debe tener al menos 4 caracteres.', 'error');
+        return;
+      }
+      if (newVal !== confirmVal) {
+        showToast('No coinciden', 'La nueva contraseña y su confirmación deben ser idénticas.', 'error');
+        return;
+      }
+
+      settings.adminPin = newVal;
+      saveSettings();
+      syncConfigInputs();
+      showToast('Contraseña actualizada', 'La nueva contraseña de administrador quedó guardada correctamente.');
     }
 
     function copyBankAccountText(accountNum) {
@@ -1920,8 +1964,6 @@
     function updateSettingsFromUI() {
       settings.capacityPerDay = Math.max(1, parseFloat(document.getElementById('cfg-capacity')?.value || '5') || 5);
       settings.discountTier1 = Math.min(100, Math.max(0, parseFloat(document.getElementById('cfg-disc-1')?.value || '10') || 10));
-      const newPin = document.getElementById('cfg-admin-pin')?.value.trim();
-      if (newPin) settings.adminPin = newPin;
       saveSettings();
       recalculateAll();
     }
