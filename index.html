@@ -210,23 +210,15 @@
       <!-- Configuración Bancaria, Webhook, Folio, Logo y Capacidad Taller -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-2.5">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-sky-300">Datos Transferencia 50% e Integración Google Sheet</h4>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-sky-300">Datos Transferencia 50% (2 Cuentas) e Integración</h4>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Banco y Tipo de Cuenta</label>
-              <input type="text" id="cfg-bank-name" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] text-amber-300 font-semibold mb-0.5">Cuenta 1 (Banco Estado — CuentaRUT)</label>
+              <textarea id="cfg-bank-1" rows="2" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white"></textarea>
             </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">N° Cuenta / RUT</label>
-              <input type="text" id="cfg-bank-account" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Titular</label>
-              <input type="text" id="cfg-bank-holder" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Correo Comprobante</label>
-              <input type="text" id="cfg-bank-email" onchange="updateBankFromUI()" placeholder="Ej. textilesrosita@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] text-emerald-300 font-semibold mb-0.5">Cuenta 2 (Banco Falabella — Cuenta Corriente)</label>
+              <textarea id="cfg-bank-2" rows="2" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white"></textarea>
             </div>
             <div class="sm:col-span-2">
               <label class="block text-[11px] text-slate-300 mb-0.5">Webhook Google Apps Script (Opcional — para enviar pedidos directo a "registro de pedidos")</label>
@@ -588,12 +580,14 @@
           <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 no-print">
             <div class="flex items-start justify-between gap-2">
               <div>
-                <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-building-columns text-brand-600 mr-1"></i> Datos para Transferencia del 50%</p>
-                <p id="display-bank-info" class="text-[11px] text-slate-600 mt-1 leading-relaxed">
-                  BancoEstado — CuentaRUT / Vista • Titular: Textiles Rosita
-                </p>
+                <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-building-columns text-brand-600 mr-1"></i> Cuentas para Transferencia del 50%</p>
+                <p class="text-[11px] text-slate-500">Elige cualquiera de las dos cuentas y copia los datos con un toque:</p>
               </div>
               <span id="bank-deposit-highlight" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-extrabold text-xs shrink-0">$0</span>
+            </div>
+
+            <div id="display-bank-info" class="grid grid-cols-1 gap-2.5">
+              <!-- Renderizado dinámico con las 2 cuentas y botón copiar -->
             </div>
 
             <div class="pt-2 border-t border-slate-200/80">
@@ -862,10 +856,8 @@
       discountTier1: 10,
       discountTier2: 18,
       adminPin: '1234',
-      bankName: 'BancoEstado — CuentaRUT / Vista',
-      bankAccount: 'Solicitar o confirmar por WhatsApp',
-      bankHolder: 'Textiles Rosita',
-      bankEmail: '',
+      bankAccount1: 'ELBA ROSA MESA RETAMALES | RUT: 11.697.230-1 | Banco Estado | CuentaRUT: 00011697230 | rosa.mesaretamales@gmail.com',
+      bankAccount2: 'Elba Rosa Mesa | RUT: 11.697.230-1 | BANCO FALABELLA | Cuenta Corriente: 1-553-007790-3 | rosa.mesaretamales@gmail.com',
       webhookUrl: ''
     };
 
@@ -1440,7 +1432,11 @@
         `• Total Final: *${formatCLP(financials.finalTotal)}*`,
         `• Abono Reserva (${financials.depositPct}%): *${formatCLP(financials.depositAmount)}*`,
         `• Saldo contra entrega: *${formatCLP(financials.balanceAmount)}*`,
-        `• Comprobante 50%: ${uploadedReceiptName ? 'Adjunto (' + uploadedReceiptName + ') — lo envío en este chat' : 'Envío comprobante en este chat'}`
+        `• Comprobante 50%: ${uploadedReceiptName ? 'Adjunto (' + uploadedReceiptName + ') — lo envío en este chat' : 'Envío comprobante en este chat'}`,
+        ``,
+        `*CUENTAS TRANSFERENCIA:*`,
+        `1) ${settings.bankAccount1}`,
+        `2) ${settings.bankAccount2}`
       );
 
       return lines.join('\n');
@@ -1847,10 +1843,8 @@
         const el = document.getElementById(id);
         if (el) el.value = v || '';
       };
-      setVal('cfg-bank-name', settings.bankName);
-      setVal('cfg-bank-account', settings.bankAccount);
-      setVal('cfg-bank-holder', settings.bankHolder);
-      setVal('cfg-bank-email', settings.bankEmail);
+      setVal('cfg-bank-1', settings.bankAccount1);
+      setVal('cfg-bank-2', settings.bankAccount2);
       setVal('cfg-webhook-url', settings.webhookUrl);
       setVal('cfg-correlative', getCorrelativeSeq());
       setVal('cfg-capacity', settings.capacityPerDay);
@@ -1858,19 +1852,55 @@
       setVal('cfg-admin-pin', settings.adminPin);
     }
 
+    function copyBankAccountText(accountNum) {
+      const textToCopy = accountNum === 1 ? settings.bankAccount1 : settings.bankAccount2;
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(`Cuenta ${accountNum} copiada`, 'Datos bancarios listos para pegar en la app de tu banco.');
+      } catch (e) {
+        showToast('No se pudo copiar', 'Selecciona el texto manualmente.', 'error');
+      }
+      document.body.removeChild(tempArea);
+    }
+
     function renderBankInfoDisplay() {
       const el = document.getElementById('display-bank-info');
       if (!el) return;
-      const parts = [settings.bankName, settings.bankAccount, `Titular: ${settings.bankHolder}`];
-      if (settings.bankEmail) parts.push(`Email: ${settings.bankEmail}`);
-      el.textContent = parts.filter(Boolean).join(' • ');
+      el.innerHTML = `
+        <div class="p-3 rounded-xl bg-white border border-amber-200/90 flex items-start justify-between gap-2">
+          <div class="text-[11px] text-slate-700 leading-relaxed">
+            <span class="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px] mb-1">OPCIÓN 1 • BANCO ESTADO</span>
+            <p class="font-bold text-slate-900">ELBA ROSA MESA RETAMALES</p>
+            <p>RUT: <strong>11.697.230-1</strong> • CuentaRUT: <strong>00011697230</strong></p>
+            <p class="text-slate-500">rosa.mesaretamales@gmail.com</p>
+          </div>
+          <button type="button" onclick="copyBankAccountText(1)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold shrink-0 cursor-pointer" title="Copiar datos Cuenta 1">
+            <i class="fa-regular fa-copy mr-1"></i> Copiar
+          </button>
+        </div>
+        <div class="p-3 rounded-xl bg-white border border-emerald-200/90 flex items-start justify-between gap-2">
+          <div class="text-[11px] text-slate-700 leading-relaxed">
+            <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px] mb-1">OPCIÓN 2 • BANCO FALABELLA</span>
+            <p class="font-bold text-slate-900">Elba Rosa Mesa</p>
+            <p>RUT: <strong>11.697.230-1</strong> • Cuenta Corriente: <strong>1-553-007790-3</strong></p>
+            <p class="text-slate-500">rosa.mesaretamales@gmail.com</p>
+          </div>
+          <button type="button" onclick="copyBankAccountText(2)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold shrink-0 cursor-pointer" title="Copiar datos Cuenta 2">
+            <i class="fa-regular fa-copy mr-1"></i> Copiar
+          </button>
+        </div>
+      `;
     }
 
     function updateBankFromUI() {
-      settings.bankName = document.getElementById('cfg-bank-name')?.value.trim() || '';
-      settings.bankAccount = document.getElementById('cfg-bank-account')?.value.trim() || '';
-      settings.bankHolder = document.getElementById('cfg-bank-holder')?.value.trim() || '';
-      settings.bankEmail = document.getElementById('cfg-bank-email')?.value.trim() || '';
+      settings.bankAccount1 = document.getElementById('cfg-bank-1')?.value.trim() || '';
+      settings.bankAccount2 = document.getElementById('cfg-bank-2')?.value.trim() || '';
       saveSettings();
       renderBankInfoDisplay();
     }
