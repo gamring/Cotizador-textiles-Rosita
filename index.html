@@ -1,2255 +1,1377 @@
 <!DOCTYPE html>
-<html lang="es-CL">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cotizador y Reserva de Uniformes Escolares — Textiles Rosita</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Inter', 'sans-serif'],
-            brand: ['Playfair Display', 'serif']
-          },
-          colors: {
-            brand: {
-              50: '#fffbeb',
-              100: '#fef3c7',
-              500: '#d97706',
-              600: '#b45309',
-              700: '#92400e',
-              900: '#78350f'
-            }
-          }
-        }
-      }
-    };
-  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
   <style>
-    .rosita-badge {
-      background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
-      border: 2px solid #c59b27;
-      box-shadow: 0 4px 14px rgba(146, 64, 14, 0.12);
-      position: relative;
-    }
-    .rosita-badge::before {
-      content: "";
-      position: absolute;
-      inset: 3px;
-      border: 1.5px dashed #c59b27;
-      border-radius: 0.65rem;
-      pointer-events: none;
-    }
-    .gold-emboss {
-      background: linear-gradient(180deg, #e5be53 0%, #b4831b 55%, #8a5e08 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 1px 0 rgba(255,255,255,0.8));
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+    .brand-serif { font-family: 'Playfair Display', serif; }
+    .stitch-border {
+      border: 2px dashed #b45309;
+      box-shadow: inset 0 0 0 3px #fffbeb, 0 4px 12px rgba(180, 83, 9, 0.12);
     }
     @media print {
       .no-print { display: none !important; }
-      body { background: #ffffff !important; color: #0f172a !important; }
-      .print-break-inside { break-inside: avoid; }
+      body { background: #fff !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
     }
   </style>
 </head>
-<body class="bg-slate-100/90 text-slate-800 font-sans antialiased min-h-screen">
+<body class="min-h-screen flex flex-col">
 
-  <!-- ENCABEZADO INSTITUCIONAL TEXTILES ROSITA -->
-  <header class="bg-white border-b border-amber-200/80 sticky top-0 z-30 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-      <!-- Etiqueta Oficial Textiles Rosita -->
-      <div class="flex items-center gap-3.5">
-        <div id="brand-logo-wrapper" class="rosita-badge rounded-2xl px-4 py-2 flex items-center gap-3">
-          <img id="custom-brand-logo" src="" alt="Logo Textiles Rosita" class="hidden h-12 w-auto object-contain rounded-lg" />
-          <div id="default-rosita-emblem" class="leading-tight">
-            <div class="flex items-center gap-1.5">
-              <span class="font-brand font-bold tracking-wider text-base sm:text-lg gold-emboss">TEXTILES Rosita</span>
-              <i class="fa-solid fa-heart text-rose-600 text-xs"></i>
-            </div>
-            <p class="text-[11px] italic font-semibold text-slate-700 -mt-0.5">Creación, costuras y confección</p>
-            <a href="https://wa.me/56989510679" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-700 hover:underline mt-0.5">
-              <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i> +56 9 8951 0679
-            </a>
+  <!-- ENCABEZADO OFICIAL TEXTILES ROSITA -->
+  <header class="bg-white border-b border-amber-200/80 shadow-sm sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="stitch-border bg-gradient-to-br from-amber-50 via-white to-amber-100/70 px-4 py-2 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-700 text-amber-50 flex items-center justify-center font-bold text-lg shadow-inner">
+            TR
+          </div>
+          <div>
+            <div class="text-[11px] font-extrabold tracking-[0.2em] text-amber-800 uppercase leading-none">TEXTILES</div>
+            <div class="brand-serif italic font-extrabold text-2xl text-amber-900 leading-tight">Rosita</div>
+            <div class="text-[10px] text-slate-600 font-medium">Creación, costuras y confección</div>
           </div>
         </div>
         <div class="hidden md:block">
-          <h1 class="font-display font-extrabold text-base lg:text-lg text-slate-900">Cotizador y Reserva de Uniformes Escolares</h1>
-          <p class="text-xs text-slate-500">Temporada Escolar 2026–2027 • María Pinto, Chorombo, Bollenar y alrededores</p>
+          <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+            Cotizador y Reserva de Uniformes Escolares
+          </h1>
+          <p class="text-xs text-slate-500 flex items-center gap-2">
+            <span>María Pinto · Bollenar · Melipilla</span>
+            <span>•</span>
+            <span class="font-semibold text-emerald-700">WhatsApp Taller: +56 9 8951 0679</span>
+            <span id="cloudSyncBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">
+              ● Catálogo local
+            </span>
+          </p>
         </div>
       </div>
 
-      <!-- Controles de Navegación y Modo Administrador -->
-      <div class="flex flex-wrap items-center gap-2 no-print">
-        <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
-          <button id="tab-btn-cotizador" onclick="switchMainTab('cotizador')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-700 shadow-xs cursor-pointer">
-            <i class="fa-solid fa-calculator mr-1"></i> Cotizador
-          </button>
-          <button id="tab-btn-registro" onclick="switchMainTab('registro')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer">
-            <i class="fa-solid fa-clipboard-list mr-1"></i> Registro de Pedidos
-          </button>
-        </div>
-
-        <span class="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-extrabold text-amber-900">
-          Folio: <span id="header-folio-badge">ROS-0001</span>
+      <div class="flex items-center gap-2 no-print">
+        <span id="folioHeaderBadge" class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold">
+          Folio: ROS-0001
         </span>
-
-        <button id="btn-admin-toggle" onclick="toggleAdminMode()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
-          <i id="admin-lock-icon" class="fa-solid fa-lock text-amber-400"></i>
-          <span id="admin-btn-label">Modo Administrador</span>
+        <button id="btnAdminToggle" onclick="handleAdminButtonClick()" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900">
+          <span id="adminBtnIcon">🔒</span>
+          <span id="adminBtnText">Modo Administrador</span>
         </button>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 border-t border-slate-100 flex items-center justify-between overflow-x-auto no-print">
+      <div class="flex gap-1 py-1.5">
+        <button id="tabBtnCotizador" onclick="switchMainTab('cotizador')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm">
+          1. Cotizador y Reserva
+        </button>
+        <button id="tabBtnRegistro" onclick="switchMainTab('registro')" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100">
+          2. Registro de Pedidos (<span id="ordersCountBadge">0</span>)
+        </button>
+        <button id="tabBtnAdmin" onclick="switchMainTab('admin')" class="hidden px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm">
+          ⚙️ Panel Administrador (Nube)
+        </button>
+      </div>
+      <div id="adminSessionTimer" class="hidden text-[11px] font-semibold text-emerald-700 py-1">
+        Sesión Admin activa · Cierre automático por inactividad: 15 min
       </div>
     </div>
   </header>
 
-  <!-- PANEL DE ADMINISTRADOR (OCULTO POR DEFECTO, PROTEGIDO CON PIN) -->
-  <section id="admin-panel" class="hidden max-w-7xl mx-auto px-4 sm:px-6 pt-5 no-print">
-    <div class="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-700">
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-700">
-        <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Panel de Control Interno</span>
-          <h2 class="text-lg font-extrabold">Administración de Precios, Extras y Configuración — Textiles Rosita</h2>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="restoreDefaultSettings()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-semibold cursor-pointer">
-            <i class="fa-solid fa-rotate-left mr-1"></i> Restaurar Lista Oficial
-          </button>
-          <button onclick="logoutAdmin()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold cursor-pointer">
-            <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesión Admin
-          </button>
-        </div>
-      </div>
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 flex-1">
 
-      <!-- Tabla Editable de Prendas por Tramo de Talla -->
-      <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 mb-5">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-300">
-            <i class="fa-solid fa-table-list mr-1"></i> Lista de Precios por Prenda y Tramo de Talla (CLP)
-          </h3>
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="syncFromGoogleSheet(true)" class="px-3.5 py-2 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-200 border border-emerald-400/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
-              <i class="fa-solid fa-rotate"></i> Sincronizar directo desde Google Sheet
-            </button>
-            <button onclick="openPasteSheetModal()" class="px-3.5 py-2 rounded-xl bg-sky-600/25 hover:bg-sky-600/40 text-sky-200 border border-sky-400/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
-              <i class="fa-solid fa-file-excel"></i> Pegar Celdas Manualmente
-            </button>
-            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit?pli=1&gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium inline-flex items-center gap-1.5">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Planilla
-            </a>
-          </div>
-        </div>
+    <!-- ==================== PESTAÑA 1: COTIZADOR Y RESERVA ==================== -->
+    <section id="viewCotizador" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- COLUMNA IZQUIERDA (8 COLS) -->
+      <div class="lg:col-span-8 space-y-6">
 
-        <div class="overflow-x-auto rounded-xl border border-slate-700 mb-4">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-950 text-slate-300 uppercase text-[10px]">
-              <tr>
-                <th class="px-3 py-2.5">Prenda / Artículo</th>
-                <th class="px-2 py-2.5 text-right">3–4</th>
-                <th class="px-2 py-2.5 text-right">6–8</th>
-                <th class="px-2 py-2.5 text-right">10–12</th>
-                <th class="px-2 py-2.5 text-right">14–16</th>
-                <th class="px-2 py-2.5 text-right">S–M</th>
-                <th class="px-2 py-2.5 text-right">L–XL</th>
-                <th class="px-2 py-2.5 text-right">XXL</th>
-                <th class="px-2 py-2.5 text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="admin-catalog-tbody" class="divide-y divide-slate-700/80 bg-slate-900/60">
-              <!-- Generado por JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Formulario para Agregar Nueva Prenda -->
-        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700">
-          <p class="text-[11px] font-bold text-slate-300 mb-2">Agregar Nueva Prenda al Catálogo:</p>
-          <div class="grid grid-cols-2 sm:grid-cols-9 gap-2 items-center">
-            <input type="text" id="new-prod-name" placeholder="Nombre prenda..." class="col-span-2 bg-slate-950 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            <input type="number" id="new-p-3_4" placeholder="3-4" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-6_8" placeholder="6-8" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-10_12" placeholder="10-12" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-14_16" placeholder="14-16" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-s_m" placeholder="S-M" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-l_xl" placeholder="L-XL" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-            <input type="number" id="new-p-xxl" placeholder="XXL" class="bg-slate-950 border border-slate-600 rounded-xl px-2 py-1.5 text-xs text-right text-white">
-          </div>
-          <div class="mt-2.5 flex justify-end">
-            <button onclick="adminAddProduct()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
-              <i class="fa-solid fa-plus"></i> Agregar Prenda al Catálogo
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gestión de Detalle Extras (Ítems 15 al 22) en Modo Administrador -->
-      <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 mb-5">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Gestión de Detalle Extras (Ítems 15 al 22 — Bordados, Bastas y Ajustes)
-          </h3>
-          <div class="flex items-center gap-2">
-            <input type="text" id="new-extra-name" placeholder="Nuevo servicio extra..." class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1 text-xs text-white focus:outline-none focus:border-amber-500">
-            <input type="number" id="new-extra-price" min="0" step="100" placeholder="$ Precio" class="w-24 bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1 text-xs text-right text-white focus:outline-none focus:border-amber-500">
-            <button onclick="adminAddExtra()" class="px-3 py-1 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold cursor-pointer">
-              + Extra
-            </button>
-          </div>
-        </div>
-        <div id="admin-extras-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-          <!-- Generado dinámicamente por JS -->
-        </div>
-      </div>
-
-      <!-- Configuración Bancaria, Webhook, Folio, Logo y Capacidad Taller -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-2.5">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-sky-300">Datos Transferencia 50% (2 Cuentas) e Integración</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div class="sm:col-span-2">
-              <label class="block text-[11px] text-amber-300 font-semibold mb-0.5">Cuenta 1 (Banco Estado — CuentaRUT)</label>
-              <textarea id="cfg-bank-1" rows="2" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white"></textarea>
-            </div>
-            <div class="sm:col-span-2">
-              <label class="block text-[11px] text-emerald-300 font-semibold mb-0.5">Cuenta 2 (Banco Falabella — Cuenta Corriente)</label>
-              <textarea id="cfg-bank-2" rows="2" onchange="updateBankFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white"></textarea>
-            </div>
-            <div class="sm:col-span-2">
-              <label class="block text-[11px] text-slate-300 mb-0.5">Webhook Google Apps Script (Opcional — para enviar pedidos directo a "registro de pedidos")</label>
-              <input type="url" id="cfg-webhook-url" onchange="updateWebhookFromUI()" placeholder="https://script.google.com/macros/s/..." class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-[11px] text-emerald-200">
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-2.5">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-300">Capacidad Taller, Correlativo, PIN y Logo</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Folio Actual (N°)</label>
-              <input type="number" id="cfg-correlative" min="1" onchange="updateCorrelativeFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Prendas / Día</label>
-              <input type="number" id="cfg-capacity" step="0.5" min="1" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-0.5">Descuento ≥10 (%)</label>
-              <input type="number" id="cfg-disc-1" min="0" max="100" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
-            </div>
-            <div class="col-span-2 sm:col-span-3">
-              <label class="block text-[11px] text-slate-300 mb-0.5">Subir Imagen Logo Personalizado</label>
-              <input type="file" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-600 file:text-white file:font-semibold">
-            </div>
-          </div>
-
-          <!-- Cambiar Contraseña de Administrador -->
-          <div class="pt-3 mt-2 border-t border-slate-700/80">
-            <label class="block text-[11px] font-bold text-amber-300 mb-1.5">
-              <i class="fa-solid fa-key mr-1"></i> Cambiar Contraseña de Administrador
-            </label>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input type="password" id="cfg-current-pin" placeholder="Contraseña actual" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
-              <input type="password" id="cfg-new-pin" placeholder="Nueva contraseña" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
-              <input type="password" id="cfg-confirm-pin" placeholder="Confirmar nueva" class="bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400">
-            </div>
-            <div class="mt-2 flex justify-end">
-              <button type="button" onclick="changeAdminPassword()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-check"></i> Guardar Nueva Contraseña
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- VISTA PRINCIPAL: COTIZADOR Y RESERVA -->
-  <main id="view-cotizador" class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-      <!-- COLUMNA IZQUIERDA (7 cols): DATOS CLIENTE, CONSTRUCTOR DE PRENDAS + EXTRAS, CARRITO -->
-      <div class="lg:col-span-7 space-y-6">
-
-        <!-- 1. DATOS DEL CLIENTE Y ENTREGA -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
+        <!-- PASO 1: DATOS DEL CLIENTE Y ENTREGA -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">1</span>
-              Datos del Apoderado / Cliente y Entrega
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+              Datos del Apoderado / Cliente y Ventana de Entrega
             </h2>
-            <span class="text-xs font-bold text-slate-500">Pedido <span id="card-folio-label" class="text-brand-700">ROS-0001</span></span>
+            <span class="text-xs font-semibold text-slate-400">Temporada 2026–2027</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label for="client-name" class="block text-xs font-semibold text-slate-700 mb-1">Nombre Completo Apoderado / Cliente *</label>
-              <input type="text" id="client-name" placeholder="Ej. María González Pérez" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600" />
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo Apoderado / Cliente *</label>
+              <input id="clientName" type="text" placeholder="Ej. María González" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" />
             </div>
-
             <div>
-              <label for="client-phone" class="block text-xs font-semibold text-slate-700 mb-1">Teléfono / WhatsApp de Contacto *</label>
-              <input type="tel" id="client-phone" placeholder="Ej. +56 9 1234 5678" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600" />
+              <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono / WhatsApp de Contacto *</label>
+              <input id="clientPhone" type="tel" placeholder="Ej. +56 9 1234 5678" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" />
             </div>
-
             <div>
-              <label for="client-school" class="block text-xs font-semibold text-slate-700 mb-1">Establecimiento Educacional</label>
-              <select id="client-school" onchange="onMainSchoolChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
-                <option value="Chorombo Alto">Chorombo Alto</option>
-                <option value="Chorombo Bajo">Chorombo Bajo</option>
-                <option value="Las Mercedes">Las Mercedes</option>
-                <option value="Los Rulos">Los Rulos</option>
-                <option value="Santa Emilia">Santa Emilia</option>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Establecimiento Educacional *</label>
+              <select id="schoolSelect" onchange="onSchoolChange()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-500 outline-none">
                 <option value="Polivalente María Pinto">Polivalente María Pinto</option>
                 <option value="Colegio y Jardín Flores de Bollenar">Colegio y Jardín Flores de Bollenar</option>
-                <option value="Otro">Otro establecimiento / Particular</option>
+                <option value="Escuela Chorombo Alto">Escuela Chorombo Alto</option>
+                <option value="Escuela Chorombo Bajo">Escuela Chorombo Bajo</option>
+                <option value="Escuela Las Mercedes">Escuela Las Mercedes</option>
+                <option value="Escuela Los Rulos">Escuela Los Rulos</option>
+                <option value="Escuela Santa Emilia">Escuela Santa Emilia</option>
+                <option value="OTRO">Otro establecimiento (especificar)...</option>
               </select>
-              <input type="text" id="custom-school-name" placeholder="Escribe el nombre del colegio..." class="hidden mt-2 w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:border-brand-600" />
+              <input id="customSchoolInput" type="text" placeholder="Nombre del colegio o jardín..." class="hidden mt-2 w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
             </div>
-
             <div>
-              <label for="client-grade" class="block text-xs font-semibold text-slate-700 mb-1">Curso / Nivel del Alumno</label>
-              <input type="text" id="client-grade" placeholder="Ej. 3° Básico A / Pre-Kínder" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600" />
+              <label class="block text-xs font-bold text-slate-700 mb-1">Curso / Nivel del Alumno(a)</label>
+              <input id="studentGrade" type="text" placeholder="Ej. 4° Básico B / Kinder" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
             </div>
-
             <div class="sm:col-span-2">
-              <label for="delivery-date" class="block text-xs font-semibold text-slate-700 mb-1">Fecha / Ciclo de Entrega Programada</label>
-              <select id="delivery-date" onchange="syncWaveFromDeliveryDate()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-medium text-slate-800 focus:outline-none focus:border-brand-600">
-                <option value="lote1">1° Pedidos — Fines de Enero</option>
-                <option value="lote2">2° Pedidos — Fines de Febrero a principios de Marzo</option>
-                <option value="lote3">3° Rezagados — Después del 15 de Marzo</option>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Fecha / Ciclo de Entrega Programada (3 opciones oficiales) *</label>
+              <select id="deliveryWindow" onchange="recalculateAll()" class="w-full rounded-xl border border-amber-300 bg-amber-50/40 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
+                <option value="1° Pedidos — Fines de Enero">1° Pedidos — Fines de Enero</option>
+                <option value="2° Pedidos — Fines de Febrero a principios de Marzo">2° Pedidos — Fines de Febrero a principios de Marzo</option>
+                <option value="3° Rezagados — Después del 15 de Marzo">3° Rezagados — Después del 15 de Marzo</option>
               </select>
-            </div>
-
-            <!-- Observaciones Generales del Pedido -->
-            <div class="sm:col-span-2 pt-2 border-t border-slate-100 space-y-3">
-              <div class="flex flex-wrap items-center justify-between gap-1">
-                <label for="order-notes" class="block text-xs font-bold text-slate-700">
-                  <i class="fa-solid fa-pen-ruler text-brand-600 mr-1"></i>
-                  Observaciones Generales del Pedido (Texto bordado, medidas especiales u otro detalle)
-                </label>
-                <span class="text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
-                  Tarifas oficiales de bordados y ajustes disponibles abajo
-                </span>
-              </div>
-
-              <div class="p-3 rounded-xl bg-amber-50/50 border border-amber-200/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div>
-                  <label for="bordado-text" class="block text-[11px] font-semibold text-amber-950 mb-1">Nombre a bordar / Color de hilo (si aplica)</label>
-                  <input type="text" id="bordado-text" placeholder="Ej. Sofía Muñoz — Hilo blanco / dorado"
-                    class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs focus:outline-none focus:border-amber-600">
-                </div>
-                <div>
-                  <label for="order-notes" class="block text-[11px] font-semibold text-amber-950 mb-1">Otras indicaciones para el taller</label>
-                  <input type="text" id="order-notes" placeholder="Ej. Largo manga, retiro en taller, colegio específico..."
-                    class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs focus:outline-none focus:border-amber-600">
-                </div>
-              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- 2. CONSTRUCTOR DE PRENDAS Y DETALLE EXTRAS -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
+        <!-- PASO 2: AGREGAR PRENDAS AL PEDIDO -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 no-print">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">2</span>
-              Agregar Prendas al Pedido
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+              Agregar Prendas del Catálogo (Ítems 1–14)
             </h2>
-            <span id="size-tier-indicator" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-brand-700 border border-blue-100">
-              Tramo Talla 10–12
+            <span id="sizeBracketTag" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">
+              Tramo Talla: 3–4
             </span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-            <div class="sm:col-span-7">
-              <label for="item-product" class="block text-xs font-semibold text-slate-700 mb-1">Prenda (Catálogo Textiles Rosita)</label>
-              <select id="item-product" onchange="onProductOrSizeChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
-                <!-- Poblado dinámicamente -->
-              </select>
-            </div>
-
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
             <div class="sm:col-span-5">
-              <label for="item-size" class="block text-xs font-semibold text-slate-700 mb-1">Talla</label>
-              <select id="item-size" onchange="onProductOrSizeChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
-                <option value="3">Talla 3</option>
-                <option value="4">Talla 4</option>
-                <option value="6">Talla 6</option>
-                <option value="8">Talla 8</option>
-                <option value="10" selected>Talla 10</option>
-                <option value="12">Talla 12</option>
-                <option value="14">Talla 14</option>
-                <option value="16">Talla 16</option>
-                <option value="S">Talla S</option>
-                <option value="M">Talla M</option>
-                <option value="L">Talla L</option>
-                <option value="XL">Talla XL</option>
-                <option value="XXL">Talla XXL</option>
-                <option value="A medida">A medida (Falda)</option>
-              </select>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Prenda (Catálogo Oficial)</label>
+              <select id="productSelect" onchange="onProductOrSizeChange()" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-500 outline-none"></select>
             </div>
-
-            <!-- Campos de Medidas (solo para Falda a Medida) -->
-            <div id="custom-measurements-box" class="hidden sm:col-span-12 p-3.5 rounded-xl bg-amber-50 border border-amber-200 grid grid-cols-3 gap-3">
-              <div>
-                <label for="meas-waist" class="block text-[11px] font-bold text-amber-900 mb-1">Cintura (cm) *</label>
-                <input type="number" id="meas-waist" min="30" max="160" placeholder="Ej. 64" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs">
-              </div>
-              <div>
-                <label for="meas-hip" class="block text-[11px] font-bold text-amber-900 mb-1">Cadera (cm) *</label>
-                <input type="number" id="meas-hip" min="30" max="180" placeholder="Ej. 78" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs">
-              </div>
-              <div>
-                <label for="meas-length" class="block text-[11px] font-bold text-amber-900 mb-1">Largo Falda (cm) *</label>
-                <input type="number" id="meas-length" min="20" max="120" placeholder="Ej. 45" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs">
-              </div>
-            </div>
-
-            <div class="sm:col-span-5">
-              <label for="item-school" class="block text-xs font-semibold text-slate-700 mb-1">Colegio de esta prenda</label>
-              <select id="item-school" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
-                <option value="Chorombo Alto">Chorombo Alto</option>
-                <option value="Chorombo Bajo">Chorombo Bajo</option>
-                <option value="Las Mercedes">Las Mercedes</option>
-                <option value="Los Rulos">Los Rulos</option>
-                <option value="Santa Emilia">Santa Emilia</option>
-                <option value="Polivalente María Pinto">Polivalente María Pinto</option>
-                <option value="Colegio y Jardín Flores de Bollenar">Colegio y Jardín Flores de Bollenar</option>
-                <option value="Otro">Otro / Particular</option>
-              </select>
-            </div>
-
             <div class="sm:col-span-3">
-              <label for="item-qty" class="block text-xs font-semibold text-slate-700 mb-1">Cantidad</label>
-              <input type="number" id="item-qty" value="1" min="1" max="200" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-center focus:outline-none focus:border-brand-600" />
+              <label class="block text-xs font-bold text-slate-700 mb-1">Talla</label>
+              <select id="sizeSelect" onchange="onProductOrSizeChange()" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-500 outline-none">
+                <option value="Talla 3">Talla 3 (Tramo 3–4)</option>
+                <option value="Talla 4">Talla 4 (Tramo 3–4)</option>
+                <option value="Talla 6">Talla 6 (Tramo 6–8)</option>
+                <option value="Talla 8">Talla 8 (Tramo 6–8)</option>
+                <option value="Talla 10">Talla 10 (Tramo 10–12)</option>
+                <option value="Talla 12">Talla 12 (Tramo 10–12)</option>
+                <option value="Talla 14">Talla 14 (Tramo 14–16)</option>
+                <option value="Talla 16">Talla 16 (Tramo 14–16)</option>
+                <option value="Talla S">Talla S (Tramo S–M)</option>
+                <option value="Talla M">Talla M (Tramo S–M)</option>
+                <option value="Talla L">Talla L (Tramo L–XL)</option>
+                <option value="Talla XL">Talla XL (Tramo L–XL)</option>
+                <option value="Talla XXL">Talla XXL (Tramo XXL)</option>
+              </select>
             </div>
-
-            <div class="sm:col-span-4">
-              <label for="item-price-display" class="block text-xs font-semibold text-slate-700 mb-1">Precio Unit. (CLP)</label>
-              <input type="text" id="item-price-display" readonly tabindex="-1" value="$25.900" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-sm font-extrabold text-brand-700 text-right cursor-not-allowed" />
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Cantidad</label>
+              <input id="qtyInput" type="number" min="1" max="100" value="1" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-center focus:ring-2 focus:ring-amber-500 outline-none" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Precio Unit.</label>
+              <input id="unitPricePreview" type="text" readonly class="w-full rounded-xl border border-slate-200 bg-slate-100 px-2.5 py-2.5 text-sm font-extrabold text-slate-800 text-right cursor-not-allowed" value="$0" />
             </div>
           </div>
 
-          <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
             <p class="text-xs text-slate-500">
-              <i class="fa-solid fa-circle-info text-brand-500 mr-1"></i>
-              Precios oficiales <strong>Temporada 2026–2027</strong> cargados directamente (tramos <strong>3–4, 6–8, 10–12, 14–16, S–M, L–XL, XXL</strong>).
+              El valor unitario se ajusta automáticamente según el tramo de talla oficial de Textiles Rosita.
             </p>
-            <button onclick="addItemToCart()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold text-sm px-5 py-3 rounded-xl shadow-sm shadow-brand-600/20 transition cursor-pointer">
-              <i class="fa-solid fa-plus"></i>
-              <span>Agregar al Pedido</span>
+            <button onclick="addItemToCart()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-extrabold shadow-sm transition flex items-center gap-2">
+              <span>+ Agregar al Pedido</span>
             </button>
           </div>
+        </div>
 
-          <!-- BLOQUE DETALLE EXTRAS OFICIALES (ÍTEMS 15 AL 22 DE LA PLANILLA) -->
-          <div class="mt-5 pt-5 border-t border-slate-200">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i>
-                Detalle Extras y Servicios de Taller (Ítems 15 al 22)
-              </h3>
-              <span id="extras-subtotal-pill" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200">
-                Extras: $0
-              </span>
-            </div>
-            <div id="extras-selector-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <!-- Renderizado dinámico por JS -->
-            </div>
-          </div>
-        </section>
-
-        <!-- 3. DETALLE DEL PEDIDO (TABLA INTERACTIVA) -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 print-break-inside">
+        <!-- PASO 3: DETALLE DE PRENDAS SELECCIONADAS -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold">3</span>
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">3</span>
               Detalle de Prendas Seleccionadas
             </h2>
-            <span id="cart-items-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700">0 prendas</span>
+            <span id="totalGarmentsBadge" class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold">0 prendas</span>
           </div>
 
-          <div id="cart-empty-state" class="py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl">
-            <i class="fa-solid fa-shirt text-2xl text-slate-300 mb-2"></i>
-            <p class="text-sm font-semibold text-slate-600">Aún no has agregado prendas al pedido</p>
-            <p class="text-xs text-slate-400 mt-0.5">Selecciona la prenda y talla arriba y haz clic en "Agregar al Pedido".</p>
-          </div>
-
-          <div id="cart-table-wrapper" class="hidden overflow-x-auto">
-            <table class="w-full text-left text-xs sm:text-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="border-b border-slate-200 text-slate-500 text-[11px] uppercase">
-                  <th class="py-2.5 pr-2">Prenda y Colegio</th>
-                  <th class="py-2.5 px-2">Talla</th>
-                  <th class="py-2.5 px-2 text-center">Cant.</th>
-                  <th class="py-2.5 px-2 text-right">Unitario</th>
-                  <th class="py-2.5 pl-2 text-right">Subtotal</th>
-                  <th class="py-2.5 pl-2 text-right no-print"></th>
+                <tr class="border-b border-slate-200 text-[11px] font-extrabold text-slate-500 uppercase">
+                  <th class="py-2 pr-2">Prenda</th>
+                  <th class="py-2 px-2">Talla</th>
+                  <th class="py-2 px-2 text-center">Cant.</th>
+                  <th class="py-2 px-2 text-right">Precio Unit.</th>
+                  <th class="py-2 px-2 text-right">Subtotal</th>
+                  <th class="py-2 pl-2 text-center no-print">Quitar</th>
                 </tr>
               </thead>
-              <tbody id="cart-tbody" class="divide-y divide-slate-100">
-                <!-- Filas dinámicas -->
+              <tbody id="cartTableBody" class="divide-y divide-slate-100 text-sm">
+                <tr>
+                  <td colspan="6" class="py-6 text-center text-slate-400 text-xs">Aún no has agregado prendas al pedido.</td>
+                </tr>
               </tbody>
             </table>
           </div>
-        </section>
-      </div>
+        </div>
 
-      <!-- COLUMNA DERECHA (5 cols): RESUMEN FINANCIERO, ABONO 50%, PLANIFICACIÓN LEAN Y ACCIONES -->
-      <div class="lg:col-span-5 space-y-6">
-
-        <!-- RESUMEN FINANCIERO EN CLP ($) Y SIMULADOR DE ABONO -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 print-break-inside">
+        <!-- PASO 4: DETALLE EXTRAS OFICIALES (ÍTEMS 15–22) Y OBSERVACIONES -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <h2 class="font-display font-bold text-base sm:text-lg text-slate-900">Resumen Financiero (CLP)</h2>
-
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none no-print" title="Activar solo si requieres recargar 19% IVA adicional sobre valores netos">
-              <span class="text-xs font-medium text-slate-600">+ IVA 19%</span>
-              <input type="checkbox" id="toggle-iva" onchange="recalculateAll()" class="sr-only peer">
-              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-600 relative"></div>
-            </label>
-          </div>
-
-          <!-- Control de Descuento por Volumen -->
-          <div class="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 no-print">
-            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
-              <input type="checkbox" id="toggle-discount" checked onchange="recalculateAll()" class="rounded text-brand-600">
-              <span>Descuento volumen</span>
-            </label>
-            <div class="flex items-center gap-1.5">
-              <select id="discount-mode" onchange="recalculateAll()" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1">
-                <option value="auto">Auto (10% ≥10un / 18% ≥30un)</option>
-                <option value="manual">Manual (%)</option>
-              </select>
-              <input type="number" id="manual-discount-pct" value="0" min="0" max="100" oninput="recalculateAll()" class="hidden w-14 text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 text-right font-bold">
-            </div>
-          </div>
-
-          <div class="space-y-2.5 text-sm">
-            <div class="flex justify-between text-slate-600">
-              <span>Prendas (<span id="sum-count">0</span> un.)</span>
-              <span id="sum-subtotal" class="font-semibold text-slate-800">$0</span>
-            </div>
-
-            <div class="flex justify-between text-slate-600">
-              <span>Detalle Extras (<span id="sum-extras-count">0</span> serv.)</span>
-              <span id="sum-extras" class="font-semibold text-amber-800">$0</span>
-            </div>
-
-            <div class="flex justify-between items-center text-emerald-700">
-              <div class="flex items-center gap-1.5">
-                <span>Descuento aplicado</span>
-                <span id="sum-discount-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">0%</span>
-              </div>
-              <span id="sum-discount-amount" class="font-semibold">-$0</span>
-            </div>
-
-            <div id="row-neto" class="flex justify-between text-slate-600 pt-2 border-t border-slate-100">
-              <span>Subtotal con Descuento</span>
-              <span id="sum-neto" class="font-semibold text-slate-800">$0</span>
-            </div>
-
-            <div id="row-iva" class="hidden flex justify-between text-slate-600">
-              <span>IVA adicional (19%)</span>
-              <span id="sum-iva" class="font-semibold text-slate-800">$0</span>
-            </div>
-
-            <div class="pt-3 border-t-2 border-slate-900 flex items-baseline justify-between">
-              <div>
-                <span class="font-display font-bold text-base text-slate-900">TOTAL FINAL</span>
-                <p id="lbl-tax-status" class="text-[11px] text-slate-500">Precios oficiales de lista (Pesos Chilenos)</p>
-              </div>
-              <span id="sum-total" class="font-display font-extrabold text-2xl sm:text-3xl text-brand-700">$0</span>
-            </div>
-          </div>
-
-          <!-- Simulador de Abono (50% estándar) y Saldo Contra Entrega -->
-          <div class="mt-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
-                <i class="fa-solid fa-money-bill-transfer text-amber-700"></i>
-                Abono Reserva (<span id="print-deposit-pct">50</span>%)
-              </span>
-              <div class="flex items-center gap-1 no-print">
-                <input type="number" id="deposit-pct" value="50" min="50" max="100" oninput="recalculateAll()" class="w-14 px-2 py-0.5 text-xs font-bold text-right rounded-lg border border-amber-300 bg-white">
-                <span class="text-xs font-bold text-amber-900">%</span>
-              </div>
-            </div>
-            <div class="flex justify-between items-baseline">
-              <span class="text-xs text-amber-900">Monto a transferir ahora:</span>
-              <span id="sum-deposit" class="font-extrabold text-lg text-emerald-800">$0</span>
-            </div>
-            <div class="flex justify-between items-baseline text-xs pt-1.5 border-t border-amber-200/80 text-amber-900">
-              <span>Saldo contra entrega:</span>
-              <span id="sum-balance" class="font-bold">$0</span>
-            </div>
-          </div>
-
-          <!-- Datos Transferencia y Comprobante Obligatorio 50% -->
-          <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 no-print">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-building-columns text-brand-600 mr-1"></i> Cuentas para Transferencia del 50%</p>
-                <p class="text-[11px] text-slate-500">Elige cualquiera de las dos cuentas y copia los datos con un toque:</p>
-              </div>
-              <span id="bank-deposit-highlight" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-extrabold text-xs shrink-0">$0</span>
-            </div>
-
-            <div id="display-bank-info" class="grid grid-cols-1 gap-2.5">
-              <!-- Renderizado dinámico con las 2 cuentas y botón copiar -->
-            </div>
-
-            <div class="pt-2 border-t border-slate-200/80">
-              <label class="block text-xs font-bold text-slate-800 mb-1">
-                1. Adjuntar Comprobante Transferencia 50% (Imagen o PDF)
-              </label>
-              <input type="file" id="transfer-receipt-file" accept="image/*,.pdf" onchange="handleReceiptUpload(event)"
-                class="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-brand-600 file:text-white file:font-semibold hover:file:bg-brand-700 cursor-pointer" />
-              <p id="receipt-file-name" class="text-[11px] text-slate-500 mt-1">Ningún archivo seleccionado aún.</p>
-            </div>
-
-            <label class="flex items-start gap-2 cursor-pointer pt-1">
-              <input type="checkbox" id="confirm-deposit-checkbox" onchange="updateReceiptVerificationState()" class="mt-0.5 rounded text-emerald-600">
-              <span class="text-[11px] font-medium text-slate-700 leading-snug">
-                Confirmo que adjuntaré / enviaré el comprobante de transferencia del <strong>50% de abono</strong> en el chat de WhatsApp para iniciar la confección.
-              </span>
-            </label>
-          </div>
-
-          <!-- Botones de Acción Principales -->
-          <div class="mt-5 space-y-2.5 no-print">
-            <button id="btn-confirm-whatsapp" onclick="sendWhatsAppDirect()" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md shadow-emerald-600/20 inline-flex items-center justify-center gap-2 transition cursor-pointer">
-              <i class="fa-brands fa-whatsapp text-lg"></i>
-              <span>Confirmar y Enviar Pedido por WhatsApp</span>
-            </button>
-
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="saveOrderToRegistry(true)" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-floppy-disk"></i> Guardar
-              </button>
-              <button onclick="window.print()" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-print"></i> PDF / Imprimir
-              </button>
-              <button onclick="resetQuote()" class="py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-rotate-right"></i> Nuevo
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- PLANIFICACIÓN LEAN Y CHECKLIST PRE-PRODUCCIÓN -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-calendar-check text-brand-600"></i>
-              Planificación de Entrega Taller
-            </h3>
-            <span id="lean-days-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
-              3 días hábiles taller
+            <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">4</span>
+              Detalle Extras Oficiales (Ítems 15–22) y Observaciones
+            </h2>
+            <span id="extrasSubtotalBadge" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-bold">
+              Extras: $0
             </span>
           </div>
 
-          <select id="delivery-wave" onchange="syncDeliveryDateFromWave()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold bg-slate-50 mb-3">
-            <option value="lote1">1° Pedidos — Fines de Enero</option>
-            <option value="lote2">2° Pedidos — Fines de Febrero a principios de Marzo</option>
-            <option value="lote3">3° Rezagados — Después del 15 de Marzo</option>
-          </select>
+          <div id="extrasGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5"></div>
 
-          <p id="lean-wave-description" class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/70 mb-4">
-            Ciclo 1: Pedidos tomados en temporada temprana con entrega comprometida a fines de enero.
-          </p>
+          <div class="border-t border-slate-100 pt-4">
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Observaciones de Confección / Texto para Bordado / Detalles Especiales
+            </label>
+            <textarea id="orderNotes" rows="2" placeholder="Ej. Nombre a bordar: 'Sofía M.', insignia lado izquierdo, o indicaciones especiales de taller..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+          </div>
+        </div>
 
-          <!-- Checklist Pre-Producción -->
-          <div class="border-t border-slate-100 pt-3">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-slate-700">Checklist Verificación Pedido</span>
-              <span id="checklist-progress" class="text-[11px] font-bold text-brand-700">0/4 listos</span>
+      </div>
+
+      <!-- COLUMNA DERECHA (4 COLS): RESUMEN FINANCIERO, BANCOS Y CONFIRMACIÓN 50% -->
+      <div class="lg:col-span-4 space-y-6">
+
+        <!-- RESUMEN FINANCIERO Y ABONO 50% -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
+          <h3 class="text-base font-extrabold text-slate-900 mb-4">Resumen del Pedido</h3>
+
+          <div class="space-y-2.5 text-sm">
+            <div class="flex justify-between text-slate-600">
+              <span>Subtotal Prendas (1–14):</span>
+              <span id="summaryGarments" class="font-bold text-slate-900">$0</span>
             </div>
-            <div class="space-y-1.5 text-xs text-slate-600">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="sop-check rounded text-brand-600" onchange="updateChecklistCount()">
-                <span>Tallas y medidas verificadas con apoderado</span>
+            <div class="flex justify-between text-slate-600">
+              <span>Subtotal Extras (15–22):</span>
+              <span id="summaryExtras" class="font-bold text-slate-900">$0</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 no-print">
+              <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                <input id="ivaToggle" type="checkbox" onchange="recalculateAll()" class="rounded text-amber-600 focus:ring-amber-500" />
+                <span>Agregar +19% IVA (solo si requiere factura)</span>
               </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="sop-check rounded text-brand-600" onchange="updateChecklistCount()">
-                <span>Establecimiento y color institucional confirmado</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="sop-check rounded text-brand-600" onchange="updateChecklistCount()">
-                <span>Bordados / Extras revisados en detalle</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="sop-check rounded text-brand-600" onchange="updateChecklistCount()">
-                <span>Comprobante transferencia 50% adjunto</span>
-              </label>
+              <span id="summaryIva" class="text-xs font-bold text-slate-500">$0</span>
+            </div>
+
+            <div class="pt-3 border-t-2 border-slate-200 flex justify-between items-baseline">
+              <span class="text-sm font-extrabold text-slate-900">TOTAL PEDIDO:</span>
+              <span id="summaryTotal" class="text-2xl font-black text-slate-900">$0</span>
+            </div>
+
+            <div class="mt-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5">
+              <div class="flex justify-between items-center text-amber-900">
+                <span class="text-xs font-extrabold uppercase">Abono 50% para Reservar:</span>
+                <span id="summaryDeposit50" class="text-lg font-black">$0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs text-amber-800/80">
+                <span>Saldo 50% contra entrega:</span>
+                <span id="summaryBalance50" class="font-bold">$0</span>
+              </div>
             </div>
           </div>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <!-- VISTA SECUNDARIA: REGISTRO DE PEDIDOS (HISTORIAL + CSV) -->
-  <section id="view-registro" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-6 no-print">
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div>
-          <h2 class="font-display font-bold text-lg text-slate-900">Registro Histórico de Pedidos — Textiles Rosita</h2>
-          <p class="text-xs text-slate-500">Control de abonos 50%, estados de confección y exportación CSV compatible con Google Sheets.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <span id="registry-count-badge" class="px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">0 pedidos</span>
-          <button onclick="exportRegistryToCSV()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-file-csv"></i> Exportar CSV para Google Sheets
+
+        <!-- DATOS DE TRANSFERENCIA BANCARIA -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
+          <h3 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+            <span>🏦</span> Cuentas Oficiales para Transferencia (Abono 50%)
+          </h3>
+          <div id="bankAccountsContainer" class="space-y-3"></div>
+        </div>
+
+        <!-- COMPROBANTE 50% Y ENVÍO WHATSAPP -->
+        <div class="bg-white rounded-2xl border-2 border-emerald-600/30 shadow-sm p-5 sm:p-6 space-y-4 no-print">
+          <h3 class="text-sm font-extrabold text-slate-900">Confirmación y Envío a Taller</h3>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Adjuntar Comprobante Transferencia 50% (Imagen o PDF) *
+            </label>
+            <input id="receiptInput" type="file" accept="image/*,.pdf" onchange="handleReceiptChange()" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5" />
+            <p id="receiptFileStatus" class="text-[11px] text-slate-500 mt-1">Ningún archivo seleccionado aún.</p>
+          </div>
+
+          <label class="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <input id="confirmReceiptCheck" type="checkbox" onchange="updateConfirmButtonState()" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500" />
+            <span>Confirmo que adjuntaré el comprobante de transferencia del <strong>50% de abono</strong> en el chat de WhatsApp de Textiles Rosita para validar la orden.</span>
+          </label>
+
+          <button id="btnConfirmWhatsApp" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
+            <span>📲 Confirmar y Enviar Pedido por WhatsApp</span>
+          </button>
+
+          <button onclick="window.print()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+            🖨️ Imprimir / Guardar Comprobante PDF
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA 2: REGISTRO DE PEDIDOS ==================== -->
+    <section id="viewRegistro" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900">Registro Histórico de Pedidos (Local y Nube)</h2>
+            <p class="text-xs text-slate-500">Cada pedido confirmado se guarda aquí con su folio correlativo y se envía a la pestaña <code>registro de pedidos</code> si configuraste tu Apps Script.</p>
+          </div>
+          <button onclick="exportOrdersCSV()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm">
+            📥 Exportar CSV para Google Sheets
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 font-extrabold uppercase">
+                <th class="p-3">Folio</th>
+                <th class="p-3">Fecha</th>
+                <th class="p-3">Cliente / Teléfono</th>
+                <th class="p-3">Colegio / Entrega</th>
+                <th class="p-3">Detalle</th>
+                <th class="p-3 text-right">Total</th>
+                <th class="p-3 text-right">Abono 50%</th>
+                <th class="p-3">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="ordersRegistryBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA 3: PANEL ADMINISTRADOR CENTRALIZADO ==================== -->
+    <section id="viewAdmin" class="hidden space-y-6">
+      
+      <!-- ESTADO DE CONEXIÓN SEGURA MULTI-DISPOSITIVO -->
+      <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-md space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
+              Seguridad Multi-Dispositivo SHA-256
+            </span>
+            <h2 class="text-lg font-extrabold mt-1">Conexión Centralizada con Google Apps Script</h2>
+            <p class="text-xs text-slate-300">
+              Tu contraseña nunca se guarda en el código público. Toda validación, cambio de clave y edición de precios se sincroniza en tu Google Sheet para que funcione igual en tu Mac, iPhone e iPad.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
+              🔄 Traer Datos desde Nube
+            </button>
+            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow">
+              ☁️ Guardar y Publicar Cambios en la Nube
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800">
+          <div class="md:col-span-9">
+            <label class="block text-xs font-bold text-slate-300 mb-1">URL de Implementación Web App (Google Apps Script)</label>
+            <input id="appsScriptUrlInput" type="url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+          </div>
+          <div class="md:col-span-3">
+            <button onclick="saveAppsScriptUrl()" class="w-full py-2 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
+              Vincular URL de Nube
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMBIAR CONTRASEÑA DE ADMINISTRADOR (EN LA NUBE) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <h3 class="text-base font-extrabold text-slate-900 mb-1">🔐 Cambiar Contraseña de Administrador (Global para todos tus dispositivos)</h3>
+        <p class="text-xs text-slate-500 mb-4">Al actualizarla aquí, se encripta en SHA-256 y se guarda directamente en la pestaña oculta <code>config_admin</code> de tu Google Sheet.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña Actual</label>
+            <input id="adminCurrentPass" type="password" placeholder="••••••" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Contraseña</label>
+            <input id="adminNewPass" type="password" placeholder="Mínimo 4 caracteres" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Confirmar Nueva Contraseña</label>
+            <input id="adminConfirmPass" type="password" placeholder="Repetir nueva clave" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <button onclick="changeAdminPasswordCloud()" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">
+              Actualizar Contraseña
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GESTIÓN DE CATÁLOGO DE PRENDAS (ÍTEMS 1–14) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
+            <p class="text-xs text-slate-500">Modifica precios directamente en la tabla, elimina prendas o agrega nuevas.</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 font-extrabold">
+                <th class="p-2.5">Prenda</th>
+                <th class="p-2 text-right">3–4</th>
+                <th class="p-2 text-right">6–8</th>
+                <th class="p-2 text-right">10–12</th>
+                <th class="p-2 text-right">14–16</th>
+                <th class="p-2 text-right">S–M</th>
+                <th class="p-2 text-right">L–XL</th>
+                <th class="p-2 text-right">XXL</th>
+                <th class="p-2 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="adminProductsBody" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+
+        <!-- AGREGAR NUEVA PRENDA -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+          <div class="text-xs font-extrabold text-slate-800">+ Agregar Nueva Prenda al Catálogo</div>
+          <div class="grid grid-cols-2 sm:grid-cols-9 gap-2">
+            <input id="newProdName" type="text" placeholder="Nombre prenda" class="col-span-2 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white" />
+            <input id="newP_3_4" type="number" placeholder="3–4" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_6_8" type="number" placeholder="6–8" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_10_12" type="number" placeholder="10–12" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_14_16" type="number" placeholder="14–16" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_S_M" type="number" placeholder="S–M" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_L_XL" type="number" placeholder="L–XL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_XXL" type="number" placeholder="XXL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+          </div>
+          <button onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            Agregar Prenda
           </button>
         </div>
       </div>
 
-      <div class="overflow-x-auto rounded-xl border border-slate-200">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[10px]">
-            <tr>
-              <th class="px-3 py-3">Folio</th>
-              <th class="px-3 py-3">Cliente</th>
-              <th class="px-3 py-3">Establecimiento / Entrega</th>
-              <th class="px-3 py-3">Detalle Prendas y Extras</th>
-              <th class="px-3 py-3">Total / Abono</th>
-              <th class="px-3 py-3">Estado</th>
-              <th class="px-3 py-3 text-right">Acción</th>
-            </tr>
-          </thead>
-          <tbody id="orders-registry-body">
-            <!-- Renderizado por JS -->
-          </tbody>
-        </table>
+      <!-- GESTIÓN DE DETALLE EXTRAS (ÍTEMS 15–22) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras (Ítems 15–22)</h3>
+        <div id="adminExtrasList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+          <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+          <input id="newExtraPrice" type="number" placeholder="Precio CLP" class="w-32 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+          <button onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            + Agregar Extra
+          </button>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- MODAL PARA PEGAR CELDAS DESDE GOOGLE SHEETS -->
-  <div id="paste-sheet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-base text-slate-900">Pegar Celdas desde Google Sheets</h3>
-        <button onclick="closePasteSheetModal()" class="text-slate-400 hover:text-slate-700 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+      <!-- GESTIÓN DE CUENTAS BANCARIAS -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+        <div id="adminBanksEditor" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
-      <p class="text-xs text-slate-600 mb-3">
-        Selecciona y copia (Ctrl+C) las filas de tu planilla <strong>precios temporada 2026_2027</strong> (incluyendo encabezados y precios) y pégalas aquí abajo:
+
+    </section>
+  </main>
+
+  <!-- MODAL DE INGRESO ADMINISTRADOR (SHA-256) -->
+  <div id="adminLoginModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-slate-900">🔐 Acceso Privado Administrador</h3>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500">
+        Ingresa tu contraseña de administrador de <strong>Textiles Rosita</strong>. La validación se realiza mediante encriptación SHA-256.
       </p>
-      <textarea id="paste-sheet-textarea" rows="7" placeholder="Pega aquí las celdas copiadas desde Google Sheets..." class="w-full p-3 rounded-xl border border-slate-300 text-xs font-mono focus:outline-none focus:border-brand-600"></textarea>
-      <div class="mt-4 flex justify-end gap-2">
-        <button onclick="closePasteSheetModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 cursor-pointer">Cancelar</button>
-        <button onclick="parsePastedSheetData()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold cursor-pointer">Aplicar Precios Pegados</button>
+      <div>
+        <input id="adminLoginPasswordInput" type="password" onkeydown="if(event.key==='Enter') submitAdminLogin()" placeholder="Contraseña de administrador" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+        <p id="adminLoginError" class="hidden text-xs font-bold text-red-600 mt-1.5"></p>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeAdminModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button id="btnSubmitAdminLogin" onclick="submitAdminLogin()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 hover:bg-slate-800 text-white">
+          Ingresar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL LOGIN ADMINISTRADOR -->
-  <div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-brand-600"></i> Acceso Administrador
-        </h3>
-        <button onclick="closeAdminLoginModal()" class="text-slate-400 hover:text-slate-700 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <p class="text-xs text-slate-600 mb-3">Ingresa el PIN de taller para editar precios, extras y configuración (PIN por defecto: <strong>1234</strong>).</p>
-      <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" onkeydown="if(event.key==='Enter') verifyAdminPin()"
-        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-center text-lg font-bold tracking-widest focus:outline-none focus:border-brand-600" />
-      <div class="mt-4 flex justify-end gap-2">
-        <button onclick="closeAdminLoginModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 cursor-pointer">Cancelar</button>
-        <button onclick="verifyAdminPin()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer">Ingresar</button>
-      </div>
-    </div>
-  </div>
+  <!-- NOTIFICACIÓN TOAST -->
+  <div id="toastBox" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold"></div>
 
-  <!-- CONTENEDOR TOAST NOTIFICACIONES -->
-  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
-
-  <!-- PIE DE PÁGINA -->
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 py-6 text-center text-xs text-slate-500 border-t border-slate-200/80 mt-6">
-    <strong>Textiles Rosita</strong> — Creación, costuras y confección • WhatsApp Pedidos: <strong>+56 9 8951 0679</strong> • Temporada Escolar 2026–2027
-  </footer>
-
-  <!-- JAVASCRIPT COMPLETO Y AUDITADO -->
   <script>
     // =========================================================================
-    // 1. CONSTANTES Y TABLA OFICIAL TEMPORADA 2026–2027 (GOOGLE SHEET)
+    // 1. DATOS OFICIALES BASE (SIN CONTRASEÑAS EN EL CÓDIGO FUENTE)
     // =========================================================================
-    const GOOGLE_SHEET_ID = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
-    const GOOGLE_SHEET_NAME = 'precios temporada 2026_2027';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v2026_2';
-    const STORAGE_KEY_FOLIO = 'textiles_rosita_correlative_seq';
-    const STORAGE_KEY_ORDERS = 'textiles_rosita_orders_registry_v1';
-    const STORAGE_KEY_LOGO = 'textiles_rosita_custom_logo';
-    const WHATSAPP_TARGET = '56989510679';
+    const WHATSAPP_TALLER = '56989510679';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v5';
+    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v5';
+    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v5';
+    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v5';
+
+    // Hash SHA-256 solo como respaldo offline si aún no se vincula Apps Script ("1234")
+    const FALLBACK_LOCAL_HASH  = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
 
     const DEFAULT_CATALOG = [
-      {
-        id: 'buzo_algodon',
-        name: '1. Buzo Algodón (Polerón y Pantalón)',
-        prices: { '3_4': 22900, '6_8': 24900, '10_12': 25900, '14_16': 26800, 's_m': 30800, 'l_xl': 35900, 'xxl': 36900 }
-      },
-      {
-        id: 'buzo_fantasia',
-        name: '2. Buzo Fantasía (Polerón y Pantalón)',
-        prices: { '3_4': 20900, '6_8': 22800, '10_12': 23900, '14_16': 24900, 's_m': 26800, 'l_xl': 30900, 'xxl': 34900 }
-      },
-      {
-        id: 'buzo_completo_fantasia',
-        name: '3. Buzo Completo con Polera (Fantasía)',
-        prices: { '3_4': 28700, '6_8': 31600, '10_12': 33700, '14_16': 35700, 's_m': 38600, 'l_xl': 42600, 'xxl': 48700 }
-      },
-      {
-        id: 'buzo_completo_algodon',
-        name: '4. Buzo Completo con Polera (Algodón)',
-        prices: { '3_4': 30700, '6_8': 33700, '10_12': 35700, '14_16': 37600, 's_m': 42600, 'l_xl': 48700, 'xxl': 50700 }
-      },
-      {
-        id: 'polera_deporte',
-        name: '5. Polera Deporte (Niña / Niño / Juvenil)',
-        prices: { '3_4': 7800, '6_8': 8800, '10_12': 9800, '14_16': 10800, 's_m': 11800, 'l_xl': 12800, 'xxl': 13800 }
-      },
-      {
-        id: 'pantalon_solo',
-        name: '6. Pantalón Solo',
-        prices: { '3_4': 12800, '6_8': 13500, '10_12': 14000, '14_16': 15800, 's_m': 16800, 'l_xl': 17800, 'xxl': 18000 }
-      },
-      {
-        id: 'poleron_solo',
-        name: '7. Polerón Solo',
-        prices: { '3_4': 13800, '6_8': 14500, '10_12': 15800, '14_16': 16800, 's_m': 17800, 'l_xl': 18800, 'xxl': 19800 }
-      },
-      {
-        id: 'polera_pique',
-        name: '8. Polera Piqué',
-        prices: { '3_4': 8600, '6_8': 8900, '10_12': 9900, '14_16': 10400, 's_m': 11200, 'l_xl': 12000, 'xxl': 14000 }
-      },
-      {
-        id: 'falda_talla',
-        name: '9. Falda por Talla',
-        prices: { '3_4': 12800, '6_8': 14800, '10_12': 16800, '14_16': 18800, 's_m': 20900, 'l_xl': 22900, 'xxl': 24900 }
-      },
-      {
-        id: 'falda_medida',
-        name: '10. Falda a Medida',
-        prices: { '3_4': 12800, '6_8': 14800, '10_12': 16800, '14_16': 18800, 's_m': 20900, 'l_xl': 22900, 'xxl': 24900 }
-      },
-      {
-        id: 'poleron_polar',
-        name: '11. Polerón de Polar',
-        prices: { '3_4': 12000, '6_8': 13000, '10_12': 14000, '14_16': 15000, 's_m': 16000, 'l_xl': 18000, 'xxl': 20100 }
-      },
-      {
-        id: 'cotona_delantal',
-        name: '12. Cotona o Delantal',
-        prices: { '3_4': 8000, '6_8': 9000, '10_12': 10000, '14_16': 12000, 's_m': 14000, 'l_xl': 18000, 'xxl': 22100 }
-      }
+      { id: 'p1',  name: '1. Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
+      { id: 'p2',  name: '2. Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
+      { id: 'p3',  name: '3. Polera Deporte', prices: { '3-4': 7800, '6-8': 8800, '10-12': 9800, '14-16': 10800, 'S-M': 11800, 'L-XL': 12800, 'XXL': 13800 } },
+      { id: 'p4',  name: '4. Pantalón Solo', prices: { '3-4': 12800, '6-8': 13500, '10-12': 14000, '14-16': 15800, 'S-M': 16800, 'L-XL': 17800, 'XXL': 18000 } },
+      { id: 'p5',  name: '5. Polerón Solo', prices: { '3-4': 13800, '6-8': 14500, '10-12': 15800, '14-16': 16800, 'S-M': 17800, 'L-XL': 18800, 'XXL': 19800 } },
+      { id: 'p6',  name: '6. Buzo Completo con Polera (Fantasía)', prices: { '3-4': 28700, '6-8': 31600, '10-12': 33700, '14-16': 35700, 'S-M': 38600, 'L-XL': 42600, 'XXL': 48700 } },
+      { id: 'p7',  name: '7. Buzo Completo con Polera (Algodón)', prices: { '3-4': 30700, '6-8': 33700, '10-12': 35700, '14-16': 37600, 'S-M': 42600, 'L-XL': 48700, 'XXL': 50700 } },
+      { id: 'p8',  name: '8. Polera Piqué', prices: { '3-4': 8600, '6-8': 8900, '10-12': 9900, '14-16': 10400, 'S-M': 11200, 'L-XL': 12000, 'XXL': 14000 } },
+      { id: 'p9',  name: '9. Falda Escolar', prices: { '3-4': 12800, '6-8': 14800, '10-12': 16800, '14-16': 18800, 'S-M': 20900, 'L-XL': 22900, 'XXL': 24900 } },
+      { id: 'p10', name: '10. Polerón de Polar', prices: { '3-4': 12000, '6-8': 13000, '10-12': 14000, '14-16': 15000, 'S-M': 16000, 'L-XL': 18000, 'XXL': 20100 } },
+      { id: 'p11', name: '11. Cotona o Delantal', prices: { '3-4': 8000, '6-8': 9000, '10-12': 10000, '14-16': 12000, 'S-M': 14000, 'L-XL': 18000, 'XXL': 22100 } }
     ];
 
     const DEFAULT_EXTRAS = [
-      { id: 'ext_15', code: 15, name: 'Bordado nombre', price: 1500 },
-      { id: 'ext_16', code: 16, name: 'Bordado insignia', price: 3500 },
-      { id: 'ext_17', code: 17, name: 'Agregar gorro a polerón', price: 1200 },
-      { id: 'ext_18', code: 18, name: 'Basta pantalón', price: 3000 },
-      { id: 'ext_19', code: 19, name: 'Ajuste polera', price: 1500 },
-      { id: 'ext_20', code: 20, name: 'Ajuste polerón', price: 1500 },
-      { id: 'ext_21', code: 21, name: 'Basta de falda con máquina', price: 3500 },
-      { id: 'ext_22', code: 22, name: 'Basta de falda a mano', price: 5000 }
+      { id: 'e15', code: '15', name: 'Bordado nombre', price: 1500 },
+      { id: 'e16', code: '16', name: 'Bordado insignia', price: 3500 },
+      { id: 'e17', code: '17', name: 'Agregar gorro a polerón', price: 1200 },
+      { id: 'e18', code: '18', name: 'Basta pantalón', price: 3000 },
+      { id: 'e19', code: '19', name: 'Ajuste polera', price: 1500 },
+      { id: 'e20', code: '20', name: 'Ajuste polerón', price: 1500 },
+      { id: 'e21', code: '21', name: 'Basta de falda con máquina', price: 3500 },
+      { id: 'e22', code: '22', name: 'Basta de falda a mano', price: 5000 }
     ];
 
-    const DEFAULT_SETTINGS = {
-      catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
-      extras: JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
-      capacityPerDay: 5,
-      discountTier1: 10,
-      discountTier2: 18,
-      adminPin: '1234',
-      bankAccount1: 'ELBA ROSA MESA RETAMALES | RUT: 11.697.230-1 | Banco Estado | CuentaRUT: 00011697230 | rosa.mesaretamales@gmail.com',
-      bankAccount2: 'Elba Rosa Mesa | RUT: 11.697.230-1 | BANCO FALABELLA | Cuenta Corriente: 1-553-007790-3 | rosa.mesaretamales@gmail.com',
-      webhookUrl: ''
-    };
+    const DEFAULT_BANKS = [
+      {
+        label: 'Opción 1 — Banco Estado',
+        holder: 'ELBA ROSA MESA RETAMALES',
+        rut: '11.697.230-1',
+        bank: 'Banco Estado',
+        accountType: 'CuentaRUT',
+        accountNumber: '00011697230',
+        email: 'rosa.mesaretamales@gmail.com'
+      },
+      {
+        label: 'Opción 2 — Banco Falabella',
+        holder: 'Elba Rosa Mesa',
+        rut: '11.697.230-1',
+        bank: 'Banco Falabella',
+        accountType: 'Cuenta Corriente',
+        accountNumber: '1-553-007790-3',
+        email: 'rosa.mesaretamales@gmail.com'
+      }
+    ];
 
-    // Estado global en memoria
-    let settings = loadSettings();
+    let settings = loadLocalSettings();
     let cart = [];
-    let selectedExtrasQty = {}; // { ext_15: 2, ... }
+    let extraQuantities = {};
     let isAdminAuthenticated = false;
-    let uploadedReceiptName = '';
+    let activeSessionHash = '';
+    let inactivityTimer = null;
 
     // =========================================================================
-    // 2. UTILIDADES DE ALMACENAMIENTO, FORMATO Y CORRELATIVO
+    // 2. UTILIDADES CRIPTOGRÁFICAS SHA-256 Y SESIÓN SEGURA
     // =========================================================================
-    function loadSettings() {
+    async function sha256Hex(plainText) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(plainText);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getAppsScriptUrl() {
+      return (localStorage.getItem(STORAGE_KEY_SCRIPT) || '').trim();
+    }
+
+    function resetAdminInactivityTimer() {
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      if (isAdminAuthenticated) {
+        inactivityTimer = setTimeout(() => {
+          logoutAdmin(true);
+        }, 15 * 60 * 1000); // 15 minutos
+      }
+    }
+
+    ['click', 'keydown', 'mousemove'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (isAdminAuthenticated) resetAdminInactivityTimer();
+      }, { passive: true });
+    });
+
+    // =========================================================================
+    // 3. INICIALIZACIÓN Y SINCRONIZACIÓN CON LA NUBE
+    // =========================================================================
+    function loadLocalSettings() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
-        if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-        const parsed = JSON.parse(raw);
-        return {
-          ...JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
-          ...parsed,
-          catalog: Array.isArray(parsed.catalog) && parsed.catalog.length > 0 ? parsed.catalog : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
-          extras: Array.isArray(parsed.extras) && parsed.extras.length > 0 ? parsed.extras : JSON.parse(JSON.stringify(DEFAULT_EXTRAS))
-        };
-      } catch (e) {
-        return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-      }
-    }
-
-    function saveSettings() {
-      try {
-        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
-      } catch (e) {
-        console.warn('No se pudo guardar configuración local:', e);
-      }
-    }
-
-    function formatCLP(amount) {
-      const n = Math.round(Number(amount) || 0);
-      return '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-
-    function getCorrelativeSeq() {
-      const val = parseInt(localStorage.getItem(STORAGE_KEY_FOLIO) || '1', 10);
-      return isNaN(val) || val < 1 ? 1 : val;
-    }
-
-    function formatFolio(seq) {
-      return 'ROS-' + String(seq).padStart(4, '0');
-    }
-
-    function advanceCorrelativeSeq() {
-      const next = getCorrelativeSeq() + 1;
-      localStorage.setItem(STORAGE_KEY_FOLIO, String(next));
-      refreshFolioDisplay();
-    }
-
-    function refreshFolioDisplay() {
-      const folio = formatFolio(getCorrelativeSeq());
-      const badge = document.getElementById('header-folio-badge');
-      const cardLbl = document.getElementById('card-folio-label');
-      const cfgInput = document.getElementById('cfg-correlative');
-      if (badge) badge.textContent = folio;
-      if (cardLbl) cardLbl.textContent = folio;
-      if (cfgInput) cfgInput.value = getCorrelativeSeq();
-    }
-
-    function loadSavedLogo() {
-      const saved = localStorage.getItem(STORAGE_KEY_LOGO);
-      const imgEl = document.getElementById('custom-brand-logo');
-      const emblemEl = document.getElementById('default-rosita-emblem');
-      if (saved && imgEl) {
-        imgEl.src = saved;
-        imgEl.classList.remove('hidden');
-        if (emblemEl) emblemEl.classList.add('hidden');
-      }
-    }
-
-    function handleLogoUpload(event) {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const dataUrl = e.target.result;
-        localStorage.setItem(STORAGE_KEY_LOGO, dataUrl);
-        loadSavedLogo();
-        showToast('Logo actualizado', 'La imagen de Textiles Rosita se guardó correctamente.');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            catalog: Array.isArray(parsed.catalog) && parsed.catalog.length ? parsed.catalog : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+            extras: Array.isArray(parsed.extras) && parsed.extras.length ? parsed.extras : JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
+            banks: Array.isArray(parsed.banks) && parsed.banks.length ? parsed.banks : JSON.parse(JSON.stringify(DEFAULT_BANKS))
+          };
+        }
+      } catch (e) {}
+      return {
+        catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+        extras: JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
+        banks: JSON.parse(JSON.stringify(DEFAULT_BANKS))
       };
-      reader.readAsDataURL(file);
     }
 
-    // =========================================================================
-    // 3. LÓGICA DE TRAMOS DE TALLA, CATÁLOGO Y EXTRAS
-    // =========================================================================
-    function getSizeTierInfo(sizeVal) {
-      if (sizeVal === '3' || sizeVal === '4') return { key: '3_4', label: 'Tramo Talla 3–4' };
-      if (sizeVal === '6' || sizeVal === '8') return { key: '6_8', label: 'Tramo Talla 6–8' };
-      if (sizeVal === '10' || sizeVal === '12') return { key: '10_12', label: 'Tramo Talla 10–12' };
-      if (sizeVal === '14' || sizeVal === '16') return { key: '14_16', label: 'Tramo Talla 14–16' };
-      if (sizeVal === 'S' || sizeVal === 'M') return { key: 's_m', label: 'Tramo Talla S–M' };
-      if (sizeVal === 'L' || sizeVal === 'XL') return { key: 'l_xl', label: 'Tramo Talla L–XL' };
-      if (sizeVal === 'XXL') return { key: 'xxl', label: 'Tramo Talla XXL' };
-      // Para Falda a medida usa referencia intermedia (10-12 / S-M según estatura)
-      return { key: '10_12', label: 'Confección a Medida' };
+    function saveLocalSettings() {
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
     }
 
-    function renderProductDropdown() {
-      const select = document.getElementById('item-product');
-      if (!select) return;
-      const prevVal = select.value;
-      select.innerHTML = settings.catalog
-        .map(p => `<option value="${p.id}">${p.name}</option>`)
-        .join('');
-      if (prevVal && settings.catalog.some(p => p.id === prevVal)) {
-        select.value = prevVal;
-      }
-    }
-
-    function onProductOrSizeChange() {
-      const prodSelect = document.getElementById('item-product');
-      const sizeSelect = document.getElementById('item-size');
-      const priceInput = document.getElementById('item-price-display');
-      const tierBadge = document.getElementById('size-tier-indicator');
-      const customMeasBox = document.getElementById('custom-measurements-box');
-
-      if (!prodSelect || !sizeSelect) return;
-
-      // Si elige Falda a Medida, forzar talla "A medida"
-      if (prodSelect.value === 'falda_medida' && sizeSelect.value !== 'A medida') {
-        sizeSelect.value = 'A medida';
-      }
-
-      const isCustomMeasure = prodSelect.value === 'falda_medida' || sizeSelect.value === 'A medida';
-      if (customMeasBox) {
-        if (isCustomMeasure) customMeasBox.classList.remove('hidden');
-        else customMeasBox.classList.add('hidden');
-      }
-
-      const prod = settings.catalog.find(p => p.id === prodSelect.value) || settings.catalog[0];
-      const tier = getSizeTierInfo(sizeSelect.value);
-      const unitPrice = prod && prod.prices ? (prod.prices[tier.key] || 0) : 0;
-
-      if (tierBadge) tierBadge.textContent = tier.label;
-      if (priceInput) priceInput.value = formatCLP(unitPrice);
-    }
-
-    function onMainSchoolChange() {
-      const mainSel = document.getElementById('client-school');
-      const customInput = document.getElementById('custom-school-name');
-      const itemSchoolSel = document.getElementById('item-school');
-      if (!mainSel) return;
-
-      if (customInput) {
-        if (mainSel.value === 'Otro') customInput.classList.remove('hidden');
-        else customInput.classList.add('hidden');
-      }
-      if (itemSchoolSel && Array.from(itemSchoolSel.options).some(o => o.value === mainSel.value)) {
-        itemSchoolSel.value = mainSel.value;
-      }
-    }
-
-    function getResolvedSchoolName(selectId) {
-      const sel = document.getElementById(selectId);
-      if (!sel) return 'Chorombo Alto';
-      if (sel.value === 'Otro') {
-        const custom = document.getElementById('custom-school-name')?.value.trim();
-        return custom || 'Otro / Particular';
-      }
-      return sel.value;
-    }
-
-    // =========================================================================
-    // 4. GESTIÓN DEL CARRITO DE PRENDAS Y DETALLE EXTRAS
-    // =========================================================================
-    function addItemToCart() {
-      const prodSelect = document.getElementById('item-product');
-      const sizeSelect = document.getElementById('item-size');
-      const qtyInput = document.getElementById('item-qty');
-      if (!prodSelect || !sizeSelect || !qtyInput) return;
-
-      const prod = settings.catalog.find(p => p.id === prodSelect.value);
-      if (!prod) {
-        showToast('Selecciona una prenda', 'Por favor elige un artículo del catálogo.', 'error');
+    async function pullFromCloudAppsScript(notify = false) {
+      const url = getAppsScriptUrl();
+      const badge = document.getElementById('cloudSyncBadge');
+      if (!url) {
+        badge.textContent = '● Catálogo oficial integrado';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
         return;
       }
 
-      const sizeVal = sizeSelect.value;
-      const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
-      const schoolName = getResolvedSchoolName('item-school');
-      const isCustomMeasure = prod.id === 'falda_medida' || sizeVal === 'A medida';
-
-      let measurementsText = '';
-      if (isCustomMeasure) {
-        const w = document.getElementById('meas-waist')?.value.trim();
-        const h = document.getElementById('meas-hip')?.value.trim();
-        const l = document.getElementById('meas-length')?.value.trim();
-        if (!w || !h || !l) {
-          showToast('Faltan medidas de falda', 'Ingresa Cintura, Cadera y Largo (cm) para confeccionar a medida.', 'error');
-          return;
+      try {
+        badge.textContent = '↻ Sincronizando nube...';
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.ok && data.settings) {
+          if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) settings.catalog = data.settings.catalog;
+          if (Array.isArray(data.settings.extras) && data.settings.extras.length) settings.extras = data.settings.extras;
+          if (Array.isArray(data.settings.banks) && data.settings.banks.length) settings.banks = data.settings.banks;
+          saveLocalSettings();
+          refreshAllViews();
+          if (notify) showToast('✅ Precios y datos actualizados desde Google Sheets.');
         }
-        measurementsText = `Cintura ${w}cm / Cadera ${h}cm / Largo ${l}cm`;
+        badge.textContent = '● Sincronizado con Nube';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700';
+      } catch (err) {
+        badge.textContent = '● Modo local (sin conexión nube)';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600';
+        if (notify) showToast('⚠️ No se pudo conectar con la URL de Apps Script.');
       }
+    }
 
-      const tier = getSizeTierInfo(sizeVal);
-      const unitPrice = prod.prices[tier.key] || 0;
+    function initApp() {
+      document.getElementById('appsScriptUrlInput').value = getAppsScriptUrl();
+      refreshFolioBadge();
+      refreshAllViews();
+      pullFromCloudAppsScript(false);
+    }
 
-      // Buscar si ya existe ítem idéntico para sumar cantidad
-      const existingIdx = cart.findIndex(
-        item =>
-          item.prodId === prod.id &&
-          item.size === sizeVal &&
-          item.school === schoolName &&
-          item.measurements === measurementsText
-      );
+    function refreshAllViews() {
+      renderProductDropdown();
+      onProductOrSizeChange();
+      renderCart();
+      renderExtrasGrid();
+      renderBankCards();
+      renderOrdersRegistry();
+      if (isAdminAuthenticated) {
+        renderAdminProducts();
+        renderAdminExtras();
+        renderAdminBanks();
+      }
+      recalculateAll();
+    }
 
-      if (existingIdx >= 0) {
-        cart[existingIdx].qty += qty;
+    // =========================================================================
+    // 4. LÓGICA DE PRECIOS, TALLAS, CARRITO Y EXTRAS
+    // =========================================================================
+    function formatCLP(num) {
+      return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
+    }
+
+    function getBracketFromSize(sizeStr) {
+      if (sizeStr.includes('3') || sizeStr.includes('4')) return '3-4';
+      if (sizeStr.includes('6') || sizeStr.includes('8')) return '6-8';
+      if (sizeStr.includes('10') || sizeStr.includes('12')) return '10-12';
+      if (sizeStr.includes('14') || sizeStr.includes('16')) return '14-16';
+      if (sizeStr.includes('S') || sizeStr.includes('M')) return 'S-M';
+      if (sizeStr.includes('L') && !sizeStr.includes('XXL')) return 'L-XL';
+      return 'XXL';
+    }
+
+    function renderProductDropdown() {
+      const sel = document.getElementById('productSelect');
+      const prev = sel.value;
+      sel.innerHTML = settings.catalog.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      if (prev && settings.catalog.some(p => p.id === prev)) sel.value = prev;
+    }
+
+    function onProductOrSizeChange() {
+      const prodId = document.getElementById('productSelect').value;
+      const sizeStr = document.getElementById('sizeSelect').value;
+      const bracket = getBracketFromSize(sizeStr);
+      document.getElementById('sizeBracketTag').textContent = `Tramo Talla: ${bracket}`;
+
+      const prod = settings.catalog.find(p => p.id === prodId);
+      const price = prod && prod.prices ? (Number(prod.prices[bracket]) || 0) : 0;
+      document.getElementById('unitPricePreview').value = formatCLP(price);
+    }
+
+    function addItemToCart() {
+      const prodId = document.getElementById('productSelect').value;
+      const sizeStr = document.getElementById('sizeSelect').value;
+      const qty = Math.max(1, parseInt(document.getElementById('qtyInput').value, 10) || 1);
+      const prod = settings.catalog.find(p => p.id === prodId);
+      if (!prod) return;
+
+      const bracket = getBracketFromSize(sizeStr);
+      const unitPrice = Number(prod.prices[bracket]) || 0;
+
+      const existing = cart.find(item => item.prodId === prodId && item.size === sizeStr);
+      if (existing) {
+        existing.qty += qty;
       } else {
         cart.push({
-          uid: Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          prodId: prod.id,
+          uid: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          prodId,
           name: prod.name,
-          size: sizeVal,
-          school: schoolName,
-          measurements: measurementsText,
-          qty: qty,
-          unitPrice: unitPrice
+          size: sizeStr,
+          bracket,
+          qty,
+          unitPrice
         });
       }
-
-      qtyInput.value = '1';
+      document.getElementById('qtyInput').value = 1;
       renderCart();
       recalculateAll();
-      showToast('Prenda agregada', `${qty} × ${prod.name} (Talla ${sizeVal})`);
+      showToast(`✅ Agregado: ${qty}x ${prod.name} (${sizeStr})`);
     }
 
-    function updateCartItemQty(index, delta) {
-      if (!cart[index]) return;
-      const newQty = cart[index].qty + delta;
-      if (newQty <= 0) {
-        cart.splice(index, 1);
-      } else {
-        cart[index].qty = newQty;
-      }
-      renderCart();
-      recalculateAll();
-    }
-
-    function removeCartItem(index) {
-      if (!cart[index]) return;
-      cart.splice(index, 1);
+    function removeCartItem(uid) {
+      cart = cart.filter(i => i.uid !== uid);
       renderCart();
       recalculateAll();
     }
 
     function renderCart() {
-      const emptyState = document.getElementById('cart-empty-state');
-      const tableWrapper = document.getElementById('cart-table-wrapper');
-      const tbody = document.getElementById('cart-tbody');
-      const badge = document.getElementById('cart-items-badge');
+      const tbody = document.getElementById('cartTableBody');
+      const totalGarments = cart.reduce((acc, i) => acc + i.qty, 0);
+      document.getElementById('totalGarmentsBadge').textContent = `${totalGarments} ${totalGarments === 1 ? 'prenda' : 'prendas'}`;
 
-      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
-      if (badge) badge.textContent = `${totalUnits} ${totalUnits === 1 ? 'prenda' : 'prendas'}`;
-
-      if (cart.length === 0) {
-        if (emptyState) emptyState.classList.remove('hidden');
-        if (tableWrapper) tableWrapper.classList.add('hidden');
-        if (tbody) tbody.innerHTML = '';
+      if (!cart.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">Aún no has agregado prendas al pedido.</td></tr>`;
         return;
       }
 
-      if (emptyState) emptyState.classList.add('hidden');
-      if (tableWrapper) tableWrapper.classList.remove('hidden');
-
-      if (tbody) {
-        tbody.innerHTML = cart
-          .map((item, idx) => {
-            const sub = item.qty * item.unitPrice;
-            return `
-              <tr class="hover:bg-slate-50/80">
-                <td class="py-3 pr-2">
-                  <div class="font-bold text-slate-900">${item.name}</div>
-                  <div class="text-[11px] text-slate-500">${item.school}${item.measurements ? ' • ' + item.measurements : ''}</div>
-                </td>
-                <td class="py-3 px-2">
-                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-xs">${item.size}</span>
-                </td>
-                <td class="py-3 px-2 text-center">
-                  <div class="inline-flex items-center border border-slate-200 rounded-lg bg-white no-print">
-                    <button onclick="updateCartItemQty(${idx}, -1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold cursor-pointer">−</button>
-                    <span class="px-2 text-xs font-extrabold text-slate-900">${item.qty}</span>
-                    <button onclick="updateCartItemQty(${idx}, 1)" class="px-2 py-0.5 text-slate-600 hover:bg-slate-100 font-bold cursor-pointer">+</button>
-                  </div>
-                  <span class="hidden print:inline font-bold">${item.qty}</span>
-                </td>
-                <td class="py-3 px-2 text-right font-medium text-slate-700">${formatCLP(item.unitPrice)}</td>
-                <td class="py-3 pl-2 text-right font-extrabold text-slate-900">${formatCLP(sub)}</td>
-                <td class="py-3 pl-2 text-right no-print">
-                  <button onclick="removeCartItem(${idx})" title="Eliminar prenda" class="text-slate-400 hover:text-rose-600 p-1 cursor-pointer">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
-                </td>
-              </tr>
-            `;
-          })
-          .join('');
-      }
+      tbody.innerHTML = cart.map(item => `
+        <tr class="hover:bg-slate-50/80">
+          <td class="py-2.5 pr-2 font-semibold text-slate-800">${item.name}</td>
+          <td class="py-2.5 px-2 text-xs text-slate-600">${item.size}</td>
+          <td class="py-2.5 px-2 text-center font-bold">${item.qty}</td>
+          <td class="py-2.5 px-2 text-right text-slate-600">${formatCLP(item.unitPrice)}</td>
+          <td class="py-2.5 px-2 text-right font-extrabold text-slate-900">${formatCLP(item.qty * item.unitPrice)}</td>
+          <td class="py-2.5 pl-2 text-center no-print">
+            <button onclick="removeCartItem('${item.uid}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-    function renderExtrasSelector() {
-      const grid = document.getElementById('extras-selector-grid');
-      if (!grid) return;
-
-      grid.innerHTML = settings.extras
-        .map(ext => {
-          const qty = selectedExtrasQty[ext.id] || 0;
-          const activeClass = qty > 0 ? 'border-amber-400 bg-amber-50/70' : 'border-slate-200 bg-slate-50/50';
-          return `
-            <div class="p-2.5 rounded-xl border ${activeClass} flex items-center justify-between gap-2 transition">
-              <div class="min-w-0">
-                <p class="text-xs font-bold text-slate-800 truncate">${ext.code}. ${ext.name}</p>
-                <p class="text-[11px] font-extrabold text-brand-700">${formatCLP(ext.price)} c/u</p>
-              </div>
-              <div class="inline-flex items-center border border-slate-300 rounded-lg bg-white shrink-0">
-                <button onclick="changeExtraQty('${ext.id}', -1)" class="px-2 py-1 text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer">−</button>
-                <span class="px-2 text-xs font-extrabold text-slate-900">${qty}</span>
-                <button onclick="changeExtraQty('${ext.id}', 1)" class="px-2 py-1 text-xs font-bold text-brand-700 hover:bg-amber-50 cursor-pointer">+</button>
-              </div>
+    function renderExtrasGrid() {
+      const grid = document.getElementById('extrasGrid');
+      grid.innerHTML = settings.extras.map(ext => {
+        const q = extraQuantities[ext.id] || 0;
+        return `
+          <div class="flex items-center justify-between p-3 rounded-xl border ${q > 0 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-200 bg-slate-50/40'}">
+            <div class="pr-2">
+              <div class="text-xs font-extrabold text-slate-800">${ext.code ? ext.code + '. ' : ''}${ext.name}</div>
+              <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
             </div>
-          `;
-        })
-        .join('');
+            <div class="flex items-center gap-1.5 no-print">
+              <button onclick="changeExtraQty('${ext.id}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
+              <span class="w-6 text-center text-xs font-extrabold">${q}</span>
+              <button onclick="changeExtraQty('${ext.id}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function changeExtraQty(extraId, delta) {
-      const current = selectedExtrasQty[extraId] || 0;
-      const next = Math.max(0, current + delta);
-      if (next === 0) delete selectedExtrasQty[extraId];
-      else selectedExtrasQty[extraId] = next;
-      renderExtrasSelector();
+      const next = Math.max(0, (extraQuantities[extraId] || 0) + delta);
+      extraQuantities[extraId] = next;
+      renderExtrasGrid();
       recalculateAll();
     }
 
-    // =========================================================================
-    // 5. MOTOR FINANCIERO CLP ($), ABONO 50% Y PLANIFICACIÓN LEAN
-    // =========================================================================
     function recalculateAll() {
-      const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
-      const garmentsSubtotal = cart.reduce((acc, item) => acc + item.qty * item.unitPrice, 0);
+      const garmentsTotal = cart.reduce((sum, item) => sum + item.qty * item.unitPrice, 0);
+      const extrasTotal = settings.extras.reduce((sum, ext) => sum + (extraQuantities[ext.id] || 0) * ext.price, 0);
+      const subtotal = garmentsTotal + extrasTotal;
+      const applyIva = document.getElementById('ivaToggle').checked;
+      const ivaAmount = applyIva ? Math.round(subtotal * 0.19) : 0;
+      const grandTotal = subtotal + ivaAmount;
+      const deposit50 = Math.round(grandTotal * 0.5);
+      const balance50 = grandTotal - deposit50;
 
-      let extrasCount = 0;
-      let extrasSubtotal = 0;
-      settings.extras.forEach(ext => {
-        const q = selectedExtrasQty[ext.id] || 0;
-        if (q > 0) {
-          extrasCount += q;
-          extrasSubtotal += q * ext.price;
-        }
-      });
+      document.getElementById('extrasSubtotalBadge').textContent = `Extras: ${formatCLP(extrasTotal)}`;
+      document.getElementById('summaryGarments').textContent = formatCLP(garmentsTotal);
+      document.getElementById('summaryExtras').textContent = formatCLP(extrasTotal);
+      document.getElementById('summaryIva').textContent = formatCLP(ivaAmount);
+      document.getElementById('summaryTotal').textContent = formatCLP(grandTotal);
+      document.getElementById('summaryDeposit50').textContent = formatCLP(deposit50);
+      document.getElementById('summaryBalance50').textContent = formatCLP(balance50);
 
-      const extrasPill = document.getElementById('extras-subtotal-pill');
-      if (extrasPill) extrasPill.textContent = `Extras: ${formatCLP(extrasSubtotal)}`;
-
-      // Descuentos por volumen (solo sobre prendas)
-      const discEnabled = document.getElementById('toggle-discount')?.checked;
-      const discMode = document.getElementById('discount-mode')?.value || 'auto';
-      const manualInput = document.getElementById('manual-discount-pct');
-
-      if (manualInput) {
-        if (discMode === 'manual') manualInput.classList.remove('hidden');
-        else manualInput.classList.add('hidden');
-      }
-
-      let discPct = 0;
-      if (discEnabled && totalUnits > 0) {
-        if (discMode === 'manual') {
-          discPct = Math.min(100, Math.max(0, parseFloat(manualInput?.value || '0') || 0));
-        } else {
-          if (totalUnits >= 30) discPct = settings.discountTier2 || 18;
-          else if (totalUnits >= 10) discPct = settings.discountTier1 || 10;
-        }
-      }
-
-      const discountAmount = Math.round(garmentsSubtotal * (discPct / 100));
-      const subtotalAfterDiscount = garmentsSubtotal - discountAmount + extrasSubtotal;
-
-      // IVA opcional (+19%)
-      const addIva = document.getElementById('toggle-iva')?.checked || false;
-      const ivaAmount = addIva ? Math.round(subtotalAfterDiscount * 0.19) : 0;
-      const finalTotal = subtotalAfterDiscount + ivaAmount;
-
-      // Abono y Saldo
-      const depositPct = Math.min(100, Math.max(50, parseFloat(document.getElementById('deposit-pct')?.value || '50') || 50));
-      const depositAmount = Math.round(finalTotal * (depositPct / 100));
-      const balanceAmount = finalTotal - depositAmount;
-
-      // Actualizar DOM
-      const setTxt = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-      };
-
-      setTxt('sum-count', totalUnits);
-      setTxt('sum-subtotal', formatCLP(garmentsSubtotal));
-      setTxt('sum-extras-count', extrasCount);
-      setTxt('sum-extras', formatCLP(extrasSubtotal));
-      setTxt('sum-discount-badge', `${discPct}%`);
-      setTxt('sum-discount-amount', `-${formatCLP(discountAmount)}`);
-      setTxt('sum-neto', formatCLP(subtotalAfterDiscount));
-      setTxt('sum-iva', formatCLP(ivaAmount));
-      setTxt('sum-total', formatCLP(finalTotal));
-      setTxt('print-deposit-pct', depositPct);
-      setTxt('sum-deposit', formatCLP(depositAmount));
-      setTxt('sum-balance', formatCLP(balanceAmount));
-      setTxt('bank-deposit-highlight', formatCLP(depositAmount));
-
-      const rowIva = document.getElementById('row-iva');
-      const lblTax = document.getElementById('lbl-tax-status');
-      if (rowIva) {
-        if (addIva) rowIva.classList.remove('hidden');
-        else rowIva.classList.add('hidden');
-      }
-      if (lblTax) {
-        lblTax.textContent = addIva
-          ? 'Incluye +19% IVA adicional (Pesos Chilenos)'
-          : 'Precios oficiales de lista (Pesos Chilenos)';
-      }
-
-      updateLeanPlanning(totalUnits);
-      return {
-        totalUnits,
-        garmentsSubtotal,
-        extrasCount,
-        extrasSubtotal,
-        discPct,
-        discountAmount,
-        subtotalAfterDiscount,
-        addIva,
-        ivaAmount,
-        finalTotal,
-        depositPct,
-        depositAmount,
-        balanceAmount
-      };
-    }
-
-    function getStageHumanLabel(waveVal) {
-      if (waveVal === 'lote1') return '1° Pedidos — Fines de Enero';
-      if (waveVal === 'lote2') return '2° Pedidos — Fines de Febrero a principios de Marzo';
-      return '3° Rezagados — Después del 15 de Marzo';
-    }
-
-    function syncWaveFromDeliveryDate() {
-      const dSel = document.getElementById('delivery-date');
-      const wSel = document.getElementById('delivery-wave');
-      if (dSel && wSel) wSel.value = dSel.value;
-      updateLeanPlanning();
-    }
-
-    function syncDeliveryDateFromWave() {
-      const dSel = document.getElementById('delivery-date');
-      const wSel = document.getElementById('delivery-wave');
-      if (dSel && wSel) dSel.value = wSel.value;
-      updateLeanPlanning();
-    }
-
-    function updateLeanPlanning(unitsOverride) {
-      const totalUnits = typeof unitsOverride === 'number'
-        ? unitsOverride
-        : cart.reduce((acc, item) => acc + item.qty, 0);
-      const waveVal = document.getElementById('delivery-wave')?.value || 'lote1';
-      const cap = Math.max(1, Number(settings.capacityPerDay) || 5);
-      const estDays = Math.max(3, Math.ceil(totalUnits / cap));
-
-      const badge = document.getElementById('lean-days-badge');
-      const desc = document.getElementById('lean-wave-description');
-      if (badge) badge.textContent = `${estDays} días hábiles taller`;
-      if (desc) {
-        if (waveVal === 'lote1') {
-          desc.textContent = 'Ciclo 1 (Pedidos tempranos): Entrega comprometida a fines de enero previa confirmación de abono 50%.';
-        } else if (waveVal === 'lote2') {
-          desc.textContent = 'Ciclo 2 (Temporada escolar): Entrega programada entre fines de febrero y los primeros días de marzo.';
-        } else {
-          desc.textContent = 'Ciclo 3 (Rezagados): Confección posterior a temporada punta con entrega después del 15 de marzo.';
-        }
-      }
-    }
-
-    function handleReceiptUpload(event) {
-      const file = event.target.files?.[0];
-      const lbl = document.getElementById('receipt-file-name');
-      const chk = document.getElementById('confirm-deposit-checkbox');
-      if (file) {
-        uploadedReceiptName = file.name;
-        if (lbl) {
-          lbl.textContent = `Archivo adjunto: ${file.name}`;
-          lbl.className = 'text-[11px] font-bold text-emerald-700 mt-1';
-        }
-        if (chk) chk.checked = true;
-      } else {
-        uploadedReceiptName = '';
-        if (lbl) {
-          lbl.textContent = 'Ningún archivo seleccionado aún.';
-          lbl.className = 'text-[11px] text-slate-500 mt-1';
-        }
-      }
-      updateReceiptVerificationState();
-    }
-
-    function updateReceiptVerificationState() {
-      const chk = document.getElementById('confirm-deposit-checkbox');
-      const btn = document.getElementById('btn-confirm-whatsapp');
-      if (!chk || !btn) return;
-      if (chk.checked) {
-        btn.classList.remove('opacity-75');
-      } else {
-        btn.classList.add('opacity-75');
-      }
-    }
-
-    function updateChecklistCount() {
-      const checks = document.querySelectorAll('.sop-check');
-      const checkedCount = Array.from(checks).filter(c => c.checked).length;
-      const lbl = document.getElementById('checklist-progress');
-      if (lbl) lbl.textContent = `${checkedCount}/${checks.length} listos`;
+      updateConfirmButtonState();
     }
 
     // =========================================================================
-    // 6. WHATSAPP DIRECTO, REGISTRO HISTÓRICO Y ADMINISTRADOR
+    // 5. DATOS BANCARIOS Y CONFIRMACIÓN DE PEDIDO + WHATSAPP + NUBE
     // =========================================================================
-    function buildWhatsAppMessage(folio, financials) {
-      const clientName = document.getElementById('client-name')?.value.trim() || 'No especificado';
-      const clientPhone = document.getElementById('client-phone')?.value.trim() || 'No especificado';
-      const school = getResolvedSchoolName('client-school');
-      const grade = document.getElementById('client-grade')?.value.trim() || 'No especificado';
-      const stageLabel = getStageHumanLabel(document.getElementById('delivery-date')?.value || 'lote1');
-      const bordadoTxt = document.getElementById('bordado-text')?.value.trim();
-      const notesTxt = document.getElementById('order-notes')?.value.trim();
-
-      const lines = [
-        `*TEXTILES ROSITA — RESERVA DE UNIFORMES (${folio})*`,
-        `• *Apoderado/Cliente:* ${clientName}`,
-        `• *Teléfono:* ${clientPhone}`,
-        `• *Colegio:* ${school}`,
-        `• *Curso/Nivel:* ${grade}`,
-        `• *Entrega:* ${stageLabel}`,
-        ``,
-        `*DETALLE DE PRENDAS:*`
-      ];
-
-      cart.forEach((item, idx) => {
-        const sub = formatCLP(item.qty * item.unitPrice);
-        const meas = item.measurements ? ` [${item.measurements}]` : '';
-        lines.push(`${idx + 1}. ${item.qty}x ${item.name} — Talla *${item.size}*${meas} (${item.school}) = *${sub}*`);
-      });
-
-      const activeExtras = settings.extras.filter(ext => (selectedExtrasQty[ext.id] || 0) > 0);
-      if (activeExtras.length > 0) {
-        lines.push(``, `*DETALLE EXTRAS / SERVICIOS:*`);
-        activeExtras.forEach(ext => {
-          const q = selectedExtrasQty[ext.id];
-          lines.push(`• ${q}x ${ext.name} (${formatCLP(ext.price)} c/u) = *${formatCLP(q * ext.price)}*`);
-        });
-      }
-
-      if (bordadoTxt) lines.push(``, `*Texto Bordado:* ${bordadoTxt}`);
-      if (notesTxt) lines.push(`*Observaciones:* ${notesTxt}`);
-
-      lines.push(
-        ``,
-        `*RESUMEN FINANCIERO:*`,
-        `• Total Final: *${formatCLP(financials.finalTotal)}*`,
-        `• Abono Reserva (${financials.depositPct}%): *${formatCLP(financials.depositAmount)}*`,
-        `• Saldo contra entrega: *${formatCLP(financials.balanceAmount)}*`,
-        `• Comprobante 50%: ${uploadedReceiptName ? 'Adjunto (' + uploadedReceiptName + ') — lo envío en este chat' : 'Envío comprobante en este chat'}`,
-        ``,
-        `*CUENTAS TRANSFERENCIA:*`,
-        `1) ${settings.bankAccount1}`,
-        `2) ${settings.bankAccount2}`
-      );
-
-      return lines.join('\n');
+    function renderBankCards() {
+      const container = document.getElementById('bankAccountsContainer');
+      container.innerHTML = settings.banks.map((b, idx) => `
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-slate-900">${b.label}</span>
+            <button onclick="copyBankData(${idx})" class="no-print px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px]">
+              📋 Copiar
+            </button>
+          </div>
+          <div><span class="text-slate-500">Titular:</span> <strong>${b.holder}</strong></div>
+          <div><span class="text-slate-500">RUT:</span> <strong>${b.rut}</strong></div>
+          <div><span class="text-slate-500">Banco / Tipo:</span> <strong>${b.bank} — ${b.accountType}</strong></div>
+          <div><span class="text-slate-500">N° Cuenta:</span> <strong>${b.accountNumber}</strong></div>
+          <div><span class="text-slate-500">Correo:</span> <strong>${b.email}</strong></div>
+        </div>
+      `).join('');
     }
 
-    function sendWhatsAppDirect() {
-      const clientName = document.getElementById('client-name')?.value.trim();
-      if (!clientName) {
-        showToast('Falta nombre del cliente', 'Por favor ingresa el nombre del apoderado o cliente antes de enviar.', 'error');
-        document.getElementById('client-name')?.focus();
+    function copyBankData(idx) {
+      const b = settings.banks[idx];
+      if (!b) return;
+      const text = `${b.holder}\n${b.rut}\n${b.bank}\n${b.accountType}\n${b.accountNumber}\n${b.email}`;
+      navigator.clipboard.writeText(text);
+      showToast(`📋 Datos de ${b.bank} copiados al portapapeles.`);
+    }
+
+    function onSchoolChange() {
+      const val = document.getElementById('schoolSelect').value;
+      document.getElementById('customSchoolInput').classList.toggle('hidden', val !== 'OTRO');
+    }
+
+    function handleReceiptChange() {
+      const input = document.getElementById('receiptInput');
+      const status = document.getElementById('receiptFileStatus');
+      if (input.files && input.files[0]) {
+        status.textContent = `✅ Archivo listo: ${input.files[0].name}`;
+        status.className = 'text-[11px] font-bold text-emerald-700 mt-1';
+      } else {
+        status.textContent = 'Ningún archivo seleccionado aún.';
+        status.className = 'text-[11px] text-slate-500 mt-1';
+      }
+      updateConfirmButtonState();
+    }
+
+    function updateConfirmButtonState() {
+      const hasItems = cart.length > 0 || Object.values(extraQuantities).some(q => q > 0);
+      const hasFile = document.getElementById('receiptInput').files.length > 0;
+      const checked = document.getElementById('confirmReceiptCheck').checked;
+      const btn = document.getElementById('btnConfirmWhatsApp');
+
+      const enabled = hasItems && hasFile && checked;
+      btn.disabled = !enabled;
+      btn.className = enabled
+        ? 'w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-emerald-600 hover:bg-emerald-700 cursor-pointer transition flex items-center justify-center gap-2 shadow-md'
+        : 'w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm';
+    }
+
+    function getCurrentFolio() {
+      const seq = parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10);
+      return 'ROS-' + String(seq).padStart(4, '0');
+    }
+
+    function refreshFolioBadge() {
+      document.getElementById('folioHeaderBadge').textContent = 'Folio: ' + getCurrentFolio();
+    }
+
+    async function confirmAndSendOrder() {
+      const clientName = document.getElementById('clientName').value.trim();
+      const clientPhone = document.getElementById('clientPhone').value.trim();
+      if (!clientName || !clientPhone) {
+        showToast('⚠️ Ingresa tu nombre completo y teléfono antes de enviar.');
         return;
       }
 
-      const hasExtras = Object.keys(selectedExtrasQty).length > 0;
-      if (cart.length === 0 && !hasExtras) {
-        showToast('Pedido vacío', 'Agrega al menos una prenda o servicio antes de enviar por WhatsApp.', 'error');
-        return;
-      }
+      const schoolSel = document.getElementById('schoolSelect').value;
+      const school = schoolSel === 'OTRO' ? (document.getElementById('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
+      const grade = document.getElementById('studentGrade').value.trim();
+      const deliveryWindow = document.getElementById('deliveryWindow').value;
+      const notes = document.getElementById('orderNotes').value.trim();
+      const receiptFile = document.getElementById('receiptInput').files[0];
 
-      const chkDeposit = document.getElementById('confirm-deposit-checkbox');
-      if (chkDeposit && !chkDeposit.checked) {
-        showToast('Confirmación de abono 50%', 'Marca la casilla de compromiso de envío del comprobante del 50% antes de confirmar.', 'error');
-        return;
-      }
+      const garmentsTotal = cart.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
+      const selectedExtras = settings.extras.filter(e => (extraQuantities[e.id] || 0) > 0).map(e => ({
+        ...e,
+        qty: extraQuantities[e.id]
+      }));
+      const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.qty * e.price, 0);
+      const subtotal = garmentsTotal + extrasTotal;
+      const applyIva = document.getElementById('ivaToggle').checked;
+      const total = subtotal + (applyIva ? Math.round(subtotal * 0.19) : 0);
+      const deposit50 = Math.round(total * 0.5);
+      const balance50 = total - deposit50;
 
-      const financials = recalculateAll();
-      const currentFolio = formatFolio(getCorrelativeSeq());
-      const message = buildWhatsAppMessage(currentFolio, financials);
+      const folio = getCurrentFolio();
+      const itemsSummary = cart.map(i => `${i.qty}x ${i.name} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
+      const extrasSummary = selectedExtras.map(e => `${e.qty}x ${e.name} = ${formatCLP(e.qty * e.price)}`).join(' | ');
 
-      // Guardar en historial local y avanzar folio
-      saveOrderToRegistry(false, currentFolio, financials);
-      advanceCorrelativeSeq();
-
-      const waUrl = `https://wa.me/${WHATSAPP_TARGET}?text=${encodeURIComponent(message)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-      showToast('Pedido listo en WhatsApp', `Folio ${currentFolio} registrado y abierto en WhatsApp (+56 9 8951 0679).`);
-    }
-
-    function resetQuote() {
-      cart = [];
-      selectedExtrasQty = {};
-      uploadedReceiptName = '';
-      ['client-name', 'client-phone', 'client-grade', 'bordado-text', 'order-notes', 'meas-waist', 'meas-hip', 'meas-length'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-      const fileInput = document.getElementById('transfer-receipt-file');
-      const fileLbl = document.getElementById('receipt-file-name');
-      const chkDeposit = document.getElementById('confirm-deposit-checkbox');
-      if (fileInput) fileInput.value = '';
-      if (fileLbl) {
-        fileLbl.textContent = 'Ningún archivo seleccionado aún.';
-        fileLbl.className = 'text-[11px] text-slate-500 mt-1';
-      }
-      if (chkDeposit) chkDeposit.checked = false;
-      document.querySelectorAll('.sop-check').forEach(c => (c.checked = false));
-
-      renderCart();
-      renderExtrasSelector();
-      recalculateAll();
-      updateChecklistCount();
-      showToast('Nuevo pedido listo', `Folio actual: ${formatFolio(getCorrelativeSeq())}`);
-    }
-
-    // Registro de Pedidos (LocalStorage + Webhook opcional + Export CSV)
-    function loadOrdersRegistry() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveOrdersRegistryList(list) {
-      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(list));
-    }
-
-    function saveOrderToRegistry(manualSave = true, forcedFolio = null, forcedFinancials = null) {
-      const financials = forcedFinancials || recalculateAll();
-      if (cart.length === 0 && Object.keys(selectedExtrasQty).length === 0) {
-        if (manualSave) showToast('Nada que guardar', 'Agrega prendas al pedido primero.', 'error');
-        return;
-      }
-
-      const folio = forcedFolio || formatFolio(getCorrelativeSeq());
-      const clientName = document.getElementById('client-name')?.value.trim() || 'Sin nombre';
-      const clientPhone = document.getElementById('client-phone')?.value.trim() || '';
-      const school = getResolvedSchoolName('client-school');
-      const grade = document.getElementById('client-grade')?.value.trim() || '';
-      const stage = getStageHumanLabel(document.getElementById('delivery-date')?.value || 'lote1');
-
-      const itemsSummary = cart.map(i => `${i.qty}x ${i.name} (${i.size})`).join(' | ');
-      const extrasSummary = settings.extras
-        .filter(e => (selectedExtrasQty[e.id] || 0) > 0)
-        .map(e => `${selectedExtrasQty[e.id]}x ${e.name}`)
-        .join(' | ');
-
-      const record = {
-        id: Date.now(),
-        fecha: new Date().toLocaleDateString('es-CL'),
+      const orderRecord = {
         folio,
+        date: new Date().toLocaleString('es-CL'),
         clientName,
         clientPhone,
         school,
         grade,
-        stage,
-        itemsSummary,
-        extrasSummary,
-        total: financials.finalTotal,
-        deposit: financials.depositAmount,
-        status: 'Abono 50% por verificar'
+        deliveryWindow,
+        itemsSummary: itemsSummary || 'Sin prendas base',
+        extrasSummary: extrasSummary || 'Sin extras',
+        total,
+        deposit50,
+        balance50,
+        status: 'Abono 50% por verificar',
+        notes
       };
 
-      const list = loadOrdersRegistry();
-      list.unshift(record);
-      saveOrdersRegistryList(list);
+      // Guardar localmente
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      orders.unshift(orderRecord);
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+
+      // Incrementar correlativo
+      const nextSeq = (parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10)) + 1;
+      localStorage.setItem(STORAGE_KEY_SEQ, String(nextSeq));
+      refreshFolioBadge();
       renderOrdersRegistry();
 
-      if (settings.webhookUrl) {
-        fetch(settings.webhookUrl, {
+      // Enviar a Google Sheets si está vinculado
+      const scriptUrl = getAppsScriptUrl();
+      if (scriptUrl) {
+        fetch(scriptUrl, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(record)
+          body: JSON.stringify({ action: 'register_order', order: orderRecord })
         }).catch(() => {});
       }
 
-      if (manualSave) {
-        showToast('Pedido guardado', `Folio ${folio} guardado en el Registro de Pedidos.`);
-      }
+      // Construir mensaje WhatsApp
+      const lines = [
+        `*PEDIDO TEXTILES ROSITA — ${folio}*`,
+        `👤 *Cliente:* ${clientName}`,
+        `📞 *Teléfono:* ${clientPhone}`,
+        `🏫 *Colegio:* ${school}${grade ? ' (' + grade + ')' : ''}`,
+        `📅 *Entrega:* ${deliveryWindow}`,
+        ``,
+        `*DETALLE DE PRENDAS:*`,
+        ...(cart.length ? cart.map(i => `• ${i.qty}x ${i.name} [${i.size}] — ${formatCLP(i.qty * i.unitPrice)}`) : ['• Sin prendas']),
+        ...(selectedExtras.length ? ['', '*EXTRAS Y CONFECCIÓN:*', ...selectedExtras.map(e => `• ${e.qty}x ${e.name} — ${formatCLP(e.qty * e.price)}`)] : []),
+        ...(notes ? ['', `📝 *Observaciones:* ${notes}`] : []),
+        ``,
+        `💰 *TOTAL PEDIDO:* ${formatCLP(total)}`,
+        `✅ *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
+        `⏳ *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
+        `📎 *Comprobante adjunto:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`
+      ];
+
+      const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(waUrl, '_blank');
+      showToast(`🎉 Pedido ${folio} registrado. Adjunta la imagen/PDF del comprobante en WhatsApp.`);
     }
 
-    function toggleOrderStatus(orderId) {
-      const states = ['Abono 50% por verificar', 'En confección', 'Listo para entrega', 'Entregado'];
-      const list = loadOrdersRegistry();
-      const target = list.find(o => o.id === orderId);
-      if (!target) return;
-      const nextIdx = (states.indexOf(target.status) + 1) % states.length;
-      target.status = states[nextIdx];
-      saveOrdersRegistryList(list);
-      renderOrdersRegistry();
-    }
-
+    // =========================================================================
+    // 6. REGISTRO HISTÓRICO Y EXPORTACIÓN CSV
+    // =========================================================================
     function renderOrdersRegistry() {
-      const tbody = document.getElementById('orders-registry-body');
-      const badge = document.getElementById('registry-count-badge');
-      const list = loadOrdersRegistry();
-      if (badge) badge.textContent = `${list.length} ${list.length === 1 ? 'pedido' : 'pedidos'}`;
-      if (!tbody) return;
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      document.getElementById('ordersCountBadge').textContent = orders.length;
+      const tbody = document.getElementById('ordersRegistryBody');
 
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Aún no hay pedidos registrados en este dispositivo.</td></tr>`;
+      if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Aún no hay pedidos registrados.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = list
-        .map(o => `
-          <tr class="border-b border-slate-100 hover:bg-slate-50">
-            <td class="px-3 py-3 font-extrabold text-brand-700">${o.folio}<div class="text-[10px] text-slate-400 font-normal">${o.fecha}</div></td>
-            <td class="px-3 py-3 font-semibold text-slate-800">${o.clientName}<div class="text-[11px] text-slate-500">${o.clientPhone}</div></td>
-            <td class="px-3 py-3">${o.school} ${o.grade ? '(' + o.grade + ')' : ''}<div class="text-[11px] text-amber-800 font-medium">${o.stage}</div></td>
-            <td class="px-3 py-3 max-w-xs">${o.itemsSummary || '—'}${o.extrasSummary ? '<div class="text-[11px] text-amber-700 mt-0.5">+ ' + o.extrasSummary + '</div>' : ''}</td>
-            <td class="px-3 py-3 font-bold">${formatCLP(o.total)}<div class="text-[11px] text-emerald-700">Abono: ${formatCLP(o.deposit)}</div></td>
-            <td class="px-3 py-3"><span class="px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold text-[11px]">${o.status}</span></td>
-            <td class="px-3 py-3 text-right">
-              <button onclick="toggleOrderStatus(${o.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px] cursor-pointer">
-                Cambiar Estado
-              </button>
-            </td>
-          </tr>
-        `)
-        .join('');
+      tbody.innerHTML = orders.map(o => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-extrabold text-amber-800">${o.folio}</td>
+          <td class="p-3 text-slate-500">${o.date}</td>
+          <td class="p-3"><div class="font-bold text-slate-900">${o.clientName}</div><div class="text-slate-500">${o.clientPhone}</div></td>
+          <td class="p-3"><div class="font-semibold">${o.school}</div><div class="text-slate-500">${o.deliveryWindow}</div></td>
+          <td class="p-3 max-w-xs"><div class="truncate" title="${o.itemsSummary}">${o.itemsSummary}</div><div class="text-emerald-700 truncate">${o.extrasSummary}</div></td>
+          <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
+          <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold">${o.status}</span></td>
+        </tr>
+      `).join('');
     }
 
-    function exportRegistryToCSV() {
-      const list = loadOrdersRegistry();
-      if (list.length === 0) {
-        showToast('Sin datos', 'No hay pedidos registrados para exportar.', 'error');
+    function exportOrdersCSV() {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      if (!orders.length) {
+        showToast('No hay pedidos para exportar.');
         return;
       }
-      const headers = ['Fecha', 'Folio', 'Cliente', 'Telefono', 'Colegio', 'Curso', 'Ciclo_Entrega', 'Prendas', 'Extras', 'Total_CLP', 'Abono_50_CLP', 'Estado'];
-      const rows = list.map(o => [
-        o.fecha, o.folio, o.clientName, o.clientPhone, o.school, o.grade, o.stage, o.itemsSummary, o.extrasSummary, o.total, o.deposit, o.status
+      const headers = ['Folio', 'Fecha', 'Cliente', 'Telefono', 'Colegio', 'Curso', 'Entrega', 'Prendas', 'Extras', 'Total', 'Abono_50', 'Saldo_50', 'Estado', 'Observaciones'];
+      const rows = orders.map(o => [
+        o.folio, o.date, o.clientName, o.clientPhone, o.school, o.grade, o.deliveryWindow,
+        o.itemsSummary, o.extrasSummary, o.total, o.deposit50, o.balance50, o.status, o.notes
       ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
 
       const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.href = URL.createObjectURL(blob);
+      a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
-      URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA (SHA-256 + GOOGLE APPS SCRIPT)
+    // =========================================================================
+    function handleAdminButtonClick() {
+      if (isAdminAuthenticated) {
+        logoutAdmin(false);
+      } else {
+        document.getElementById('adminLoginError').classList.add('hidden');
+        document.getElementById('adminLoginPasswordInput').value = '';
+        document.getElementById('adminLoginModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('adminLoginPasswordInput').focus(), 50);
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminLoginModal').classList.add('hidden');
+    }
+
+    async function submitAdminLogin() {
+      const pass = document.getElementById('adminLoginPasswordInput').value;
+      const errEl = document.getElementById('adminLoginError');
+      const btn = document.getElementById('btnSubmitAdminLogin');
+      if (!pass) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+      errEl.classList.add('hidden');
+
+      try {
+        const hash = await sha256Hex(pass);
+        const scriptUrl = getAppsScriptUrl();
+
+        if (scriptUrl) {
+          const res = await fetch(scriptUrl, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'verify_login', passwordHash: hash })
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            errEl.textContent = data.error || 'Contraseña incorrecta.';
+            errEl.classList.remove('hidden');
+            return;
+          }
+        } else {
+          // Respaldo local antes de vincular Apps Script
+          if (hash !== FALLBACK_LOCAL_HASH) {
+            errEl.textContent = 'Contraseña incorrecta (vincula tu URL de Apps Script para sincronización global).';
+            errEl.classList.remove('hidden');
+            return;
+          }
+        }
+
+        // Acceso autorizado
+        isAdminAuthenticated = true;
+        activeSessionHash = hash;
+        closeAdminModal();
+        updateAdminUIState();
+        switchMainTab('admin');
+        resetAdminInactivityTimer();
+        showToast('🔓 Sesión de Administrador iniciada.');
+      } catch (e) {
+        errEl.textContent = 'Error de red al verificar credenciales con la nube.';
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+      }
+    }
+
+    function logoutAdmin(byTimeout = false) {
+      isAdminAuthenticated = false;
+      activeSessionHash = '';
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      updateAdminUIState();
+      switchMainTab('cotizador');
+      showToast(byTimeout ? '⏱️ Sesión administrador cerrada por inactividad.' : '🔒 Sesión administrador cerrada.');
+    }
+
+    function updateAdminUIState() {
+      const btn = document.getElementById('btnAdminToggle');
+      const icon = document.getElementById('adminBtnIcon');
+      const txt = document.getElementById('adminBtnText');
+      const tabAdmin = document.getElementById('tabBtnAdmin');
+      const timerBadge = document.getElementById('adminSessionTimer');
+
+      if (isAdminAuthenticated) {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-red-600 text-white hover:bg-red-700 border-red-600';
+        icon.textContent = '🔓';
+        txt.textContent = 'Cerrar Sesión Admin';
+        tabAdmin.classList.remove('hidden');
+        timerBadge.classList.remove('hidden');
+        renderAdminProducts();
+        renderAdminExtras();
+        renderAdminBanks();
+      } else {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900';
+        icon.textContent = '🔒';
+        txt.textContent = 'Modo Administrador';
+        tabAdmin.classList.add('hidden');
+        timerBadge.classList.add('hidden');
+      }
     }
 
     function switchMainTab(tab) {
-      const viewCot = document.getElementById('view-cotizador');
-      const viewReg = document.getElementById('view-registro');
-      const btnCot = document.getElementById('tab-btn-cotizador');
-      const btnReg = document.getElementById('tab-btn-registro');
+      if (tab === 'admin' && !isAdminAuthenticated) {
+        handleAdminButtonClick();
+        return;
+      }
+      document.getElementById('viewCotizador').classList.toggle('hidden', tab !== 'cotizador');
+      document.getElementById('viewRegistro').classList.toggle('hidden', tab !== 'registro');
+      document.getElementById('viewAdmin').classList.toggle('hidden', tab !== 'admin');
 
-      if (tab === 'registro') {
-        viewCot?.classList.add('hidden');
-        viewReg?.classList.remove('hidden');
-        btnReg.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-700 shadow-xs cursor-pointer';
-        btnCot.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer';
-        renderOrdersRegistry();
-      } else {
-        viewReg?.classList.add('hidden');
-        viewCot?.classList.remove('hidden');
-        btnCot.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-700 shadow-xs cursor-pointer';
-        btnReg.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer';
+      document.getElementById('tabBtnCotizador').className = tab === 'cotizador'
+        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+
+      document.getElementById('tabBtnRegistro').className = tab === 'registro'
+        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+    }
+
+    function saveAppsScriptUrl() {
+      const url = document.getElementById('appsScriptUrlInput').value.trim();
+      localStorage.setItem(STORAGE_KEY_SCRIPT, url);
+      showToast('✅ URL de Google Apps Script guardada.');
+      pullFromCloudAppsScript(true);
+    }
+
+    async function changeAdminPasswordCloud() {
+      const curr = document.getElementById('adminCurrentPass').value;
+      const next = document.getElementById('adminNewPass').value;
+      const conf = document.getElementById('adminConfirmPass').value;
+
+      if (!curr || !next || next.length < 4) {
+        showToast('⚠️ La nueva contraseña debe tener al menos 4 caracteres.');
+        return;
+      }
+      if (next !== conf) {
+        showToast('⚠️ La confirmación de contraseña no coincide.');
+        return;
+      }
+
+      const scriptUrl = getAppsScriptUrl();
+      if (!scriptUrl) {
+        showToast('⚠️ Primero vincula tu URL de Google Apps Script arriba.');
+        return;
+      }
+
+      const currentHash = await sha256Hex(curr);
+      const newHash = await sha256Hex(next);
+
+      try {
+        const res = await fetch(scriptUrl, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'change_password', currentHash, newHash })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          showToast('❌ ' + (data.error || 'No se pudo actualizar la clave.'));
+          return;
+        }
+        activeSessionHash = newHash;
+        document.getElementById('adminCurrentPass').value = '';
+        document.getElementById('adminNewPass').value = '';
+        document.getElementById('adminConfirmPass').value = '';
+        showToast('✅ Contraseña actualizada en la nube para todos tus dispositivos.');
+      } catch (e) {
+        showToast('❌ Error de conexión con Google Apps Script.');
       }
     }
 
-    // Modo Administrador
-    function toggleAdminMode() {
-      const panel = document.getElementById('admin-panel');
-      if (isAdminAuthenticated) {
-        panel?.classList.toggle('hidden');
-      } else {
-        document.getElementById('admin-login-modal')?.classList.remove('hidden');
-        setTimeout(() => document.getElementById('admin-pin-input')?.focus(), 50);
+    async function pushSettingsToCloud() {
+      saveLocalSettings();
+      refreshAllViews();
+      const scriptUrl = getAppsScriptUrl();
+      if (!scriptUrl) {
+        showToast('💾 Guardado localmente. Vincula tu URL de Apps Script para sincronizar todos tus dispositivos.');
+        return;
+      }
+
+      try {
+        const res = await fetch(scriptUrl, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'save_global_settings',
+            passwordHash: activeSessionHash,
+            settings
+          })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          showToast('❌ ' + (data.error || 'No autorizado para guardar en la nube.'));
+          return;
+        }
+        showToast('☁️ ¡Cambios publicados en la nube! Todos los dispositivos verán los nuevos datos.');
+      } catch (e) {
+        showToast('❌ Error al publicar cambios en Google Apps Script.');
       }
     }
 
-    function closeAdminLoginModal() {
-      document.getElementById('admin-login-modal')?.classList.add('hidden');
+    // =========================================================================
+    // 8. EDITORES DEL PANEL ADMINISTRADOR (PRENDAS, EXTRAS, BANCOS)
+    // =========================================================================
+    function renderAdminProducts() {
+      const brackets = ['3-4', '6-8', '10-12', '14-16', 'S-M', 'L-XL', 'XXL'];
+      const tbody = document.getElementById('adminProductsBody');
+      tbody.innerHTML = settings.catalog.map((p, idx) => `
+        <tr>
+          <td class="p-2">
+            <input type="text" value="${p.name}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
+          </td>
+          ${brackets.map(b => `
+            <td class="p-1.5 text-right">
+              <input type="number" value="${p.prices[b] || 0}" onchange="updateProdPrice(${idx}, '${b}', this.value)" class="w-20 rounded border border-slate-300 px-1.5 py-1 text-xs text-right font-bold" />
+            </td>
+          `).join('')}
+          <td class="p-2 text-center">
+            <button onclick="adminDeleteProduct(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-    function verifyAdminPin() {
-      const entered = document.getElementById('admin-pin-input')?.value.trim();
-      if (entered === (settings.adminPin || '1234')) {
-        isAdminAuthenticated = true;
-        closeAdminLoginModal();
-        document.getElementById('admin-panel')?.classList.remove('hidden');
-        const icon = document.getElementById('admin-lock-icon');
-        const lbl = document.getElementById('admin-btn-label');
-        if (icon) icon.className = 'fa-solid fa-lock-open text-emerald-400';
-        if (lbl) lbl.textContent = 'Panel Admin Activo';
-        renderConfigTable();
-        renderAdminExtras();
-        syncConfigInputs();
-        showToast('Modo Administrador activo', 'Ya puedes editar precios, extras y configuración del taller.');
-      } else {
-        showToast('PIN incorrecto', 'Verifica el PIN de administrador e intenta nuevamente.', 'error');
-      }
-    }
-
-    function logoutAdmin() {
-      isAdminAuthenticated = false;
-      document.getElementById('admin-panel')?.classList.add('hidden');
-      const icon = document.getElementById('admin-lock-icon');
-      const lbl = document.getElementById('admin-btn-label');
-      if (icon) icon.className = 'fa-solid fa-lock text-amber-400';
-      if (lbl) lbl.textContent = 'Modo Administrador';
-    }
-
-    function renderConfigTable() {
-      const tbody = document.getElementById('admin-catalog-tbody');
-      if (!tbody) return;
-      const tiers = ['3_4', '6_8', '10_12', '14_16', 's_m', 'l_xl', 'xxl'];
-
-      tbody.innerHTML = settings.catalog
-        .map((prod, idx) => {
-          const cells = tiers
-            .map(t => `
-              <td class="px-1.5 py-2 text-right">
-                <input type="number" step="100" value="${prod.prices[t] || 0}"
-                  onchange="adminUpdateProductPrice(${idx}, '${t}', this.value)"
-                  class="w-20 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-right text-xs text-white" />
-              </td>
-            `)
-            .join('');
-          return `
-            <tr>
-              <td class="px-3 py-2">
-                <input type="text" value="${prod.name}" onchange="adminUpdateProductName(${idx}, this.value)"
-                  class="w-48 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-semibold" />
-              </td>
-              ${cells}
-              <td class="px-2 py-2 text-center">
-                <button onclick="adminDeleteProduct(${idx})" class="text-rose-400 hover:text-rose-300 p-1 cursor-pointer" title="Eliminar prenda">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </td>
-            </tr>
-          `;
-        })
-        .join('');
-    }
-
-    function adminUpdateProductName(idx, val) {
-      if (!settings.catalog[idx] || !val.trim()) return;
-      settings.catalog[idx].name = val.trim();
-      saveSettings();
+    function updateProdName(idx, val) {
+      settings.catalog[idx].name = val.trim() || settings.catalog[idx].name;
+      saveLocalSettings();
       renderProductDropdown();
     }
 
-    function adminUpdateProductPrice(idx, tier, val) {
-      if (!settings.catalog[idx]) return;
-      settings.catalog[idx].prices[tier] = Math.max(0, parseInt(val || '0', 10));
-      saveSettings();
+    function updateProdPrice(idx, bracket, val) {
+      settings.catalog[idx].prices[bracket] = Math.max(0, parseInt(val, 10) || 0);
+      saveLocalSettings();
       onProductOrSizeChange();
     }
 
     function adminDeleteProduct(idx) {
-      if (settings.catalog.length <= 1) {
-        showToast('No permitido', 'Debe quedar al menos una prenda en el catálogo.', 'error');
-        return;
-      }
       settings.catalog.splice(idx, 1);
-      saveSettings();
-      renderProductDropdown();
-      renderConfigTable();
-      onProductOrSizeChange();
-      showToast('Prenda eliminada', 'El catálogo fue actualizado.');
+      saveLocalSettings();
+      refreshAllViews();
     }
 
     function adminAddProduct() {
-      const name = document.getElementById('new-prod-name')?.value.trim();
+      const name = document.getElementById('newProdName').value.trim();
       if (!name) {
-        showToast('Nombre requerido', 'Escribe el nombre de la nueva prenda.', 'error');
+        showToast('⚠️ Escribe el nombre de la nueva prenda.');
         return;
       }
-      const getVal = id => Math.max(0, parseInt(document.getElementById(id)?.value || '0', 10));
       settings.catalog.push({
-        id: 'custom_' + Date.now(),
+        id: 'p_' + Date.now(),
         name,
         prices: {
-          '3_4': getVal('new-p-3_4'),
-          '6_8': getVal('new-p-6_8'),
-          '10_12': getVal('new-p-10_12'),
-          '14_16': getVal('new-p-14_16'),
-          's_m': getVal('new-p-s_m'),
-          'l_xl': getVal('new-p-l_xl'),
-          'xxl': getVal('new-p-xxl')
+          '3-4':   parseInt(document.getElementById('newP_3_4').value, 10) || 0,
+          '6-8':   parseInt(document.getElementById('newP_6_8').value, 10) || 0,
+          '10-12': parseInt(document.getElementById('newP_10_12').value, 10) || 0,
+          '14-16': parseInt(document.getElementById('newP_14_16').value, 10) || 0,
+          'S-M':   parseInt(document.getElementById('newP_S_M').value, 10) || 0,
+          'L-XL':  parseInt(document.getElementById('newP_L_XL').value, 10) || 0,
+          'XXL':   parseInt(document.getElementById('newP_XXL').value, 10) || 0
         }
       });
-      saveSettings();
-      renderProductDropdown();
-      renderConfigTable();
-      ['new-prod-name', 'new-p-3_4', 'new-p-6_8', 'new-p-10_12', 'new-p-14_16', 'new-p-s_m', 'new-p-l_xl', 'new-p-xxl'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-      showToast('Prenda agregada', `${name} se añadió al catálogo.`);
+      ['newProdName','newP_3_4','newP_6_8','newP_10_12','newP_14_16','newP_S_M','newP_L_XL','newP_XXL'].forEach(id => document.getElementById(id).value = '');
+      saveLocalSettings();
+      refreshAllViews();
+      showToast('✅ Prenda agregada. Pulsa "Guardar y Publicar Cambios en la Nube".');
     }
 
     function renderAdminExtras() {
-      const grid = document.getElementById('admin-extras-grid');
-      if (!grid) return;
-      grid.innerHTML = settings.extras
-        .map((ext, idx) => `
-          <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-between gap-2">
-            <div class="min-w-0 flex-1">
-              <input type="text" value="${ext.name}" onchange="adminUpdateExtra(${idx}, 'name', this.value)"
-                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white mb-1" />
-              <input type="number" step="100" value="${ext.price}" onchange="adminUpdateExtra(${idx}, 'price', this.value)"
-                class="w-24 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-300 font-bold text-right" />
-            </div>
-            <button onclick="adminDeleteExtra(${idx})" class="text-rose-400 hover:text-rose-300 p-1 cursor-pointer">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        `)
-        .join('');
-    }
-
-    function adminUpdateExtra(idx, field, val) {
-      if (!settings.extras[idx]) return;
-      if (field === 'name' && val.trim()) settings.extras[idx].name = val.trim();
-      if (field === 'price') settings.extras[idx].price = Math.max(0, parseInt(val || '0', 10));
-      saveSettings();
-      renderExtrasSelector();
-      recalculateAll();
-    }
-
-    function adminDeleteExtra(idx) {
-      const removed = settings.extras.splice(idx, 1)[0];
-      if (removed) delete selectedExtrasQty[removed.id];
-      saveSettings();
-      renderAdminExtras();
-      renderExtrasSelector();
-      recalculateAll();
+      const container = document.getElementById('adminExtrasList');
+      container.innerHTML = settings.extras.map((e, idx) => `
+        <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
+          <input type="text" value="${e.name}" onchange="settings.extras[${idx}].name=this.value; saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
+          <input type="number" value="${e.price}" onchange="settings.extras[${idx}].price=parseInt(this.value,10)||0; saveLocalSettings(); renderExtrasGrid(); recalculateAll();" class="w-24 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold bg-white" />
+          <button onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
+        </div>
+      `).join('');
     }
 
     function adminAddExtra() {
-      const name = document.getElementById('new-extra-name')?.value.trim();
-      const price = Math.max(0, parseInt(document.getElementById('new-extra-price')?.value || '0', 10));
+      const name = document.getElementById('newExtraName').value.trim();
+      const price = parseInt(document.getElementById('newExtraPrice').value, 10) || 0;
       if (!name) return;
-      const nextCode = settings.extras.reduce((m, e) => Math.max(m, e.code || 22), 22) + 1;
-      settings.extras.push({ id: 'ext_' + Date.now(), code: nextCode, name, price });
-      saveSettings();
-      renderAdminExtras();
-      renderExtrasSelector();
-      document.getElementById('new-extra-name').value = '';
-      document.getElementById('new-extra-price').value = '';
-      showToast('Extra agregado', `${name} (${formatCLP(price)}) añadido.`);
-    }
-
-    function syncConfigInputs() {
-      const setVal = (id, v) => {
-        const el = document.getElementById(id);
-        if (el) el.value = v || '';
-      };
-      setVal('cfg-bank-1', settings.bankAccount1);
-      setVal('cfg-bank-2', settings.bankAccount2);
-      setVal('cfg-webhook-url', settings.webhookUrl);
-      setVal('cfg-correlative', getCorrelativeSeq());
-      setVal('cfg-capacity', settings.capacityPerDay);
-      setVal('cfg-disc-1', settings.discountTier1);
-      setVal('cfg-current-pin', '');
-      setVal('cfg-new-pin', '');
-      setVal('cfg-confirm-pin', '');
-    }
-
-    function changeAdminPassword() {
-      const currentVal = document.getElementById('cfg-current-pin')?.value.trim() || '';
-      const newVal = document.getElementById('cfg-new-pin')?.value.trim() || '';
-      const confirmVal = document.getElementById('cfg-confirm-pin')?.value.trim() || '';
-      const activePin = settings.adminPin || '1234';
-
-      if (!currentVal) {
-        showToast('Contraseña actual requerida', 'Ingresa tu contraseña actual para autorizar el cambio.', 'error');
-        return;
-      }
-      if (currentVal !== activePin) {
-        showToast('Contraseña actual incorrecta', 'La contraseña actual ingresada no coincide.', 'error');
-        return;
-      }
-      if (newVal.length < 4) {
-        showToast('Contraseña muy corta', 'La nueva contraseña debe tener al menos 4 caracteres.', 'error');
-        return;
-      }
-      if (newVal !== confirmVal) {
-        showToast('No coinciden', 'La nueva contraseña y su confirmación deben ser idénticas.', 'error');
-        return;
-      }
-
-      settings.adminPin = newVal;
-      saveSettings();
-      syncConfigInputs();
-      showToast('Contraseña actualizada', 'La nueva contraseña de administrador quedó guardada correctamente.');
-    }
-
-    function copyBankAccountText(accountNum) {
-      const textToCopy = accountNum === 1 ? settings.bankAccount1 : settings.bankAccount2;
-      const tempArea = document.createElement('textarea');
-      tempArea.value = textToCopy;
-      tempArea.style.position = 'fixed';
-      tempArea.style.opacity = '0';
-      document.body.appendChild(tempArea);
-      tempArea.select();
-      try {
-        document.execCommand('copy');
-        showToast(`Cuenta ${accountNum} copiada`, 'Datos bancarios listos para pegar en la app de tu banco.');
-      } catch (e) {
-        showToast('No se pudo copiar', 'Selecciona el texto manualmente.', 'error');
-      }
-      document.body.removeChild(tempArea);
-    }
-
-    function renderBankInfoDisplay() {
-      const el = document.getElementById('display-bank-info');
-      if (!el) return;
-      el.innerHTML = `
-        <div class="p-3 rounded-xl bg-white border border-amber-200/90 flex items-start justify-between gap-2">
-          <div class="text-[11px] text-slate-700 leading-relaxed">
-            <span class="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px] mb-1">OPCIÓN 1 • BANCO ESTADO</span>
-            <p class="font-bold text-slate-900">ELBA ROSA MESA RETAMALES</p>
-            <p>RUT: <strong>11.697.230-1</strong> • CuentaRUT: <strong>00011697230</strong></p>
-            <p class="text-slate-500">rosa.mesaretamales@gmail.com</p>
-          </div>
-          <button type="button" onclick="copyBankAccountText(1)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold shrink-0 cursor-pointer" title="Copiar datos Cuenta 1">
-            <i class="fa-regular fa-copy mr-1"></i> Copiar
-          </button>
-        </div>
-        <div class="p-3 rounded-xl bg-white border border-emerald-200/90 flex items-start justify-between gap-2">
-          <div class="text-[11px] text-slate-700 leading-relaxed">
-            <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px] mb-1">OPCIÓN 2 • BANCO FALABELLA</span>
-            <p class="font-bold text-slate-900">Elba Rosa Mesa</p>
-            <p>RUT: <strong>11.697.230-1</strong> • Cuenta Corriente: <strong>1-553-007790-3</strong></p>
-            <p class="text-slate-500">rosa.mesaretamales@gmail.com</p>
-          </div>
-          <button type="button" onclick="copyBankAccountText(2)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold shrink-0 cursor-pointer" title="Copiar datos Cuenta 2">
-            <i class="fa-regular fa-copy mr-1"></i> Copiar
-          </button>
-        </div>
-      `;
-    }
-
-    function updateBankFromUI() {
-      settings.bankAccount1 = document.getElementById('cfg-bank-1')?.value.trim() || '';
-      settings.bankAccount2 = document.getElementById('cfg-bank-2')?.value.trim() || '';
-      saveSettings();
-      renderBankInfoDisplay();
-    }
-
-    function updateWebhookFromUI() {
-      settings.webhookUrl = document.getElementById('cfg-webhook-url')?.value.trim() || '';
-      saveSettings();
-      showToast('Webhook guardado', 'La URL de Google Apps Script se guardó correctamente.');
-    }
-
-    function updateCorrelativeFromUI() {
-      const val = Math.max(1, parseInt(document.getElementById('cfg-correlative')?.value || '1', 10));
-      localStorage.setItem(STORAGE_KEY_FOLIO, String(val));
-      refreshFolioDisplay();
-    }
-
-    function updateSettingsFromUI() {
-      settings.capacityPerDay = Math.max(1, parseFloat(document.getElementById('cfg-capacity')?.value || '5') || 5);
-      settings.discountTier1 = Math.min(100, Math.max(0, parseFloat(document.getElementById('cfg-disc-1')?.value || '10') || 10));
-      saveSettings();
-      recalculateAll();
-    }
-
-    function restoreDefaultSettings() {
-      settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-      saveSettings();
-      renderProductDropdown();
-      renderConfigTable();
-      renderAdminExtras();
-      renderExtrasSelector();
-      syncConfigInputs();
-      renderBankInfoDisplay();
-      onProductOrSizeChange();
-      recalculateAll();
-      showToast('Lista oficial restaurada', 'Se cargaron todos los precios oficiales Temporada 2026–2027.');
-    }
-
-    // =========================================================================
-    // 7. SINCRONIZACIÓN DIRECTA CON GOOGLE SHEETS Y PEGADO MANUAL (AUDITORÍA PRO)
-    // =========================================================================
-    function parseChileanCurrencyCell(rawCell) {
-      if (rawCell === null || rawCell === undefined) return null;
-      let str = String(rawCell).trim();
-      if (!str) return null;
-      // Eliminar símbolos de moneda y espacios
-      str = str.replace(/[$\sCLP]/gi, '');
-      // Si tiene formato decimal tipo 1500.00 o 1500,00 al final, quitar los 2 ceros decimales
-      str = str.replace(/[.,]00$/, '');
-      // Quitar separadores de miles (puntos o comas)
-      const digits = str.replace(/[.,]/g, '');
-      if (!/^\d{3,7}$/.test(digits)) return null;
-      return parseInt(digits, 10);
-    }
-
-    function normalizeHeaderText(text) {
-      return String(text || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-
-    async function syncFromGoogleSheet(manualTrigger = false) {
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(GOOGLE_SHEET_NAME)}`;
-      try {
-        const response = await fetch(csvUrl, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Sin acceso público o respuesta no válida');
-        const csvText = await response.text();
-        if (!csvText || csvText.trim().startsWith('<!DOCTYPE')) {
-          throw new Error('La planilla requiere permiso "Cualquier persona con el enlace puede ver"');
-        }
-
-        const rows = csvText
-          .split(/\r?\n/)
-          .map(line =>
-            line
-              .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-              .map(cell => cell.replace(/^"|"$/g, '').trim())
-          );
-
-        const updatedCells = applyParsedRowsToSettings(rows);
-        if (updatedCells > 0) {
-          saveSettings();
-          renderConfigTable();
-          renderAdminExtras();
-          renderExtrasSelector();
-          onProductOrSizeChange();
-          recalculateAll();
-          if (manualTrigger) {
-            showToast('Google Sheet sincronizado', `Se verificaron y actualizaron ${updatedCells} valores desde "${GOOGLE_SHEET_NAME}".`);
-          }
-        } else if (manualTrigger) {
-          showToast('Sin cambios detectados', 'Verifica que la pestaña "precios temporada 2026_2027" mantenga los encabezados oficiales.', 'error');
-        }
-      } catch (err) {
-        if (manualTrigger) {
-          showToast(
-            'Planilla privada o sin conexión',
-            'En Google Sheets haz clic en Compartir → "Cualquier persona con el enlace (Lector)" para sincronizar en vivo.',
-            'error'
-          );
-        }
-      }
-    }
-
-    function applyParsedRowsToSettings(rows) {
-      let sectionMode = 'upper';
-      let sizeColIdx = 1;
-      let activeColumnMapping = [
-        { colIdx: 2, prodId: 'buzo_algodon' },
-        { colIdx: 3, prodId: 'buzo_fantasia' },
-        { colIdx: 4, prodId: 'polera_deporte' },
-        { colIdx: 5, prodId: 'pantalon_solo' },
-        { colIdx: 6, prodId: 'poleron_solo' },
-        { colIdx: 7, prodId: 'buzo_completo_fantasia' },
-        { colIdx: 8, prodId: 'buzo_completo_algodon' }
-      ];
-      let extrasCodeCol = 0;
-      let extrasNameCol = 1;
-      let extrasPriceCol = 2;
-      let updatedCells = 0;
-
-      rows.forEach(cols => {
-        const normalizedCols = cols.map(normalizeHeaderText);
-        const joined = normalizedCols.join(' ');
-
-        // Detección inteligente de encabezados de Bloque 1 (Uniformes principales)
-        if (joined.includes('buzo algodon') || joined.includes('buzo fantasia')) {
-          sectionMode = 'upper';
-          const detected = [];
-          normalizedCols.forEach((h, idx) => {
-            if (h === 'talla') sizeColIdx = idx;
-            else if (h.includes('buzo algodon')) detected.push({ colIdx: idx, prodId: 'buzo_algodon' });
-            else if (h.includes('buzo fantasia')) detected.push({ colIdx: idx, prodId: 'buzo_fantasia' });
-            else if (h.includes('polera deporte')) detected.push({ colIdx: idx, prodId: 'polera_deporte' });
-            else if (h.includes('pantalon')) detected.push({ colIdx: idx, prodId: 'pantalon_solo' });
-            else if (h.includes('poleron')) detected.push({ colIdx: idx, prodId: 'poleron_solo' });
-            else if (h.includes('completo') && h.includes('fantasia')) detected.push({ colIdx: idx, prodId: 'buzo_completo_fantasia' });
-            else if (h.includes('completo') && h.includes('algodon')) detected.push({ colIdx: idx, prodId: 'buzo_completo_algodon' });
-          });
-          if (detected.length > 0) activeColumnMapping = detected;
-          return;
-        }
-
-        // Detección inteligente de encabezados de Bloque 2 (Complementarios)
-        if (joined.includes('polera pique') || joined.includes('cotona')) {
-          sectionMode = 'lower';
-          const detected = [];
-          normalizedCols.forEach((h, idx) => {
-            if (h === 'talla') sizeColIdx = idx;
-            else if (h.includes('polera pique')) detected.push({ colIdx: idx, prodId: 'polera_pique' });
-            else if (h.includes('falda')) detected.push({ colIdx: idx, prodId: 'falda_talla' });
-            else if (h.includes('poleron polar')) detected.push({ colIdx: idx, prodId: 'poleron_polar' });
-            else if (h.includes('cotona') || h.includes('delantal')) detected.push({ colIdx: idx, prodId: 'cotona_delantal' });
-          });
-          activeColumnMapping = detected.length > 0 ? detected : [
-            { colIdx: 2, prodId: 'polera_pique' },
-            { colIdx: 3, prodId: 'falda_talla' },
-            { colIdx: 4, prodId: 'poleron_polar' },
-            { colIdx: 5, prodId: 'cotona_delantal' }
-          ];
-          return;
-        }
-
-        // Detección inteligente de encabezados de Bloque 3 (Detalle Extras 15–22)
-        if (joined.includes('detalle_extras') || joined.includes('detalle extras')) {
-          sectionMode = 'extras';
-          normalizedCols.forEach((h, idx) => {
-            if (h.includes('detalle')) {
-              extrasNameCol = idx;
-              extrasCodeCol = Math.max(0, idx - 1);
-            } else if (h.includes('precio')) {
-              extrasPriceCol = idx;
-            }
-          });
-          return;
-        }
-
-        if (sectionMode === 'extras') {
-          const itemNum = parseInt((cols[extrasCodeCol] || '').replace(/[^\d]/g, ''), 10);
-          const extraName = (cols[extrasNameCol] || '').trim();
-          const pVal = parseChileanCurrencyCell(cols[extrasPriceCol]);
-          if (extraName && pVal !== null) {
-            const existingExt = settings.extras.find(
-              e => (!isNaN(itemNum) && e.code === itemNum) || normalizeHeaderText(e.name) === normalizeHeaderText(extraName)
-            );
-            if (existingExt) {
-              existingExt.name = extraName;
-              existingExt.price = pVal;
-              updatedCells++;
-            } else if (!isNaN(itemNum) && itemNum >= 15) {
-              settings.extras.push({ id: 'ext_' + itemNum, code: itemNum, name: extraName, price: pVal });
-              updatedCells++;
-            }
-          }
-          return;
-        }
-
-        const sizeCell = (cols[sizeColIdx] || '').toLowerCase().replace(/\s+/g, '');
-        let tierKey = null;
-        if (sizeCell === '3-4') tierKey = '3_4';
-        else if (sizeCell === '6-8') tierKey = '6_8';
-        else if (sizeCell === '10-12') tierKey = '10_12';
-        else if (sizeCell === '14-16') tierKey = '14_16';
-        else if (sizeCell === 's-m') tierKey = 's_m';
-        else if (sizeCell === 'l-xl') tierKey = 'l_xl';
-        else if (sizeCell === 'xxl') tierKey = 'xxl';
-
-        if (!tierKey) return;
-
-        activeColumnMapping.forEach(({ colIdx, prodId }) => {
-          const priceVal = parseChileanCurrencyCell(cols[colIdx]);
-          if (priceVal !== null) {
-            const prod = settings.catalog.find(p => p.id === prodId);
-            if (prod) {
-              prod.prices[tierKey] = priceVal;
-              updatedCells++;
-            }
-            if (prodId === 'falda_talla') {
-              const faldaMed = settings.catalog.find(p => p.id === 'falda_medida');
-              if (faldaMed) faldaMed.prices[tierKey] = priceVal;
-            }
-          }
-        });
+      settings.extras.push({
+        id: 'e_' + Date.now(),
+        code: String(settings.extras.length + 15),
+        name,
+        price
       });
-
-      return updatedCells;
+      document.getElementById('newExtraName').value = '';
+      document.getElementById('newExtraPrice').value = '';
+      saveLocalSettings();
+      refreshAllViews();
     }
 
-    function openPasteSheetModal() {
-      const modal = document.getElementById('paste-sheet-modal');
-      if (modal) modal.classList.remove('hidden');
-    }
-
-    function closePasteSheetModal() {
-      const modal = document.getElementById('paste-sheet-modal');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    function parsePastedSheetData() {
-      const raw = document.getElementById('paste-sheet-textarea')?.value || '';
-      if (!raw.trim()) {
-        showToast('Texto vacío', 'Pega primero las filas copiadas desde Google Sheets.', 'error');
-        return;
-      }
-      const lines = raw.split(/\r?\n/).map(l => l.split('\t').map(c => c.trim()));
-      const updated = applyParsedRowsToSettings(lines);
-      if (updated > 0) {
-        saveSettings();
-        renderConfigTable();
-        renderAdminExtras();
-        renderExtrasSelector();
-        onProductOrSizeChange();
-        recalculateAll();
-        closePasteSheetModal();
-        showToast('Celdas aplicadas', `Se actualizaron ${updated} precios correctamente.`);
-      } else {
-        showToast('Sin coincidencias', 'Asegúrate de copiar las columnas desde Ítem y Talla.', 'error');
-      }
-    }
-
-    function showToast(title, message, type = 'success') {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
-      const toast = document.createElement('div');
-      const borderClass = type === 'error' ? 'border-rose-500 bg-rose-950 text-white' : 'border-emerald-500 bg-slate-900 text-white';
-      const iconHtml = type === 'error'
-        ? '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>'
-        : '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-      toast.className = `pointer-events-auto max-w-sm rounded-2xl border ${borderClass} px-4 py-3 shadow-xl flex items-start gap-3 transition-all`;
-      toast.innerHTML = `
-        <div class="mt-0.5 text-sm">${iconHtml}</div>
-        <div class="text-xs">
-          <p class="font-bold">${title}</p>
-          <p class="text-slate-300 mt-0.5">${message}</p>
+    function renderAdminBanks() {
+      const container = document.getElementById('adminBanksEditor');
+      container.innerHTML = settings.banks.map((b, idx) => `
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs">
+          <div class="font-extrabold text-slate-800">${b.label}</div>
+          <input type="text" value="${b.holder}" onchange="settings.banks[${idx}].holder=this.value; saveLocalSettings(); renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${b.rut}" onchange="settings.banks[${idx}].rut=this.value; saveLocalSettings(); renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${b.bank}" onchange="settings.banks[${idx}].bank=this.value; saveLocalSettings(); renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${b.accountType}" onchange="settings.banks[${idx}].accountType=this.value; saveLocalSettings(); renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${b.accountNumber}" onchange="settings.banks[${idx}].accountNumber=this.value; saveLocalSettings(); renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          </div>
+          <input type="email" value="${b.email}" onchange="settings.banks[${idx}].email=this.value; saveLocalSettings(); renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
         </div>
-      `;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 250);
-      }, 3600);
+      `).join('');
     }
 
-    function initApp() {
-      refreshFolioDisplay();
-      loadSavedLogo();
-      renderProductDropdown();
-      renderConfigTable();
-      renderAdminExtras();
-      renderExtrasSelector();
-      syncConfigInputs();
-      renderBankInfoDisplay();
-      onMainSchoolChange();
-      onProductOrSizeChange();
-      renderCart();
-      recalculateAll();
-      updateReceiptVerificationState();
-      updateChecklistCount();
-      renderOrdersRegistry();
-      syncFromGoogleSheet(false);
+    // =========================================================================
+    // 9. TOAST NOTIFICATION
+    // =========================================================================
+    let toastTimeout = null;
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => box.classList.add('hidden'), 4000);
     }
 
-    window.addEventListener('DOMContentLoaded', initApp);
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
