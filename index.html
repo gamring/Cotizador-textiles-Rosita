@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cotizador y Planificador de Pedidos — Textiles Rosita</title>
+  <title>Cotizador y Reserva de Uniformes Escolares — Textiles Rosita</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Plus Jakarta Sans -->
@@ -104,7 +104,6 @@
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
         <!-- Tarjeta Etiqueta Textiles Rosita + Indicadores -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-          <!-- Etiqueta Bordada Textiles Rosita (replica exacta de la tarjeta o imagen subida) -->
           <div class="rosita-stitch-card rounded-2xl px-4 py-2.5 flex items-center gap-3 shrink-0 relative overflow-hidden">
             <img id="header-custom-logo" src="" alt="Logo Textiles Rosita" class="hidden max-h-16 w-auto object-contain rounded-lg" />
             <div id="header-vector-badge" class="flex flex-col items-center text-center leading-none select-none">
@@ -130,10 +129,9 @@
           <!-- Contexto y Métricas Lean -->
           <div>
             <div class="flex flex-wrap items-center gap-2">
-              <h1 class="font-display font-bold text-base sm:text-lg tracking-tight text-white">Cotizador y Planificador de Uniformes Escolares</h1>
+              <h1 class="font-display font-bold text-base sm:text-lg tracking-tight text-white">Cotizador y Reserva de Uniformes Escolares</h1>
               <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30">María Pinto • Melipilla • Bollenar</span>
             </div>
-            <!-- Indicador Operativo Lean -->
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-stone-300">
               <span class="inline-flex items-center gap-1.5">
                 <i class="fa-solid fa-gauge-high text-emerald-400"></i>
@@ -144,17 +142,25 @@
                 Meta estándar: <strong id="hdr-meta" class="text-white">≤ 3 días hábiles</strong>
               </span>
               <span id="hdr-season-badge" class="hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/30 font-semibold">
-                <i class="fa-solid fa-fire-flame-curved"></i> Temporada Alta (Dic–Abr)
+                <i class="fa-solid fa-fire-flame-curved"></i> Campaña Escolar Activa
               </span>
             </div>
           </div>
         </div>
 
         <!-- Controles superiores -->
-        <div class="flex items-center gap-2.5 self-start lg:self-auto">
-          <button onclick="toggleConfigPanel()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white/10 hover:bg-white/15 text-white border border-white/15 transition cursor-pointer">
-            <i class="fa-solid fa-sliders"></i>
-            <span>Tarifas y Capacidad</span>
+        <div class="flex flex-wrap items-center gap-2.5 self-start lg:self-auto">
+          <div class="inline-flex rounded-xl bg-stone-800 p-1 border border-stone-700">
+            <button id="tab-btn-cotizador" onclick="switchMainView('cotizador')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white transition cursor-pointer">
+              <i class="fa-solid fa-calculator mr-1"></i>Cotizador & Reserva
+            </button>
+            <button id="tab-btn-registro" onclick="switchMainView('registro')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white transition cursor-pointer">
+              <i class="fa-solid fa-table-list mr-1"></i>Registro de Pedidos (<span id="registro-count-badge">0</span>)
+            </button>
+          </div>
+          <button onclick="openAdminModal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 transition cursor-pointer">
+            <i class="fa-solid fa-user-shield"></i>
+            <span id="btn-admin-label">Modo Administrador</span>
           </button>
           <button onclick="resetQuote()" title="Limpiar pedido actual" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/20 transition cursor-pointer">
             <i class="fa-solid fa-broom"></i>
@@ -165,31 +171,146 @@
     </div>
   </header>
 
-  <!-- PANEL DESPLEGABLE DE TARIFAS Y CAPACIDAD (GUARDADO EN LOCALSTORAGE) -->
-  <section id="config-panel" class="hidden bg-slate-900 text-slate-200 border-b border-slate-700 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
-        <div>
-          <h2 class="font-display font-bold text-base sm:text-lg text-white flex items-center gap-2">
-            <i class="fa-solid fa-tags text-blue-400"></i>
-            Tarifario Base por Rango de Talla y Capacidad Taller (Guardado Automático)
-          </h2>
-          <p class="text-xs text-slate-400">Configura precios en CLP para Tallas Niños (3–16) y Adultos (S–XXL). Se guardan automáticamente en este navegador.</p>
-        </div>
-        <button onclick="toggleConfigPanel()" class="text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer">
+  <!-- MODAL DE ACCESO ADMINISTRADOR (PIN) -->
+  <div id="admin-login-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-display font-bold text-lg text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-600"></i>
+          Acceso Administrador
+        </h3>
+        <button onclick="closeAdminLoginModal()" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
+      <p class="text-xs text-slate-600 mb-4">Ingresa el PIN de administrador de <strong>Textiles Rosita</strong> para agregar, modificar o eliminar prendas, precios por talla y datos bancarios.</p>
+      <div class="space-y-3">
+        <div>
+          <label for="admin-pin-input" class="block text-xs font-semibold text-slate-700 mb-1">PIN de Seguridad</label>
+          <input type="password" id="admin-pin-input" maxlength="12" placeholder="••••" onkeydown="if(event.key==='Enter') verifyAdminPin()"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-center text-lg font-bold tracking-widest focus:outline-none focus:border-amber-600">
+          <p class="text-xs text-slate-400 mt-0.5">Agrega nuevas prendas, modifica precios por tramo de talla (3-4, 6-8, 10-12, 14-16, S-M, L-XL, XXL), importa desde tu planilla o edita la cuenta bancaria.</p>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="closeAdminLoginModal()" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancelar</button>
+          <button onclick="verifyAdminPin()" class="w-1/2 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm cursor-pointer">Ingresar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL DE ADMINISTRADOR -->
+  <section id="config-panel" class="hidden bg-slate-900 text-slate-200 border-b-2 border-amber-500 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-bold uppercase tracking-wider">Perfil Administrador Activo</span>
+            <h2 class="font-display font-bold text-base sm:text-lg text-white">Gestión de Catálogo, Precios por Talla y Datos de Transferencia</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Agrega nuevas prendas, modifica precios por tramo de talla (3-4, 6-8, 10-14, 16, S-M, L-XL, XXL), elimina ítems o edita la cuenta bancaria.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="logoutAdmin()" class="px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 text-xs font-semibold cursor-pointer">
+            <i class="fa-solid fa-lock mr-1"></i> Cerrar Sesión Admin
+          </button>
+          <button onclick="toggleConfigPanel(false)" class="text-slate-400 hover:text-white p-2 rounded-lg cursor-pointer" title="Ocultar panel">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulario para Agregar Nueva Prenda al Catálogo -->
+      <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 mb-5">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-1.5">
+          <i class="fa-solid fa-plus-circle"></i> Agregar Nueva Prenda al Catálogo
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-2.5 items-end">
+          <div class="col-span-2">
+            <label class="block text-[11px] text-slate-300 mb-1">Nombre de la Prenda *</label>
+            <input type="text" id="new-prod-name" placeholder="Ej. Falda Escocesa / Polera Piqué" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla 3-4</label>
+            <input type="number" id="new-p-3_4" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla 6-8</label>
+            <input type="number" id="new-p-6_8" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla 10-12</label>
+            <input type="number" id="new-p-10_12" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla 14-16</label>
+            <input type="number" id="new-p-14_16" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla S-M</label>
+            <input type="number" id="new-p-s_m" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla L-XL</label>
+            <input type="number" id="new-p-l_xl" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-300 mb-1">Talla XXL</label>
+            <input type="number" id="new-p-xxl" min="0" step="100" placeholder="$" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-right text-white">
+          </div>
+        </div>
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="syncFromGoogleSheet(true)" class="px-3.5 py-2 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-200 border border-emerald-400/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-rotate"></i> Sincronizar directo desde Google Sheet
+            </button>
+            <button onclick="openPasteSheetModal()" class="px-3.5 py-2 rounded-xl bg-sky-600/25 hover:bg-sky-600/40 text-sky-200 border border-sky-400/30 text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-file-excel"></i> Pegar Celdas Manualmente
+            </button>
+            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit?pli=1&gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium inline-flex items-center gap-1.5">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Planilla
+            </a>
+          </div>
+          <button onclick="adminAddProduct()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-plus"></i> Agregar Prenda al Catálogo
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal rápido para pegar filas copiadas desde Google Sheets -->
+      <div id="paste-sheet-modal" class="hidden mb-5 bg-slate-950/90 p-4 rounded-2xl border border-sky-500/40 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-bold text-sky-300 uppercase tracking-wider">Sincronizar Precios desde Google Sheets ("precios temporada 2026_2027")</h4>
+          <button onclick="closePasteSheetModal()" class="text-slate-400 hover:text-white text-xs cursor-pointer"><i class="fa-solid fa-xmark"></i> Cerrar</button>
+        </div>
+        <p class="text-[11px] text-slate-300">Copia las celdas de tu planilla (fila de encabezados con las prendas y las 7 filas de tallas <strong>3-4, 6-8, 10-12, 14-16, S-M, L-XL, XXL</strong>) y pégalas aquí abajo para actualizar todos los precios automáticamente:</p>
+        <textarea id="paste-sheet-textarea" rows="5" placeholder="Pega aquí las celdas copiadas desde Google Sheets (Ctrl+V / Cmd+V)..."
+          class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs font-mono text-emerald-200 focus:outline-none focus:border-sky-500"></textarea>
+        <div class="flex justify-end gap-2">
+          <button onclick="closePasteSheetModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer">Cancelar</button>
+          <button onclick="parseAndApplyPastedSheet()" class="px-4 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold cursor-pointer">Aplicar Precios Pegados</button>
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Tabla de Precios de los 9 Productos -->
-        <div class="lg:col-span-8 bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 overflow-x-auto">
-          <table class="w-full text-left text-xs">
+        <!-- Tabla Editable de Precios por Tramo de Talla + Eliminar -->
+        <div class="lg:col-span-9 bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 overflow-x-auto">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Lista Oficial de Precios por Talla (CLP — Editable en línea)</span>
+            <span class="text-[11px] text-slate-400">Deja vacío si el precio de esa talla está "Por definir"</span>
+          </div>
+          <table class="w-full text-left text-xs min-w-[760px]">
             <thead>
-              <tr class="border-b border-slate-700 text-slate-400 uppercase">
-                <th class="pb-2.5 pr-2">Prenda del Catálogo (9 ítems)</th>
-                <th class="pb-2.5 px-2 text-right w-32">Niños (3 – 16)</th>
-                <th class="pb-2.5 pl-2 text-right w-32">Adultos (S – XXL)</th>
+              <tr class="border-b border-slate-700 text-slate-400 uppercase text-[10px]">
+                <th class="pb-2.5 pr-2">Prenda (Editable)</th>
+                <th class="pb-2.5 px-1 text-right">3 – 4</th>
+                <th class="pb-2.5 px-1 text-right">6 – 8</th>
+                <th class="pb-2.5 px-1 text-right">10 – 12</th>
+                <th class="pb-2.5 px-1 text-right">14 – 16</th>
+                <th class="pb-2.5 px-1 text-right">S – M</th>
+                <th class="pb-2.5 px-1 text-right">L – XL</th>
+                <th class="pb-2.5 px-1 text-right">XXL</th>
+                <th class="pb-2.5 pl-2 text-center">Acción</th>
               </tr>
             </thead>
             <tbody id="config-prices-tbody" class="divide-y divide-slate-700/60">
@@ -198,48 +319,56 @@
           </table>
         </div>
 
-        <!-- Capacidad Lean & Descuentos Volumen -->
-        <div class="lg:col-span-4 space-y-4">
-          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">Capacidad Taller (Lean)</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] text-slate-300 mb-1">Prendas/día (equipo)</label>
-                <input type="number" id="cfg-daily-capacity" min="1" max="50" step="0.5" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-[11px] text-slate-300 mb-1">Meta estándar (días)</label>
-                <input type="number" id="cfg-min-days" min="1" max="30" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
-              </div>
+        <!-- Datos Bancarios, PIN Admin y Capacidad Taller -->
+        <div class="lg:col-span-3 space-y-4">
+          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-2.5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-sky-400">Datos Transferencia 50%</h3>
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-0.5">Banco y Tipo de Cuenta</label>
+              <input type="text" id="cfg-bank-name" onchange="updateBankFromUI()" placeholder="Ej. BancoEstado CuentaRUT" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
             </div>
             <div>
-              <label class="block text-[11px] text-slate-300 mb-1">Holgura Temporada Alta Dic–Abr (+días hábiles)</label>
-              <input type="number" id="cfg-high-season-extra" min="0" max="15" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+              <label class="block text-[11px] text-slate-300 mb-0.5">N° de Cuenta</label>
+              <input type="text" id="cfg-bank-account" onchange="updateBankFromUI()" placeholder="Ej. 12345678" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-0.5">Titular y RUT</label>
+              <input type="text" id="cfg-bank-holder" onchange="updateBankFromUI()" placeholder="Ej. Rosita ... / 12.345.678-9" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-300 mb-0.5">Correo Comprobante</label>
+              <input type="text" id="cfg-bank-email" onchange="updateBankFromUI()" placeholder="Ej. textilesrosita@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
             </div>
           </div>
 
-          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Descuentos por Volumen</h3>
-            <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/70 space-y-2.5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Seguridad, Folio y Taller</h3>
+            <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] text-slate-300 mb-1">Desde 10 un. (%)</label>
-                <input type="number" id="cfg-disc-tier1" min="0" max="50" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                <label class="block text-[11px] text-slate-300 mb-0.5">PIN Admin</label>
+                <input type="text" id="cfg-admin-pin" maxlength="12" onchange="updateAdminPinFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs font-bold text-amber-300">
               </div>
               <div>
-                <label class="block text-[11px] text-slate-300 mb-1">Desde 30 un. (%)</label>
-                <input type="number" id="cfg-disc-tier2" min="0" max="60" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                <label class="block text-[11px] text-slate-300 mb-0.5">Folio Actual</label>
+                <input type="number" id="cfg-correlative-seq" min="1" max="999999" onchange="updateCorrelativeFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs font-bold text-amber-300">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-0.5">Prendas/día</label>
+                <input type="number" id="cfg-daily-capacity" min="1" max="50" step="0.5" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[11px] text-slate-300 mb-0.5">Desc. ≥10 (%)</label>
+                <input type="number" id="cfg-disc-tier1" min="0" max="50" onchange="updateSettingsFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-2.5 py-1.5 text-xs text-white">
               </div>
             </div>
             <div>
-              <label class="block text-[11px] text-slate-300 mb-1">Folio Correlativo Actual (N° Pedido)</label>
-              <input type="number" id="cfg-correlative-seq" min="1" max="999999" onchange="updateCorrelativeFromUI()" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm font-bold text-amber-300 focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-300 mb-1">Logo / Etiqueta Personalizada (Opcional)</label>
-              <input type="file" id="cfg-logo-upload" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-xs text-slate-300 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500 cursor-pointer">
+              <label class="block text-[11px] text-slate-300 mb-0.5">Logo / Etiqueta (Opcional)</label>
+              <input type="file" id="cfg-logo-upload" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-semibold file:bg-amber-600 file:text-white cursor-pointer">
             </div>
             <button onclick="restoreDefaultSettings()" class="w-full py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-medium text-slate-200 transition cursor-pointer">
-              Restaurar Tarifas de Fábrica
+              Restaurar Precios Oficiales Lista
             </button>
           </div>
         </div>
@@ -250,6 +379,53 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
+    <!-- VISTA: REGISTRO DE PEDIDOS (Equivalente a pestaña "registro de pedidos") -->
+    <section id="view-registro-pedidos" class="hidden space-y-5 no-print">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="font-display font-bold text-lg text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-list text-amber-600"></i>
+              Registro de Pedidos — Temporada 2026–2027
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Historial local de reservas confirmadas, abonos del 50%, colegios y exportación directa a CSV / Excel / Google Sheets.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="exportOrdersCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-file-csv"></i> Exportar CSV para Google Sheets
+            </button>
+            <button onclick="switchMainView('cotizador')" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold cursor-pointer">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Volver al Cotizador
+            </button>
+          </div>
+        </div>
+
+        <div id="registro-empty-state" class="text-center py-10 px-4 border-2 border-dashed border-slate-200 rounded-2xl">
+          <i class="fa-solid fa-folder-open text-2xl text-slate-400 mb-2"></i>
+          <p class="text-sm font-semibold text-slate-700">Aún no hay pedidos guardados en el registro</p>
+          <p class="text-xs text-slate-500 mt-1">Cada vez que confirmes un pedido por WhatsApp o lo guardes, quedará registrado automáticamente aquí.</p>
+        </div>
+
+        <div id="registro-table-wrapper" class="hidden overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-200 text-[11px] font-bold uppercase text-slate-500">
+                <th class="py-2.5 pr-2">Folio / Fecha</th>
+                <th class="py-2.5 px-2">Cliente / Contacto</th>
+                <th class="py-2.5 px-2">Colegio / Curso</th>
+                <th class="py-2.5 px-2">Detalle Prendas</th>
+                <th class="py-2.5 px-2">Entrega</th>
+                <th class="py-2.5 px-2 text-right">Total / Abono 50%</th>
+                <th class="py-2.5 pl-2 text-center">Estado / Acción</th>
+              </tr>
+            </thead>
+            <tbody id="registro-orders-tbody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div id="view-cotizador-principal">
     <!-- Encabezado exclusivo Impresión / PDF -->
     <div class="hidden print-only mb-5 pb-4 border-b-2 border-amber-600">
       <div class="flex justify-between items-center gap-4">
@@ -312,59 +488,104 @@
               </div>
             </div>
 
-            <!-- Selector de Establecimiento / Colegio Exacto -->
             <div>
-              <label for="client-school" class="block text-xs font-semibold text-slate-600 mb-1.5">Establecimiento / Colegio *</label>
-              <div class="relative">
-                <i class="fa-solid fa-school absolute left-3.5 top-3 text-brand-600 text-sm no-print"></i>
-                <select id="client-school" onchange="onMainSchoolChange()"
-                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-                  <option value="Chorombo Alto">1. Chorombo Alto</option>
-                  <option value="Chorombo Bajo">2. Chorombo Bajo</option>
-                  <option value="Las Mercedes">3. Las Mercedes</option>
-                  <option value="Los Rulos">4. Los Rulos</option>
-                  <option value="Santa Emilia">5. Santa Emilia</option>
-                  <option value="Polivalente María Pinto">6. Polivalente María Pinto</option>
-                  <option value="Colegio y Jardín Flores de Bollenar">7. Colegio y Jardín Flores de Bollenar</option>
-                  <option value="Otro / Particular">8. Otro establecimiento / Particular</option>
-                </select>
-              </div>
+              <label for="client-school" class="block text-xs font-semibold text-slate-600 mb-1.5">Establecimiento Educacional *</label>
+              <select id="client-school" onchange="onMainSchoolChange()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                <option value="Chorombo Alto">Chorombo Alto</option>
+                <option value="Chorombo Bajo">Chorombo Bajo</option>
+                <option value="Las Mercedes">Las Mercedes</option>
+                <option value="Los Rulos">Los Rulos</option>
+                <option value="Santa Emilia">Santa Emilia</option>
+                <option value="Polivalente María Pinto">Polivalente María Pinto</option>
+                <option value="Colegio y Jardín Flores de Bollenar">Colegio y Jardín Flores de Bollenar</option>
+                <option value="Otro / Particular">Otro / Particular</option>
+              </select>
             </div>
 
-            <!-- Curso / Nivel -->
+            <div id="custom-school-wrapper" class="hidden">
+              <label for="custom-school-name" class="block text-xs font-semibold text-slate-600 mb-1.5">Nombre del Colegio / Jardín *</label>
+              <input type="text" id="custom-school-name" oninput="syncItemSchoolDefault()" placeholder="Escribe el nombre del establecimiento"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+
             <div>
-              <label for="client-grade" class="block text-xs font-semibold text-slate-600 mb-1.5">Curso / Nivel</label>
-            <!-- Fecha / Ciclo de Entrega Comprometida (3 Opciones Oficiales) -->
-            <div class="sm:col-span-2">
-              <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1.5">Fecha / Ciclo de Entrega Solicitada *</label>
-              <div class="relative">
-                <i class="fa-solid fa-calendar-days absolute left-3.5 top-3 text-brand-600 text-sm no-print"></i>
-                <select id="delivery-date" onchange="onDeliveryStageChange()"
-                  class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-                  <option value="lote1">1° Pedidos — Fines de Enero</option>
-                  <option value="lote2">2° Pedidos — Fines de Febrero a principios de Marzo</option>
-                  <option value="rezagados">3° Rezagados — Después del 15 de Marzo</option>
-                </select>
+              <label for="client-grade" class="block text-xs font-semibold text-slate-600 mb-1.5">Curso / Nivel del Alumno(a)</label>
+              <input type="text" id="client-grade" placeholder="Ej. Pre-Kínder / 4° Básico B / 1° Medio"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+            </div>
+
+            <div>
+              <label for="delivery-date" class="block text-xs font-semibold text-slate-600 mb-1.5">Fecha de Entrega Programada *</label>
+              <select id="delivery-date" onchange="onDeliveryStageChange()"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+                <option value="lote1">1° Pedidos — Fines de Enero</option>
+                <option value="lote2">2° Pedidos — Fines de Febrero a principios de Marzo</option>
+                <option value="rezagados">3° Rezagados — Después del 15 de Marzo</option>
+              </select>
+            </div>
+
+            <!-- Observaciones Generales del Pedido (Con opciones de Bordado, Detalles de Confección y Nota de Cotización Aparte) -->
+            <div class="sm:col-span-2 pt-2 border-t border-slate-100 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-1">
+                <label for="order-notes" class="block text-xs font-bold text-slate-700">
+                  <i class="fa-solid fa-pen-ruler text-brand-600 mr-1"></i>
+                  Observaciones Generales del Pedido (Bordado, detalles u otro requerimiento)
+                </label>
+                <span class="text-[11px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/80">
+                  Bordados y extras se confirman / cotizan aparte
+                </span>
               </div>
-            </div>
 
-            <!-- Texto Libre si elige 'Otro establecimiento' -->
-            <div id="custom-school-wrapper" class="hidden sm:col-span-2">
-              <label for="custom-school-name" class="block text-xs font-semibold text-brand-700 mb-1.5">Nombre del Otro Establecimiento / Particular</label>
-              <input type="text" id="custom-school-name" placeholder="Escribe el nombre del colegio, jardín o empresa..." oninput="syncItemSchoolDefault()"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-brand-300 bg-brand-50/30 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-            </div>
+              <!-- Accesos rápidos de requerimientos textiles frecuentes -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 no-print">
+                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-amber-50/50 cursor-pointer transition text-xs">
+                  <input type="checkbox" id="req-bordado" onchange="toggleExtraReqFields()" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                  <span class="font-semibold text-slate-700">Bordado (Insignia / Nombre)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-amber-50/50 cursor-pointer transition text-xs">
+                  <input type="checkbox" id="req-ajustes" onchange="toggleExtraReqFields()" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                  <span class="font-semibold text-slate-700">Ajuste de largo / Basta / Puño</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-amber-50/50 cursor-pointer transition text-xs">
+                  <input type="checkbox" id="req-otro" onchange="toggleExtraReqFields()" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
+                  <span class="font-semibold text-slate-700">Otro requerimiento especial</span>
+                </label>
+              </div>
 
-            <!-- Observaciones Generales del Pedido -->
-            <div class="sm:col-span-2">
-              <label for="order-notes" class="block text-xs font-semibold text-slate-600 mb-1.5">Observaciones Generales del Pedido</label>
-              <input type="text" id="order-notes" placeholder="Ej. Insignia bordada lado izquierdo, entrega en taller o retiro acordado..."
-                class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
+              <!-- Detalle específico de Bordado (se muestra al marcar Bordado) -->
+              <div id="bordado-detail-box" class="hidden p-3 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2 no-print">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label for="bordado-type" class="block text-[11px] font-semibold text-amber-950 mb-1">Tipo y Ubicación del Bordado</label>
+                    <select id="bordado-type" class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs font-medium text-slate-800 focus:outline-none focus:border-amber-600">
+                      <option value="Insignia colegio pecho izquierdo">Insignia colegio (pecho izquierdo)</option>
+                      <option value="Nombre bordado alumno(a)">Nombre bordado alumno(a)</option>
+                      <option value="Insignia colegio + Nombre alumno(a)">Insignia colegio + Nombre alumno(a)</option>
+                      <option value="Otro bordado personalizado">Otro bordado personalizado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="bordado-text" class="block text-[11px] font-semibold text-amber-950 mb-1">Texto a bordar / Color de hilo (Opcional)</label>
+                    <input type="text" id="bordado-text" placeholder="Ej. Sofía Muñoz — Hilo blanco / dorado"
+                      class="w-full px-3 py-2 rounded-xl border border-amber-300 bg-white text-xs focus:outline-none focus:border-amber-600">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campo abierto para detalles u otro requerimiento -->
+              <textarea id="order-notes" rows="2" placeholder="Indica aquí detalles de confección, nombre a bordar, largo de manga/pantalón, coordinación de retiro o cualquier otro requerimiento..."
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition"></textarea>
+
+              <p class="text-[11px] text-slate-500 leading-relaxed flex items-start gap-1.5">
+                <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+                <span><strong>Nota importante:</strong> Los bordados personalizados (insignias o nombres), modificaciones especiales de moldería u otros requerimientos adicionales se evalúan y cotizan <strong>aparte</strong> directamente con el taller al recibir tu pedido.</span>
+              </p>
             </div>
           </div>
         </section>
 
-        <!-- 2. CONSTRUCTOR DE PRENDAS (9 ÍTEMS + 13 TALLAS + FALDA A MEDIDA) -->
+        <!-- 2. CONSTRUCTOR DE PRENDAS -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2 class="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2.5">
@@ -372,25 +593,28 @@
               Agregar Prendas al Pedido
             </h2>
             <span id="size-tier-indicator" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-brand-700 border border-blue-100">
-              Tarifa Infantil / Juvenil (3–16)
+              Tramo Talla 10–14
             </span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-            <!-- Catálogo de 9 Prendas -->
+            <!-- Catálogo de Prendas -->
             <div class="sm:col-span-7">
               <label for="item-product" class="block text-xs font-semibold text-slate-600 mb-1.5">Prenda (Catálogo Textiles Rosita)</label>
               <select id="item-product" onchange="onProductOrSizeChange()"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
-                <option value="buzo">A. Buzo (Polerón y Pantalón)</option>
-                <option value="buzo_completo">B. Buzo Completo (Pantalón, Polerón y Polera Deporte)</option>
-                <option value="polera_pique">C. Polera Piqué</option>
-                <option value="polera_nina_nino">D. Polera de Niña o Niño</option>
-                <option value="falda_talla">E. Falda por Talla</option>
-                <option value="falda_medida">F. Falda a Medida</option>
-                <option value="pantalon">G. Pantalón</option>
-                <option value="poleron">H. Polerón</option>
-                <option value="poleron_polar">I. Polerón de Polar</option>
+                <option value="buzo_algodon">1. Buzo Algodón (Polerón y Pantalón)</option>
+                <option value="buzo_fantasia">2. Buzo Fantasía (Polerón y Pantalón)</option>
+                <option value="buzo_completo_algodon">3. Buzo Completo con Polera (Algodón)</option>
+                <option value="buzo_completo_fantasia">4. Buzo Completo con Polera (Fantasía)</option>
+                <option value="polera_deporte">5. Polera Deporte</option>
+                <option value="pantalon_solo">6. Pantalón Solo</option>
+                <option value="poleron_solo">7. Polerón Solo</option>
+                <option value="polera_pique">8. Polera Piqué</option>
+                <option value="falda_talla">9. Falda por Talla</option>
+                <option value="falda_medida">10. Falda a Medida</option>
+                <option value="poleron_polar">11. Polerón de Polar</option>
+                <option value="cotona_delantal">12. Cotona o Delantal</option>
               </select>
             </div>
 
@@ -422,7 +646,7 @@
               </select>
             </div>
 
-            <!-- Campos Dinámicos de Medidas (Solo visible si elige '6. Falda a Medida' o talla 'A medida') -->
+            <!-- Campos Dinámicos de Medidas (Falda a Medida) -->
             <div id="custom-measurements-box" class="hidden sm:col-span-12 p-4 rounded-xl bg-amber-50/90 border border-amber-200 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
@@ -450,7 +674,7 @@
               </div>
             </div>
 
-            <!-- Colegio asociado a la línea (por defecto toma el principal, editable si mezcla hermanos de distintos colegios) -->
+            <!-- Colegio asociado a la línea -->
             <div class="sm:col-span-5">
               <label for="item-school" class="block text-xs font-semibold text-slate-600 mb-1.5">Colegio de esta prenda</label>
               <select id="item-school"
@@ -473,16 +697,16 @@
                 class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-center focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition">
             </div>
 
-            <!-- Precio Unitario CLP (Bloqueado para clientes) -->
+            <!-- Precio Unitario CLP (Automático según lista oficial y bloqueado para clientes) -->
             <div class="sm:col-span-4">
               <label for="item-price" class="block text-xs font-semibold text-slate-600 mb-1.5 flex items-center justify-between">
                 <span>Precio Unit. (CLP)</span>
-                <span class="text-[10px] font-semibold text-amber-700 inline-flex items-center gap-1"><i class="fa-solid fa-lock"></i> Bloqueado</span>
+                <span class="text-[10px] font-semibold text-emerald-700 inline-flex items-center gap-1"><i class="fa-solid fa-tag"></i> Lista Oficial</span>
               </label>
               <div class="relative pointer-events-none select-none">
-                <input type="text" id="item-price" value="Precio por definir" readonly disabled tabindex="-1"
-                  title="Campo bloqueado: precio por definir en taller"
-                  class="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-xs sm:text-sm font-semibold text-slate-500 italic cursor-not-allowed select-none">
+                <input type="text" id="item-price" value="$25.900" readonly disabled tabindex="-1"
+                  title="Precio oficial según prenda y talla"
+                  class="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-xs sm:text-sm font-bold text-slate-800 cursor-not-allowed select-none">
                 <i class="fa-solid fa-lock absolute right-3 top-3 text-slate-400 text-xs"></i>
               </div>
             </div>
@@ -491,7 +715,7 @@
           <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <p class="text-xs text-slate-500">
               <i class="fa-solid fa-circle-info text-brand-500 mr-1"></i>
-              El precio unitario está bloqueado y queda como <strong>Precio por definir</strong> hasta confirmar con el taller.
+              Precios oficiales <strong>Temporada 2026–2027</strong> cargados directamente (tramos <strong>3–4, 6–8, 10–12, 14–16, S–M, L–XL, XXL</strong>).
             </p>
             <button onclick="addItemToCart()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 active:scale-[0.99] text-white font-semibold text-sm px-5 py-3 rounded-xl shadow-sm shadow-brand-600/20 transition cursor-pointer">
               <i class="fa-solid fa-plus"></i>
@@ -516,7 +740,7 @@
               <i class="fa-solid fa-shirt text-xl"></i>
             </div>
             <p class="text-sm font-semibold text-slate-700">El pedido aún no tiene prendas agregadas</p>
-            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Selecciona una prenda del catálogo (Buzo, Polera Piqué, Falda a medida, Polerón de Polar, etc.) y agrégala arriba.</p>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Selecciona una prenda del catálogo (Buzo, Polera Deporte, Pantalón, Polerón, Falda a medida, etc.) y agrégala arriba.</p>
           </div>
 
           <!-- Tabla de Líneas -->
@@ -540,7 +764,7 @@
 
       </div>
 
-      <!-- COLUMNA DERECHA (5 cols): Resumen Financiero + Simulador Abono + Planificación Lean + Checklist SOP + Exportar -->
+      <!-- COLUMNA DERECHA (5 cols): Resumen Financiero + Planificación Lean + Comprobante 50% + Exportar -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
 
         <!-- RESUMEN FINANCIERO EN CLP ($) Y SIMULADOR DE ABONO -->
@@ -556,7 +780,7 @@
             </label>
           </div>
 
-          <!-- Control de Descuento por Volumen (Automático o Manual) -->
+          <!-- Control de Descuento por Volumen -->
           <div class="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2 no-print">
             <div class="flex items-center gap-2">
               <input type="checkbox" id="toggle-discount" checked onchange="recalculateAll()" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500">
@@ -598,7 +822,7 @@
             <div class="pt-3 border-t-2 border-slate-900 flex items-baseline justify-between">
               <div>
                 <span class="font-display font-bold text-base text-slate-900">TOTAL FINAL</span>
-                <p id="lbl-tax-status" class="text-[11px] text-slate-500">IVA incluido (Pesos Chilenos)</p>
+                <p id="lbl-tax-status" class="text-[11px] text-slate-500">IVA 19% incluido (Pesos Chilenos)</p>
               </div>
               <span id="sum-total" class="font-display font-extrabold text-2xl sm:text-3xl text-brand-700">$0</span>
             </div>
@@ -630,7 +854,7 @@
               Planificación Lean de Taller
             </h2>
             <span id="lean-status-pill" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Flujo Estándar
+              1° Pedidos
             </span>
           </div>
 
@@ -647,7 +871,7 @@
             </select>
           </div>
 
-          <!-- Alerta Temporada Alta (Dic - Abr) -->
+          <!-- Alerta Campaña Escolar -->
           <div id="high-season-banner" class="hidden mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
             <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-amber-900">
@@ -656,21 +880,12 @@
             </div>
           </div>
 
-          <!-- Alerta Capacidad Semanal (> 22.5 unidades) -->
+          <!-- Alerta Capacidad Semanal -->
           <div id="weekly-capacity-banner" class="hidden mb-3 p-3 rounded-xl bg-indigo-50 border border-indigo-200 flex items-start gap-2.5">
             <i class="fa-solid fa-layer-group text-indigo-600 mt-0.5 text-sm"></i>
             <div class="text-xs text-indigo-900">
               <p class="font-bold">Pedido supera capacidad semanal (5 días)</p>
               <p class="mt-0.5 text-indigo-800">Planificar corte por lotes dentro de la ventana de campaña comprometida.</p>
-            </div>
-          </div>
-
-          <!-- Alerta Fecha Requerida vs Estimada -->
-          <div id="deadline-warning-banner" class="hidden mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 no-print">
-            <i class="fa-solid fa-clock text-rose-600 mt-0.5 text-sm"></i>
-            <div class="text-xs text-rose-900">
-              <p class="font-bold">Fecha requerida anterior al ciclo comprometido</p>
-              <p id="deadline-warning-text" class="mt-0.5 text-rose-800"></p>
             </div>
           </div>
 
@@ -685,7 +900,7 @@
             </div>
             <div class="flex justify-between text-xs">
               <span class="text-slate-500">Ciclo asignado:</span>
-              <span id="op-wave-badge" class="font-bold text-amber-800">Pedidos 1 (Nov) → Fines de Enero</span>
+              <span id="op-wave-badge" class="font-bold text-amber-800">1° Pedidos → Fines de Enero</span>
             </div>
             <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
               <div>
@@ -697,57 +912,100 @@
           </div>
         </section>
 
-        <!-- CHECKLIST SOP PRE-PRODUCCIÓN -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
+        <!-- CONFIRMACIÓN DE ABONO 50% (OBLIGATORIO ANTES DE CONFIRMAR COMPRA) + CHECKLIST SOP -->
+        <section class="bg-white rounded-2xl shadow-sm border border-amber-300/90 p-5 sm:p-6 no-print">
           <div class="flex items-center justify-between mb-3">
             <h2 class="font-display font-bold text-sm text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-clipboard-check text-emerald-600"></i>
-              Checklist SOP Pre-Producción
+              <i class="fa-solid fa-money-check-dollar text-amber-600"></i>
+              Confirmación de Abono 50% (Obligatorio)
             </h2>
-            <span id="checklist-progress" class="text-xs font-bold text-slate-500">0/4 listos</span>
+            <span id="receipt-status-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">Pendiente</span>
           </div>
 
-          <div class="space-y-2 text-xs">
-            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
-              <span class="text-slate-700 font-medium">Verificar stock de tela por colegio (franela, piqué, polar, casimir)</span>
+          <!-- Datos bancarios visibles para transferir el 50% -->
+          <div class="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-slate-700 space-y-1 mb-3">
+            <p class="font-bold text-amber-950 flex items-center justify-between">
+              <span>Monto a Transferir (Abono 50%):</span>
+              <span id="bank-deposit-highlight" class="text-brand-800 font-extrabold text-sm">$0</span>
+            </p>
+            <p id="display-bank-info" class="text-[11px] text-slate-700 leading-relaxed">
+              Solicita o verifica los datos de transferencia de Textiles Rosita al +56 9 8951 0679.
+            </p>
+          </div>
+
+          <!-- Adjuntar comprobante y casilla obligatoria antes de confirmar compra -->
+          <div class="space-y-3 text-xs">
+            <div>
+              <label for="transfer-receipt-file" class="block font-semibold text-slate-700 mb-1">
+                Adjuntar Comprobante de Transferencia 50% (Imagen o PDF) *
+              </label>
+              <input type="file" id="transfer-receipt-file" accept="image/*,.pdf" onchange="handleReceiptUpload(event)"
+                class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 border border-slate-200 rounded-xl p-1.5 bg-slate-50 cursor-pointer">
+              <p id="receipt-file-name" class="text-[11px] text-slate-500 mt-1">Ningún archivo seleccionado aún.</p>
+            </div>
+
+            <label class="flex items-start gap-2.5 p-3 rounded-xl border border-amber-200 bg-amber-50/40 hover:bg-amber-50 cursor-pointer transition">
+              <input type="checkbox" id="confirm-deposit-checkbox" onchange="updateReceiptVerificationState()" class="w-4 h-4 mt-0.5 rounded text-emerald-600 focus:ring-emerald-500">
+              <span class="text-slate-800 font-medium leading-snug">
+                Confirmo que adjuntaré / enviaré el <strong>comprobante de transferencia del 50%</strong> al WhatsApp <strong>+56 9 8951 0679</strong> para validar e iniciar la confección de mi pedido.
+              </span>
             </label>
-            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
-              <span class="text-slate-700 font-medium">Confirmar tallas (3–XXL) y medidas de falda (cintura/cadera/largo)</span>
-            </label>
-            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
-              <span class="text-slate-700 font-medium">Revisar matriz insignia / bordado del establecimiento</span>
-            </label>
-            <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition">
-              <input type="checkbox" class="sop-check w-4 h-4 rounded text-brand-600 focus:ring-brand-500" onchange="updateChecklistCount()">
-              <span class="text-slate-700 font-medium">Confirmar abono inicial recibido para iniciar corte</span>
-            </label>
+          </div>
+
+          <!-- Checklist SOP Taller -->
+          <div class="mt-4 pt-3 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Checklist SOP Taller</span>
+              <span id="checklist-progress" class="text-[11px] font-bold text-slate-500">0/4 listos</span>
+            </div>
+            <div class="space-y-1.5 text-xs">
+              <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" class="sop-check w-3.5 h-3.5 rounded text-brand-600" onchange="updateChecklistCount()">
+                <span class="text-slate-600">Stock de tela (algodón, fantasía, piqué, polar)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" class="sop-check w-3.5 h-3.5 rounded text-brand-600" onchange="updateChecklistCount()">
+                <span class="text-slate-600">Tallas (3–XXL) y medidas de falda verificadas</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" class="sop-check w-3.5 h-3.5 rounded text-brand-600" onchange="updateChecklistCount()">
+                <span class="text-slate-600">Matriz insignia / bordado del colegio</span>
+              </label>
+              <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" class="sop-check w-3.5 h-3.5 rounded text-brand-600" onchange="updateChecklistCount()">
+                <span class="text-slate-600">Comprobante abono 50% verificado</span>
+              </label>
+            </div>
           </div>
         </section>
 
         <!-- BOTONES DE EXPORTACIÓN Y CIERRE -->
         <div class="space-y-3 no-print">
-          <button onclick="sendWhatsAppDirect()" class="w-full inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm px-4 py-3.5 rounded-2xl shadow-md shadow-emerald-600/25 transition cursor-pointer">
+          <button id="btn-send-whatsapp" onclick="sendWhatsAppDirect()" class="w-full inline-flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm px-4 py-3.5 rounded-2xl shadow-md shadow-emerald-600/25 transition cursor-pointer">
             <i class="fa-brands fa-whatsapp text-xl"></i>
-            <span>Enviar Pedido por WhatsApp (+56 9 8951 0679)</span>
+            <span>Confirmar Pedido y Enviar Comprobante 50%</span>
           </button>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button onclick="copyWhatsAppQuote()" class="w-full inline-flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 active:scale-[0.99] text-emerald-900 border border-emerald-200 font-semibold text-xs sm:text-sm px-4 py-3 rounded-2xl transition cursor-pointer">
-              <i class="fa-regular fa-copy text-base"></i>
-              <span>Copiar Texto para WhatsApp</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button onclick="saveOrderToRegistry(true)" class="w-full inline-flex items-center justify-center gap-1.5 bg-amber-50 hover:bg-amber-100 active:scale-[0.99] text-amber-950 border border-amber-300 font-semibold text-xs px-3 py-3 rounded-2xl transition cursor-pointer">
+              <i class="fa-solid fa-bookmark text-amber-700"></i>
+              <span>Guardar en Registro</span>
             </button>
 
-            <button onclick="printQuote()" class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold text-xs sm:text-sm px-4 py-3 rounded-2xl shadow-sm transition cursor-pointer">
-              <i class="fa-solid fa-file-pdf text-base"></i>
-              <span>Imprimir / Guardar PDF</span>
+            <button onclick="copyWhatsAppQuote()" class="w-full inline-flex items-center justify-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 active:scale-[0.99] text-emerald-900 border border-emerald-200 font-semibold text-xs px-3 py-3 rounded-2xl transition cursor-pointer">
+              <i class="fa-regular fa-copy text-sm"></i>
+              <span>Copiar WhatsApp</span>
+            </button>
+
+            <button onclick="printQuote()" class="w-full inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-semibold text-xs px-3 py-3 rounded-2xl shadow-sm transition cursor-pointer">
+              <i class="fa-solid fa-file-pdf text-sm"></i>
+              <span>Imprimir / PDF</span>
             </button>
           </div>
         </div>
 
       </div>
+    </div>
     </div>
 
     <!-- Pie de página formal para Impresión -->
@@ -757,7 +1015,7 @@
         <p>María Pinto • Melipilla • Bollenar — WhatsApp Pedidos: +56 9 8951 0679</p>
       </div>
       <div class="text-right">
-        <p>Abono requerido para iniciar confección • Saldo contra entrega.</p>
+        <p>Abono 50% requerido para iniciar confección • Saldo contra entrega.</p>
       </div>
     </div>
 
@@ -774,37 +1032,92 @@
   <!-- JAVASCRIPT -->
   <script>
     // =========================================================================
-    // 1. CONFIGURACIÓN, CATÁLOGO DE 9 PRENDAS Y PERSISTENCIA (LOCALSTORAGE)
+    // 1. CONFIGURACIÓN, CATÁLOGO OFICIAL TEMPORADA 2026-2027 Y PERSISTENCIA
     // =========================================================================
-    const STORAGE_KEY = 'textiles_rosita_settings_v4_locked_por_definir';
+    const STORAGE_KEY = 'textiles_rosita_admin_catalog_2026_2027_v6';
     const CORRELATIVE_KEY = 'textiles_rosita_correlative_seq_v1';
     const LOGO_STORAGE_KEY = 'textiles_rosita_logo_data_v1';
+    const ORDERS_REGISTRY_KEY = 'textiles_rosita_orders_registry_v1';
     const TEXTILES_ROSITA_WHATSAPP = '56989510679';
+    const GOOGLE_SHEET_ID = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
+    const GOOGLE_SHEET_NAME = 'precios temporada 2026_2027';
 
-    const CATALOG_PRODUCTS = [
-      { id: 'buzo', name: 'A. Buzo (Polerón y Pantalón)' },
-      { id: 'buzo_completo', name: 'B. Buzo Completo (Pantalón, Polerón y Polera Deporte)' },
-      { id: 'polera_pique', name: 'C. Polera Piqué' },
-      { id: 'polera_nina_nino', name: 'D. Polera de Niña o Niño' },
-      { id: 'falda_talla', name: 'E. Falda por Talla' },
-      { id: 'falda_medida', name: 'F. Falda a Medida' },
-      { id: 'pantalon', name: 'G. Pantalón' },
-      { id: 'poleron', name: 'H. Polerón' },
-      { id: 'poleron_polar', name: 'I. Polerón de Polar' }
+    // Tramos exactos de la planilla "precios temporada 2026_2027":
+    // 3-4 | 6-8 | 10-12 | 14-16 | S-M | L-XL | XXL
+    const SIZE_TIERS = ['3_4', '6_8', '10_12', '14_16', 's_m', 'l_xl', 'xxl'];
+
+    const DEFAULT_CATALOG = [
+      {
+        id: 'buzo_algodon',
+        name: '1. Buzo Algodón (Polerón y Pantalón)',
+        prices: { '3_4': 22900, '6_8': 24900, '10_12': 25900, '14_16': 26800, 's_m': 30800, 'l_xl': 35900, 'xxl': 36900 }
+      },
+      {
+        id: 'buzo_fantasia',
+        name: '2. Buzo Fantasía (Polerón y Pantalón)',
+        prices: { '3_4': 20900, '6_8': 22800, '10_12': 23900, '14_16': 24900, 's_m': 26800, 'l_xl': 30900, 'xxl': 34900 }
+      },
+      {
+        id: 'buzo_completo_algodon',
+        name: '3. Buzo Completo con Polera (Algodón)',
+        prices: { '3_4': 30700, '6_8': 33700, '10_12': 35700, '14_16': 37600, 's_m': 42600, 'l_xl': 48700, 'xxl': 50700 }
+      },
+      {
+        id: 'buzo_completo_fantasia',
+        name: '4. Buzo Completo con Polera (Fantasía)',
+        prices: { '3_4': 28700, '6_8': 31600, '10_12': 33700, '14_16': 35700, 's_m': 38600, 'l_xl': 42600, 'xxl': 48700 }
+      },
+      {
+        id: 'polera_deporte',
+        name: '5. Polera Deporte',
+        prices: { '3_4': 7800, '6_8': 8800, '10_12': 9800, '14_16': 10800, 's_m': 11800, 'l_xl': 12800, 'xxl': 13800 }
+      },
+      {
+        id: 'pantalon_solo',
+        name: '6. Pantalón Solo',
+        prices: { '3_4': 12800, '6_8': 13500, '10_12': 14000, '14_16': 15800, 's_m': 16800, 'l_xl': 17800, 'xxl': 18000 }
+      },
+      {
+        id: 'poleron_solo',
+        name: '7. Polerón Solo',
+        prices: { '3_4': 13800, '6_8': 14500, '10_12': 15800, '14_16': 16800, 's_m': 17800, 'l_xl': 18800, 'xxl': 19800 }
+      },
+      {
+        id: 'polera_pique',
+        name: '8. Polera Piqué',
+        prices: { '3_4': 8600, '6_8': 8900, '10_12': 9900, '14_16': 10400, 's_m': 11200, 'l_xl': 12000, 'xxl': 14000 }
+      },
+      {
+        id: 'falda_talla',
+        name: '9. Falda por Talla',
+        prices: { '3_4': 12800, '6_8': 14800, '10_12': 16800, '14_16': 18800, 's_m': 20900, 'l_xl': 22900, 'xxl': 24900 }
+      },
+      {
+        id: 'falda_medida',
+        name: '10. Falda a Medida',
+        prices: { '3_4': 12800, '6_8': 14800, '10_12': 16800, '14_16': 18800, 's_m': 20900, 'l_xl': 22900, 'xxl': 24900 }
+      },
+      {
+        id: 'poleron_polar',
+        name: '11. Polerón de Polar',
+        prices: { '3_4': 12000, '6_8': 13000, '10_12': 14000, '14_16': 15000, 's_m': 16000, 'l_xl': 18000, 'xxl': 20100 }
+      },
+      {
+        id: 'cotona_delantal',
+        name: '12. Cotona o Delantal',
+        prices: { '3_4': 8000, '6_8': 9000, '10_12': 10000, '14_16': 12000, 's_m': 14000, 'l_xl': 18000, 'xxl': 22100 }
+      }
     ];
 
-    const ADULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
-
-    function createDefaultPrices() {
-      const prices = {};
-      CATALOG_PRODUCTS.forEach(p => {
-        prices[p.id] = { child: null, adult: null };
-      });
-      return prices;
-    }
-
     const DEFAULT_SETTINGS = {
-      prices: createDefaultPrices(),
+      adminPin: '1234',
+      catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+      bankInfo: {
+        bankName: 'BancoEstado — CuentaRUT / Vista',
+        accountNumber: 'Consultar / Confirmar al +56 9 8951 0679',
+        holderName: 'Textiles Rosita',
+        email: ''
+      },
       dailyCapacity: 4.5,
       minDays: 3,
       highSeasonExtra: 2,
@@ -814,6 +1127,33 @@
 
     let settings = loadSettings();
     let cart = [];
+    let isAdminAuthenticated = false;
+    let uploadedReceiptFileName = '';
+
+    function mapSizeToTierKey(sizeValue) {
+      const s = String(sizeValue).trim().toUpperCase();
+      if (s === '3' || s === '4') return '3_4';
+      if (s === '6' || s === '8') return '6_8';
+      if (s === '10' || s === '12') return '10_12';
+      if (s === '14' || s === '16') return '14_16';
+      if (s === 'S' || s === 'M') return 's_m';
+      if (s === 'L' || s === 'XL') return 'l_xl';
+      if (s === 'XXL') return 'xxl';
+      return null;
+    }
+
+    function getTierHumanName(tierKey) {
+      const labels = {
+        '3_4': 'Tramo Talla 3–4',
+        '6_8': 'Tramo Talla 6–8',
+        '10_12': 'Tramo Talla 10–12',
+        '14_16': 'Tramo Talla 14–16',
+        's_m': 'Tramo Talla S–M',
+        'l_xl': 'Tramo Talla L–XL',
+        'xxl': 'Tramo Talla XXL'
+      };
+      return labels[tierKey] || 'Confección a Medida';
+    }
 
     function loadSettings() {
       try {
@@ -823,7 +1163,10 @@
         return {
           ...JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
           ...parsed,
-          prices: { ...createDefaultPrices(), ...(parsed.prices || {}) }
+          catalog: Array.isArray(parsed.catalog) && parsed.catalog.length > 0
+            ? parsed.catalog
+            : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+          bankInfo: { ...DEFAULT_SETTINGS.bankInfo, ...(parsed.bankInfo || {}) }
         };
       } catch (e) {
         return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -836,6 +1179,184 @@
       } catch (e) {
         console.warn('No se pudo guardar en localStorage:', e);
       }
+    }
+
+    // =========================================================================
+    // 1B. PERFIL ADMINISTRADOR (PIN, AGREGAR, MODIFICAR Y ELIMINAR PRENDAS)
+    // =========================================================================
+    function openAdminModal() {
+      if (isAdminAuthenticated) {
+        toggleConfigPanel();
+        return;
+      }
+      const modal = document.getElementById('admin-login-modal');
+      const input = document.getElementById('admin-pin-input');
+      if (modal) modal.classList.remove('hidden');
+      if (input) {
+        input.value = '';
+        setTimeout(() => input.focus(), 50);
+      }
+    }
+
+    function closeAdminLoginModal() {
+      const modal = document.getElementById('admin-login-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function verifyAdminPin() {
+      const input = document.getElementById('admin-pin-input');
+      const entered = (input?.value || '').trim();
+      if (entered === String(settings.adminPin || '1234')) {
+        isAdminAuthenticated = true;
+        closeAdminLoginModal();
+        const btnLabel = document.getElementById('btn-admin-label');
+        if (btnLabel) btnLabel.textContent = 'Panel Administrador';
+        toggleConfigPanel(true);
+        showToast('Acceso concedido', 'Bienvenido al Perfil Administrador de Textiles Rosita.');
+      } else {
+        showToast('PIN incorrecto', 'Verifica la clave de administrador e inténtalo de nuevo.', 'error');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdminAuthenticated = false;
+      toggleConfigPanel(false);
+      const btnLabel = document.getElementById('btn-admin-label');
+      if (btnLabel) btnLabel.textContent = 'Modo Administrador';
+      showToast('Sesión cerrada', 'El perfil de administrador ha sido bloqueado.');
+    }
+
+    function toggleConfigPanel(forceState) {
+      const panel = document.getElementById('config-panel');
+      if (!panel) return;
+      if (typeof forceState === 'boolean') {
+        panel.classList.toggle('hidden', !forceState);
+      } else {
+        panel.classList.toggle('hidden');
+      }
+    }
+
+    function renderProductDropdown() {
+      const select = document.getElementById('item-product');
+      if (!select) return;
+      const previousValue = select.value;
+      select.innerHTML = settings.catalog.map(prod =>
+        `<option value="${prod.id}">${prod.name}</option>`
+      ).join('');
+      if (settings.catalog.some(p => p.id === previousValue)) {
+        select.value = previousValue;
+      }
+    }
+
+    function adminAddProduct() {
+      if (!isAdminAuthenticated) return;
+      const nameInput = document.getElementById('new-prod-name');
+      const name = (nameInput?.value || '').trim();
+      if (!name) {
+        showToast('Nombre requerido', 'Escribe el nombre de la prenda antes de agregarla.', 'error');
+        return;
+      }
+
+      const prices = {};
+      SIZE_TIERS.forEach(tier => {
+        const val = document.getElementById(`new-p-${tier}`)?.value;
+        prices[tier] = (val === '' || val === undefined || val === null) ? null : Math.max(0, Number(val) || 0);
+      });
+
+      const newId = 'prod_' + Date.now();
+      settings.catalog.push({ id: newId, name, prices });
+      saveSettings();
+
+      if (nameInput) nameInput.value = '';
+      SIZE_TIERS.forEach(tier => {
+        const el = document.getElementById(`new-p-${tier}`);
+        if (el) el.value = '';
+      });
+
+      renderConfigTable();
+      renderProductDropdown();
+      const select = document.getElementById('item-product');
+      if (select) select.value = newId;
+      onProductOrSizeChange();
+      showToast('Prenda agregada', `"${name}" se añadió al catálogo oficial.`);
+    }
+
+    function adminUpdateProductName(prodId, newName) {
+      if (!isAdminAuthenticated) return;
+      const clean = (newName || '').trim();
+      if (!clean) return;
+      const prod = settings.catalog.find(p => p.id === prodId);
+      if (prod) {
+        prod.name = clean;
+        saveSettings();
+        renderProductDropdown();
+        showToast('Prenda actualizada', 'El nombre se guardó correctamente.');
+      }
+    }
+
+    function adminUpdateTierPrice(prodId, tierKey, rawVal) {
+      if (!isAdminAuthenticated) return;
+      const prod = settings.catalog.find(p => p.id === prodId);
+      if (!prod) return;
+      if (!prod.prices) prod.prices = {};
+      prod.prices[tierKey] = rawVal === '' ? null : Math.max(0, Number(rawVal) || 0);
+      saveSettings();
+      onProductOrSizeChange();
+      showToast('Precio actualizado', 'La tarifa se guardó en el catálogo.');
+    }
+
+    function adminDeleteProduct(prodId) {
+      if (!isAdminAuthenticated) return;
+      if (settings.catalog.length <= 1) {
+        showToast('Acción no permitida', 'Debe existir al menos una prenda en el catálogo.', 'error');
+        return;
+      }
+      const prod = settings.catalog.find(p => p.id === prodId);
+      settings.catalog = settings.catalog.filter(p => p.id !== prodId);
+      saveSettings();
+      renderConfigTable();
+      renderProductDropdown();
+      onProductOrSizeChange();
+      showToast('Prenda eliminada', `Se quitó "${prod ? prod.name : 'la prenda'}" del catálogo.`);
+    }
+
+    function updateBankFromUI() {
+      if (!isAdminAuthenticated) return;
+      settings.bankInfo = {
+        bankName: document.getElementById('cfg-bank-name')?.value || '',
+        accountNumber: document.getElementById('cfg-bank-account')?.value || '',
+        holderName: document.getElementById('cfg-bank-holder')?.value || '',
+        email: document.getElementById('cfg-bank-email')?.value || ''
+      };
+      saveSettings();
+      renderBankInfoDisplay();
+      showToast('Datos bancarios guardados', 'Actualizados para el comprobante de transferencia del 50%.');
+    }
+
+    function updateAdminPinFromUI() {
+      if (!isAdminAuthenticated) return;
+      const newPin = (document.getElementById('cfg-admin-pin')?.value || '').trim();
+      if (newPin.length < 4) {
+        showToast('PIN muy corto', 'Usa al menos 4 caracteres o números.', 'error');
+        return;
+      }
+      settings.adminPin = newPin;
+      saveSettings();
+      showToast('PIN actualizado', 'La nueva clave de administrador quedó guardada.');
+    }
+
+    function renderBankInfoDisplay() {
+      const box = document.getElementById('display-bank-info');
+      if (!box) return;
+      const b = settings.bankInfo || DEFAULT_SETTINGS.bankInfo;
+      const parts = [];
+      if (b.bankName) parts.push(`<strong>${b.bankName}</strong>`);
+      if (b.accountNumber) parts.push(`Cuenta: <strong>${b.accountNumber}</strong>`);
+      if (b.holderName) parts.push(`Titular: ${b.holderName}`);
+      if (b.email) parts.push(`Correo: ${b.email}`);
+      box.innerHTML = parts.length > 0
+        ? parts.join(' • ')
+        : 'Solicita o verifica los datos de transferencia de Textiles Rosita al +56 9 8951 0679.';
     }
 
     function getCorrelativeSeq() {
@@ -915,13 +1436,115 @@
 
       refreshFolioDisplay();
       loadSavedLogo();
+      renderProductDropdown();
       renderConfigTable();
       syncConfigInputs();
+      renderBankInfoDisplay();
       onMainSchoolChange();
       onProductOrSizeChange();
       renderCart();
       recalculateAll();
+      updateReceiptVerificationState();
       updateChecklistCount();
+      renderOrdersRegistry();
+      syncFromGoogleSheet(false);
+    }
+
+    async function syncFromGoogleSheet(manualTrigger = false) {
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(GOOGLE_SHEET_NAME)}`;
+      try {
+        const response = await fetch(csvUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Sin acceso público o respuesta no válida');
+        const csvText = await response.text();
+        if (!csvText || csvText.trim().startsWith('<!DOCTYPE')) {
+          throw new Error('La planilla requiere permiso "Cualquier persona con el enlace puede ver"');
+        }
+
+        const rows = csvText
+          .split(/\r?\n/)
+          .map(line =>
+            line
+              .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+              .map(cell => cell.replace(/^"|"$/g, '').trim())
+          );
+
+        const productColumnMap = [
+          { colIdx: 2, prodId: 'buzo_algodon' },
+          { colIdx: 3, prodId: 'buzo_fantasia' },
+          { colIdx: 4, prodId: 'polera_deporte' },
+          { colIdx: 5, prodId: 'pantalon_solo' },
+          { colIdx: 6, prodId: 'poleron_solo' },
+          { colIdx: 7, prodId: 'buzo_completo_fantasia' },
+          { colIdx: 8, prodId: 'buzo_completo_algodon' }
+        ];
+
+        const lowerBlockMap = [
+          { colIdx: 2, prodId: 'polera_pique' },
+          { colIdx: 3, prodId: 'falda_talla' },
+          { colIdx: 4, prodId: 'poleron_polar' },
+          { colIdx: 5, prodId: 'cotona_delantal' }
+        ];
+
+        let inLowerBlock = false;
+        let updatedCells = 0;
+
+        rows.forEach(cols => {
+          const joined = cols.join(' ').toLowerCase();
+          if (joined.includes('polera pique') || joined.includes('cotona')) {
+            inLowerBlock = true;
+            return;
+          }
+
+          const sizeCell = (cols[1] || '').toLowerCase().replace(/\s+/g, '');
+          let tierKey = null;
+          if (sizeCell === '3-4') tierKey = '3_4';
+          else if (sizeCell === '6-8') tierKey = '6_8';
+          else if (sizeCell === '10-12') tierKey = '10_12';
+          else if (sizeCell === '14-16') tierKey = '14_16';
+          else if (sizeCell === 's-m') tierKey = 's_m';
+          else if (sizeCell === 'l-xl') tierKey = 'l_xl';
+          else if (sizeCell === 'xxl') tierKey = 'xxl';
+
+          if (!tierKey) return;
+
+          const activeMap = inLowerBlock ? lowerBlockMap : productColumnMap;
+          activeMap.forEach(({ colIdx, prodId }) => {
+            const rawDigits = (cols[colIdx] || '').replace(/[^\d]/g, '');
+            if (rawDigits.length >= 3) {
+              const priceVal = parseInt(rawDigits, 10);
+              const prod = settings.catalog.find(p => p.id === prodId);
+              if (prod) {
+                prod.prices[tierKey] = priceVal;
+                updatedCells++;
+              }
+              if (prodId === 'falda_talla') {
+                const faldaMed = settings.catalog.find(p => p.id === 'falda_medida');
+                if (faldaMed) faldaMed.prices[tierKey] = priceVal;
+              }
+            }
+          });
+        });
+
+        if (updatedCells > 0) {
+          saveSettings();
+          renderConfigTable();
+          onProductOrSizeChange();
+          recalculateAll();
+          if (manualTrigger) {
+            showToast('Google Sheet sincronizado', `Se actualizaron ${updatedCells} precios desde "${GOOGLE_SHEET_NAME}".`);
+          }
+        } else if (manualTrigger) {
+          showToast('Sin cambios detectados', 'Verifica que la planilla tenga el formato de columnas de temporada 2026–2027.', 'error');
+        }
+      } catch (err) {
+        if (manualTrigger) {
+          showToast(
+            'Planilla privada o sin conexión',
+            'En Google Sheets haz clic en Compartir → "Cualquier persona con el enlace (Lector)" para sincronizar en vivo.',
+            'error'
+          );
+        }
+      }
     }
 
     function onDeliveryStageChange() {
@@ -976,30 +1599,34 @@
       reader.readAsDataURL(file);
     }
 
-    function toggleConfigPanel() {
-      const panel = document.getElementById('config-panel');
-      if (panel) panel.classList.toggle('hidden');
-    }
-
     function renderConfigTable() {
       const tbody = document.getElementById('config-prices-tbody');
       if (!tbody) return;
-      tbody.innerHTML = CATALOG_PRODUCTS.map(prod => {
-        const p = settings.prices[prod.id] || { child: null, adult: null };
-        const childVal = p.child !== null && p.child !== undefined ? p.child : '';
-        const adultVal = p.adult !== null && p.adult !== undefined ? p.adult : '';
-        return `
-          <tr>
-            <td class="py-2 pr-2 font-medium text-slate-200">${prod.name}</td>
-            <td class="py-2 px-2 text-right">
-              <input type="number" min="0" step="500" placeholder="Por definir" value="${childVal}"
-                onchange="updateProductPrice('${prod.id}', 'child', this.value)"
-                class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-xs text-white focus:outline-none focus:border-amber-500">
+      tbody.innerHTML = settings.catalog.map(prod => {
+        const tierInputs = SIZE_TIERS.map(tier => {
+          const val = prod.prices && prod.prices[tier] !== null && prod.prices[tier] !== undefined ? prod.prices[tier] : '';
+          return `
+            <td class="py-2 px-1 text-right">
+              <input type="number" min="0" step="100" placeholder="Por def." value="${val}"
+                onchange="adminUpdateTierPrice('${prod.id}', '${tier}', this.value)"
+                class="w-20 bg-slate-900 border border-slate-600 rounded-lg px-1.5 py-1 text-right text-[11px] text-white focus:outline-none focus:border-amber-500">
             </td>
-            <td class="py-2 pl-2 text-right">
-              <input type="number" min="0" step="500" placeholder="Por definir" value="${adultVal}"
-                onchange="updateProductPrice('${prod.id}', 'adult', this.value)"
-                class="w-28 bg-slate-900 border border-slate-600 rounded-lg px-2.5 py-1 text-right text-xs text-white focus:outline-none focus:border-amber-500">
+          `;
+        }).join('');
+
+        return `
+          <tr class="hover:bg-slate-800/50">
+            <td class="py-2 pr-2">
+              <input type="text" value="${prod.name.replace(/"/g, '&quot;')}"
+                onchange="adminUpdateProductName('${prod.id}', this.value)"
+                class="w-full min-w-[180px] bg-slate-900/80 border border-slate-700 rounded-lg px-2 py-1 text-xs font-medium text-slate-100 focus:outline-none focus:border-amber-500">
+            </td>
+            ${tierInputs}
+            <td class="py-2 pl-2 text-center">
+              <button onclick="adminDeleteProduct('${prod.id}')" title="Eliminar prenda del catálogo"
+                class="px-2 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white transition cursor-pointer">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
             </td>
           </tr>
         `;
@@ -1008,37 +1635,30 @@
 
     function syncConfigInputs() {
       const cap = document.getElementById('cfg-daily-capacity');
-      const minD = document.getElementById('cfg-min-days');
-      const extra = document.getElementById('cfg-high-season-extra');
       const t1 = document.getElementById('cfg-disc-tier1');
-      const t2 = document.getElementById('cfg-disc-tier2');
+      const pinEl = document.getElementById('cfg-admin-pin');
+      const bName = document.getElementById('cfg-bank-name');
+      const bAcc = document.getElementById('cfg-bank-account');
+      const bHolder = document.getElementById('cfg-bank-holder');
+      const bEmail = document.getElementById('cfg-bank-email');
       if (cap) cap.value = settings.dailyCapacity;
-      if (minD) minD.value = settings.minDays;
-      if (extra) extra.value = settings.highSeasonExtra;
       if (t1) t1.value = settings.discTier1;
-      if (t2) t2.value = settings.discTier2;
-    }
-
-    function updateProductPrice(prodId, tier, rawVal) {
-      if (!settings.prices[prodId]) settings.prices[prodId] = { child: null, adult: null };
-      settings.prices[prodId][tier] = rawVal === '' ? null : Math.max(0, Number(rawVal) || 0);
-      saveSettings();
-      onProductOrSizeChange();
-      showToast('Tarifa guardada', 'El precio se actualizó en el tarifario interno.');
+      if (pinEl) pinEl.value = settings.adminPin || '1234';
+      if (bName) bName.value = settings.bankInfo?.bankName || '';
+      if (bAcc) bAcc.value = settings.bankInfo?.accountNumber || '';
+      if (bHolder) bHolder.value = settings.bankInfo?.holderName || '';
+      if (bEmail) bEmail.value = settings.bankInfo?.email || '';
     }
 
     function updateSettingsFromUI() {
-      settings.dailyCapacity = Math.max(0.5, parseFloat(document.getElementById('cfg-daily-capacity').value) || 4.5);
-      settings.minDays = Math.max(1, parseInt(document.getElementById('cfg-min-days').value, 10) || 3);
-      settings.highSeasonExtra = Math.max(0, parseInt(document.getElementById('cfg-high-season-extra').value, 10) || 0);
-      settings.discTier1 = Math.max(0, parseFloat(document.getElementById('cfg-disc-tier1').value) || 0);
-      settings.discTier2 = Math.max(0, parseFloat(document.getElementById('cfg-disc-tier2').value) || 0);
+      settings.dailyCapacity = Math.max(0.5, parseFloat(document.getElementById('cfg-daily-capacity')?.value) || 4.5);
+      settings.discTier1 = Math.max(0, parseFloat(document.getElementById('cfg-disc-tier1')?.value) || 0);
       saveSettings();
       recalculateAll();
     }
 
     function updateCorrelativeFromUI() {
-      const val = parseInt(document.getElementById('cfg-correlative-seq').value, 10);
+      const val = parseInt(document.getElementById('cfg-correlative-seq')?.value, 10);
       if (!isNaN(val) && val >= 1) {
         setCorrelativeSeq(val);
         showToast('Folio actualizado', `Siguiente pedido: ${formatFolio(val)}`);
@@ -1046,13 +1666,17 @@
     }
 
     function restoreDefaultSettings() {
+      const currentPin = settings.adminPin;
       settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      settings.adminPin = currentPin;
       saveSettings();
       renderConfigTable();
+      renderProductDropdown();
       syncConfigInputs();
+      renderBankInfoDisplay();
       onProductOrSizeChange();
       recalculateAll();
-      showToast('Tarifas restauradas', 'Todos los precios volvieron a "Por definir".');
+      showToast('Catálogo restaurado', 'Se restablecieron todos los precios oficiales de la lista.');
     }
 
     function getResolvedMainSchool() {
@@ -1083,6 +1707,14 @@
       // Mantiene sincronía si se escribe nombre personalizado
     }
 
+    function toggleExtraReqFields() {
+      const bordadoChecked = document.getElementById('req-bordado')?.checked;
+      const bordadoBox = document.getElementById('bordado-detail-box');
+      if (bordadoBox) {
+        bordadoBox.classList.toggle('hidden', !bordadoChecked);
+      }
+    }
+
     function onProductOrSizeChange() {
       const prodEl = document.getElementById('item-product');
       const sizeEl = document.getElementById('item-size');
@@ -1106,20 +1738,16 @@
         }
       }
 
-      const isAdult = ADULT_SIZES.includes(currentSize);
+      const tierKey = mapSizeToTierKey(currentSize);
       const tierBadge = document.getElementById('size-tier-indicator');
       if (tierBadge) {
-        if (isCustomMeasure) {
-          tierBadge.textContent = 'Confección a Medida (Cintura / Cadera / Largo)';
-        } else if (isAdult) {
-          tierBadge.textContent = 'Rango Talla Adulto (S–XXL) • Precio por definir';
-        } else {
-          tierBadge.textContent = 'Rango Talla Infantil / Juvenil (3–16) • Precio por definir';
-        }
+        tierBadge.textContent = isCustomMeasure
+          ? 'Confección a Medida (Cintura / Cadera / Largo)'
+          : getTierHumanName(tierKey);
       }
 
-      const priceMap = settings.prices[prodId] || { child: null, adult: null };
-      const unitPrice = isAdult ? priceMap.adult : priceMap.child;
+      const prodObj = settings.catalog.find(p => p.id === prodId);
+      const unitPrice = (prodObj && tierKey && prodObj.prices) ? prodObj.prices[tierKey] : null;
       const priceInput = document.getElementById('item-price');
       if (priceInput) {
         priceInput.value = (unitPrice !== null && unitPrice !== undefined) ? formatCLP(unitPrice) : 'Precio por definir';
@@ -1135,13 +1763,12 @@
       const qtyEl = document.getElementById('item-qty');
       const itemSchoolEl = document.getElementById('item-school');
 
-      const prodId = prodEl ? prodEl.value : 'buzo';
-      const prodObj = CATALOG_PRODUCTS.find(p => p.id === prodId) || CATALOG_PRODUCTS[0];
+      const prodId = prodEl ? prodEl.value : settings.catalog[0]?.id;
+      const prodObj = settings.catalog.find(p => p.id === prodId) || settings.catalog[0];
       const size = sizeEl ? sizeEl.value : '10';
       const qty = Math.max(1, parseInt(qtyEl ? qtyEl.value : '1', 10) || 1);
-      const isAdult = ADULT_SIZES.includes(size);
-      const priceMap = settings.prices[prodId] || { child: null, adult: null };
-      const configuredPrice = isAdult ? priceMap.adult : priceMap.child;
+      const tierKey = mapSizeToTierKey(size);
+      const configuredPrice = (prodObj && tierKey && prodObj.prices) ? prodObj.prices[tierKey] : null;
       const price = (configuredPrice !== null && configuredPrice !== undefined) ? Math.max(0, Number(configuredPrice) || 0) : null;
 
       let school = itemSchoolEl ? itemSchoolEl.value : 'Chorombo Alto';
@@ -1324,6 +1951,8 @@
         document.getElementById('lbl-tax-status').textContent = 'Valores sujetos a confirmación con taller';
         document.getElementById('sum-deposit').textContent = 'Por definir';
         document.getElementById('sum-balance').textContent = 'Por definir';
+        const bankDep = document.getElementById('bank-deposit-highlight');
+        if (bankDep) bankDep.textContent = 'Por definir (50%)';
       } else {
         const subtotal = cart.reduce((acc, item) => acc + (item.unitPrice * item.qty), 0);
         const discountAmount = Math.round(subtotal * (discountPct / 100));
@@ -1341,6 +1970,8 @@
         document.getElementById('lbl-tax-status').textContent = useIva ? 'IVA 19% incluido (Pesos Chilenos)' : 'Valores Netos sin IVA';
         document.getElementById('sum-deposit').textContent = formatCLP(deposit);
         document.getElementById('sum-balance').textContent = formatCLP(balance);
+        const bankDep = document.getElementById('bank-deposit-highlight');
+        if (bankDep) bankDep.textContent = formatCLP(deposit);
       }
 
       updateLeanPlanning(totalUnits);
@@ -1373,8 +2004,6 @@
       const estDaysEl = document.getElementById('op-estimated-days');
       const estDateEl = document.getElementById('op-estimated-date');
       const statusPill = document.getElementById('lean-status-pill');
-      const warnBanner = document.getElementById('deadline-warning-banner');
-      if (warnBanner) warnBanner.classList.add('hidden');
 
       const now = new Date();
       const currentYear = now.getFullYear();
@@ -1410,22 +2039,44 @@
       }
     }
 
-    function addBusinessDays(startDate, days) {
-      const result = new Date(startDate);
-      let added = 0;
-      while (added < days) {
-        result.setDate(result.getDate() + 1);
-        const day = result.getDay();
-        if (day !== 0 && day !== 6) added++;
-      }
-      return result;
-    }
-
     function updateChecklistCount() {
       const checks = document.querySelectorAll('.sop-check');
       const checked = document.querySelectorAll('.sop-check:checked');
       const prog = document.getElementById('checklist-progress');
       if (prog) prog.textContent = `${checked.length}/${checks.length} listos`;
+    }
+
+    function handleReceiptUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      const label = document.getElementById('receipt-file-name');
+      const checkbox = document.getElementById('confirm-deposit-checkbox');
+      if (file) {
+        uploadedReceiptFileName = file.name;
+        if (label) {
+          label.innerHTML = `<i class="fa-solid fa-file-circle-check text-emerald-600 mr-1"></i>Archivo listo: <strong>${file.name}</strong>`;
+        }
+        if (checkbox) checkbox.checked = true;
+        showToast('Comprobante adjuntado', `Se cargó "${file.name}".`);
+      } else {
+        uploadedReceiptFileName = '';
+        if (label) label.textContent = 'Ningún archivo seleccionado aún.';
+      }
+      updateReceiptVerificationState();
+    }
+
+    function updateReceiptVerificationState() {
+      const checkbox = document.getElementById('confirm-deposit-checkbox');
+      const badge = document.getElementById('receipt-status-badge');
+      const isReady = Boolean(checkbox && checkbox.checked);
+      if (badge) {
+        if (isReady) {
+          badge.textContent = uploadedReceiptFileName ? 'Comprobante Adjunto' : 'Confirmado';
+          badge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+        } else {
+          badge.textContent = 'Pendiente';
+          badge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800';
+        }
+      }
     }
 
     // =========================================================================
@@ -1440,10 +2091,17 @@
       const stageCode = resolveActiveWave();
       const stageLabel = getStageHumanLabel(stageCode);
       const notes = (document.getElementById('order-notes')?.value || '').trim();
+      const reqBordado = document.getElementById('req-bordado')?.checked;
+      const reqAjustes = document.getElementById('req-ajustes')?.checked;
+      const reqOtro = document.getElementById('req-otro')?.checked;
+      const bordadoType = document.getElementById('bordado-type')?.value || '';
+      const bordadoText = (document.getElementById('bordado-text')?.value || '').trim();
       const totalText = document.getElementById('sum-total')?.textContent || 'Por definir';
+      const depositText = document.getElementById('sum-deposit')?.textContent || 'Por definir';
+      const balanceText = document.getElementById('sum-balance')?.textContent || 'Por definir';
 
       let lines = [
-        `*TEXTILES ROSITA — COTIZACIÓN Y PEDIDO*`,
+        `*TEXTILES ROSITA — CONFIRMACIÓN DE PEDIDO*`,
         `N° Pedido: *${folio}*`,
         `Cliente: *${clientName}*`
       ];
@@ -1462,8 +2120,31 @@
         }
       });
 
-      lines.push(``, `*TOTAL ESTIMADO:* ${totalText}`);
-      if (notes) lines.push(`Observaciones: ${notes}`);
+      lines.push(
+        ``,
+        `*TOTAL PEDIDO (PRENDAS):* ${totalText}`,
+        `*ABONO TRANSFERENCIA 50%:* ${depositText}`,
+        `*SALDO CONTRA ENTREGA:* ${balanceText}`,
+        `*COMPROBANTE 50%:* ${uploadedReceiptFileName ? `Adjunto (${uploadedReceiptFileName}) — Envío imagen en este chat` : 'Envío comprobante de transferencia a continuación'}`
+      );
+
+      const extraReqs = [];
+      if (reqBordado) {
+        extraReqs.push(`Bordado: ${bordadoType}${bordadoText ? ` ("${bordadoText}")` : ''}`);
+      }
+      if (reqAjustes) {
+        extraReqs.push('Ajuste de largo / Basta / Puño');
+      }
+      if (reqOtro) {
+        extraReqs.push('Otro requerimiento especial');
+      }
+
+      if (extraReqs.length > 0 || notes) {
+        lines.push(``, `*OBSERVACIONES Y REQUERIMIENTOS (A COORDINAR / COTIZAR APARTE):*`);
+        extraReqs.forEach(req => lines.push(`• ${req}`));
+        if (notes) lines.push(`• Detalle cliente: ${notes}`);
+      }
+
       lines.push(``, `_Enviado desde Cotizador Web Textiles Rosita (+56 9 8951 0679)_`);
 
       return lines.join('\n');
@@ -1471,14 +2152,26 @@
 
     function sendWhatsAppDirect() {
       if (cart.length === 0) {
-        showToast('Pedido vacío', 'Agrega al menos una prenda antes de enviar por WhatsApp.', 'error');
+        showToast('Pedido vacío', 'Agrega al menos una prenda antes de confirmar el pedido.', 'error');
         return;
       }
+      const depositConfirmed = document.getElementById('confirm-deposit-checkbox')?.checked;
+      if (!depositConfirmed) {
+        showToast(
+          'Comprobante de 50% requerido',
+          'Adjunta el comprobante de transferencia del 50% y marca la casilla de confirmación antes de enviar.',
+          'error'
+        );
+        document.getElementById('confirm-deposit-checkbox')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       const msg = buildWhatsAppMessage();
       const url = `https://wa.me/${TEXTILES_ROSITA_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+      saveOrderToRegistry(false);
       window.open(url, '_blank', 'noopener,noreferrer');
       advanceCorrelativeSeq();
-      showToast('Abriendo WhatsApp', 'Pedido enviado y folio correlativo avanzado.');
+      showToast('Pedido confirmado', 'Guardado en Registro de Pedidos. Recuerda adjuntar el comprobante del 50% en WhatsApp.');
     }
 
     function copyWhatsAppQuote() {
@@ -1513,10 +2206,24 @@
     function resetQuote() {
       const hadItems = cart.length > 0;
       cart = [];
-      ['client-name', 'client-phone', 'client-grade', 'custom-school-name', 'order-notes', 'meas-waist', 'meas-hip', 'meas-length'].forEach(id => {
+      uploadedReceiptFileName = '';
+      ['client-name', 'client-phone', 'client-grade', 'custom-school-name', 'order-notes', 'bordado-text', 'meas-waist', 'meas-hip', 'meas-length'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+      ['req-bordado', 'req-ajustes', 'req-otro'].forEach(id => {
+        const cb = document.getElementById(id);
+        if (cb) cb.checked = false;
+      });
+      toggleExtraReqFields();
+      const receiptInput = document.getElementById('transfer-receipt-file');
+      const receiptLabel = document.getElementById('receipt-file-name');
+      const receiptCb = document.getElementById('confirm-deposit-checkbox');
+      if (receiptInput) receiptInput.value = '';
+      if (receiptLabel) receiptLabel.textContent = 'Ningún archivo seleccionado aún.';
+      if (receiptCb) receiptCb.checked = false;
+      updateReceiptVerificationState();
+
       const delDate = document.getElementById('delivery-date');
       const delWave = document.getElementById('delivery-wave');
       if (delDate) delDate.value = 'lote1';
@@ -1527,6 +2234,225 @@
       renderCart();
       recalculateAll();
       showToast('Nuevo pedido listo', `Folio actual: ${formatFolio(getCorrelativeSeq())}`);
+    }
+
+    // =========================================================================
+    // 6. REGISTRO DE PEDIDOS (HISTORIAL + CSV) Y SINCRONIZACIÓN DE PLANILLA
+    // =========================================================================
+    function switchMainView(viewName) {
+      const cotView = document.getElementById('view-cotizador-principal');
+      const regView = document.getElementById('view-registro-pedidos');
+      const btnCot = document.getElementById('tab-btn-cotizador');
+      const btnReg = document.getElementById('tab-btn-registro');
+      if (!cotView || !regView) return;
+
+      if (viewName === 'registro') {
+        cotView.classList.add('hidden');
+        regView.classList.remove('hidden');
+        btnReg.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white transition cursor-pointer';
+        btnCot.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white transition cursor-pointer';
+        renderOrdersRegistry();
+      } else {
+        regView.classList.add('hidden');
+        cotView.classList.remove('hidden');
+        btnCot.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white transition cursor-pointer';
+        btnReg.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-stone-300 hover:text-white transition cursor-pointer';
+      }
+    }
+
+    function loadOrdersRegistry() {
+      try {
+        const raw = localStorage.getItem(ORDERS_REGISTRY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveOrdersRegistryList(list) {
+      try {
+        localStorage.setItem(ORDERS_REGISTRY_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function saveOrderToRegistry(notifyUser = true) {
+      if (cart.length === 0) {
+        if (notifyUser) showToast('Pedido vacío', 'Agrega al menos una prenda antes de guardar.', 'error');
+        return;
+      }
+      const list = loadOrdersRegistry();
+      const folio = formatFolio(getCorrelativeSeq());
+      const record = {
+        id: folio + '_' + Date.now(),
+        folio,
+        date: new Date().toLocaleDateString('es-CL'),
+        clientName: (document.getElementById('client-name')?.value || '').trim() || 'Sin nombre',
+        clientPhone: (document.getElementById('client-phone')?.value || '').trim(),
+        school: getResolvedMainSchool(),
+        grade: (document.getElementById('client-grade')?.value || '').trim(),
+        stage: getStageHumanLabel(resolveActiveWave()),
+        itemsSummary: cart.map(i => `${i.qty}x ${i.name} (${i.size})`).join(' | '),
+        totalText: document.getElementById('sum-total')?.textContent || 'Por definir',
+        depositText: document.getElementById('sum-deposit')?.textContent || 'Por definir',
+        receiptAttached: Boolean(uploadedReceiptFileName || document.getElementById('confirm-deposit-checkbox')?.checked),
+        status: 'Abono 50% por verificar'
+      };
+      list.unshift(record);
+      saveOrdersRegistryList(list);
+      renderOrdersRegistry();
+      if (notifyUser) {
+        showToast('Guardado en Registro', `Pedido ${folio} añadido a la pestaña Registro de Pedidos.`);
+      }
+    }
+
+    function toggleOrderStatus(orderId) {
+      const list = loadOrdersRegistry();
+      const item = list.find(o => o.id === orderId);
+      if (!item) return;
+      const states = ['Abono 50% por verificar', 'En confección', 'Listo para entrega', 'Entregado'];
+      const nextIdx = (states.indexOf(item.status) + 1) % states.length;
+      item.status = states[nextIdx];
+      saveOrdersRegistryList(list);
+      renderOrdersRegistry();
+    }
+
+    function deleteOrderRecord(orderId) {
+      const list = loadOrdersRegistry().filter(o => o.id !== orderId);
+      saveOrdersRegistryList(list);
+      renderOrdersRegistry();
+      showToast('Registro eliminado', 'El pedido fue quitado del historial local.');
+    }
+
+    function renderOrdersRegistry() {
+      const list = loadOrdersRegistry();
+      const badge = document.getElementById('registro-count-badge');
+      const emptyEl = document.getElementById('registro-empty-state');
+      const wrapperEl = document.getElementById('registro-table-wrapper');
+      const tbody = document.getElementById('registro-orders-tbody');
+
+      if (badge) badge.textContent = list.length;
+      if (!emptyEl || !wrapperEl || !tbody) return;
+
+      if (list.length === 0) {
+        emptyEl.classList.remove('hidden');
+        wrapperEl.classList.add('hidden');
+        tbody.innerHTML = '';
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      wrapperEl.classList.remove('hidden');
+      tbody.innerHTML = list.map(o => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 pr-2 font-bold text-slate-900">
+            ${o.folio}
+            <div class="text-[11px] font-normal text-slate-500">${o.date}</div>
+          </td>
+          <td class="py-3 px-2">
+            <div class="font-semibold text-slate-800">${o.clientName}</div>
+            <div class="text-[11px] text-slate-500">${o.clientPhone || 'Sin teléfono'}</div>
+          </td>
+          <td class="py-3 px-2">
+            <div class="font-medium text-amber-900">${o.school}</div>
+            <div class="text-[11px] text-slate-500">${o.grade || '—'}</div>
+          </td>
+          <td class="py-3 px-2 max-w-xs text-slate-700">${o.itemsSummary}</td>
+          <td class="py-3 px-2 text-[11px] font-medium text-slate-700">${o.stage}</td>
+          <td class="py-3 px-2 text-right">
+            <div class="font-bold text-slate-900">${o.totalText}</div>
+            <div class="text-[11px] text-emerald-700">Abono: ${o.depositText}</div>
+          </td>
+          <td class="py-3 pl-2 text-center space-y-1">
+            <button onclick="toggleOrderStatus('${o.id}')" class="px-2.5 py-1 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px] cursor-pointer">
+              ${o.status}
+            </button>
+            <div>
+              <button onclick="deleteOrderRecord('${o.id}')" class="text-[11px] text-rose-500 hover:underline cursor-pointer">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function exportOrdersCSV() {
+      const list = loadOrdersRegistry();
+      if (list.length === 0) {
+        showToast('Sin registros', 'No hay pedidos guardados para exportar aún.', 'error');
+        return;
+      }
+      const headers = ['Folio', 'Fecha', 'Cliente', 'Telefono', 'Colegio', 'Curso', 'Prendas', 'Entrega', 'Total', 'Abono 50%', 'Estado'];
+      const rows = list.map(o => [
+        o.folio, o.date, o.clientName, o.clientPhone, o.school, o.grade,
+        o.itemsSummary, o.stage, o.totalText, o.depositText, o.status
+      ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(';'));
+      const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('CSV descargado', 'Puedes abrirlo en Excel o importarlo directo en Google Sheets.');
+    }
+
+    function openPasteSheetModal() {
+      document.getElementById('paste-sheet-modal')?.classList.remove('hidden');
+    }
+
+    function closePasteSheetModal() {
+      document.getElementById('paste-sheet-modal')?.classList.add('hidden');
+    }
+
+    function parseAndApplyPastedSheet() {
+      const raw = (document.getElementById('paste-sheet-textarea')?.value || '').trim();
+      if (!raw) {
+        showToast('Texto vacío', 'Pega primero las celdas copiadas desde Google Sheets.', 'error');
+        return;
+      }
+      const lines = raw.split(/\r?\n/).map(l => l.split('\t'));
+      let updatedCount = 0;
+
+      lines.forEach(cols => {
+        if (cols.length < 3) return;
+        const rowText = cols.join(' ').toLowerCase();
+        let tierKey = null;
+        if (rowText.includes('3-4') || rowText.includes('3 – 4')) tierKey = '3_4';
+        else if (rowText.includes('6-8') || rowText.includes('6 – 8')) tierKey = '6_8';
+        else if (rowText.includes('10-12') || rowText.includes('10 – 12')) tierKey = '10_12';
+        else if (rowText.includes('14-16') || rowText.includes('14 – 16')) tierKey = '14_16';
+        else if (rowText.includes('s-m') || rowText.includes('s – m')) tierKey = 's_m';
+        else if (rowText.includes('l-xl') || rowText.includes('l – xl')) tierKey = 'l_xl';
+        else if (rowText.includes('xxl')) tierKey = 'xxl';
+
+        if (tierKey) {
+          const numericValues = cols
+            .slice(1)
+            .map(c => c.replace(/[^\d]/g, ''))
+            .filter(d => d.length >= 3)
+            .map(d => parseInt(d, 10));
+
+          numericValues.forEach((priceVal, idx) => {
+            if (settings.catalog[idx]) {
+              settings.catalog[idx].prices[tierKey] = priceVal;
+              updatedCount++;
+            }
+          });
+        }
+      });
+
+      if (updatedCount > 0) {
+        saveSettings();
+        renderConfigTable();
+        onProductOrSizeChange();
+        recalculateAll();
+        closePasteSheetModal();
+        showToast('Planilla sincronizada', `Se actualizaron ${updatedCount} tarifas desde los datos pegados.`);
+      } else {
+        showToast('Formato no reconocido', 'Asegúrate de incluir la columna de Tallas (3-4, 6-8, 10-12, 14-16, S-M, L-XL, XXL) junto a los precios.', 'error');
+      }
     }
 
     window.addEventListener('DOMContentLoaded', initApp);
