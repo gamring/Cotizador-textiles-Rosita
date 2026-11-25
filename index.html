@@ -463,4 +463,988 @@
           <div class="text-xs font-extrabold text-slate-800">+ Agregar Nueva Prenda al Catálogo</div>
           <div class="grid grid-cols-2 sm:grid-cols-9 gap-2">
             <input id="newProdName" type="text" placeholder="Nombre prenda" class="col-span-2 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white" />
-            <input id="newP_3_4" type="number"
+            <input id="newP_3_4" type="number" placeholder="3–4" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_6_8" type="number" placeholder="6–8" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_10_12" type="number" placeholder="10–12" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_14_16" type="number" placeholder="14–16" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_S_M" type="number" placeholder="S–M" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_L_XL" type="number" placeholder="L–XL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            <input id="newP_XXL" type="number" placeholder="XXL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+          </div>
+          <button onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            Agregar Prenda
+          </button>
+        </div>
+      </div>
+
+      <!-- GESTIÓN DE DETALLE EXTRAS (ÍTEMS 15–22) -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras (Ítems 15–22)</h3>
+        <div id="adminExtrasList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+          <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+          <input id="newExtraPrice" type="number" placeholder="Precio CLP" class="w-32 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+          <button onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            + Agregar Extra
+          </button>
+        </div>
+      </div>
+
+      <!-- GESTIÓN DE CUENTAS BANCARIAS -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+        <div id="adminBanksEditor" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL DE INGRESO ADMINISTRADOR (SHA-256) -->
+  <div id="adminLoginModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-extrabold text-slate-900">🔐 Acceso Privado Administrador</h3>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500">
+        Ingresa tu contraseña de administrador de <strong>Textiles Rosita</strong>. La validación se realiza mediante SHA-256 en la nube.
+      </p>
+      <div>
+        <input id="adminLoginPasswordInput" type="password" onkeydown="if(event.key==='Enter') submitAdminLogin()" placeholder="Contraseña de administrador" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+        <p id="adminLoginError" class="hidden text-xs font-bold text-red-600 mt-1.5"></p>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeAdminModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button id="btnSubmitAdminLogin" onclick="submitAdminLogin()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 hover:bg-slate-800 text-white">
+          Ingresar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST -->
+  <div id="toastBox" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold"></div>
+
+  <script>
+    // =========================================================================
+    // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
+    // =========================================================================
+    const WHATSAPP_TALLER = '56989510679';
+    const SHEET_ID        = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v8';
+    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
+    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
+    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
+
+    // PEGA AQUÍ TU URL COMPLETA DE APPS SCRIPT (COPIADA CON EL BOTÓN "COPIAR", SIN "...")
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
+
+    const DEFAULT_CATALOG = [
+      { id: 'p1',  name: '1. Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
+      { id: 'p2',  name: '2. Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
+      { id: 'p3',  name: '3. Polera Deporte', prices: { '3-4': 7800, '6-8': 8800, '10-12': 9800, '14-16': 10800, 'S-M': 11800, 'L-XL': 12800, 'XXL': 13800 } },
+      { id: 'p4',  name: '4. Pantalón Solo', prices: { '3-4': 12800, '6-8': 13500, '10-12': 14000, '14-16': 15800, 'S-M': 16800, 'L-XL': 17800, 'XXL': 18000 } },
+      { id: 'p5',  name: '5. Polerón Solo', prices: { '3-4': 13800, '6-8': 14500, '10-12': 15800, '14-16': 16800, 'S-M': 17800, 'L-XL': 18800, 'XXL': 19800 } },
+      { id: 'p6',  name: '6. Buzo Completo con Polera (Fantasía)', prices: { '3-4': 28700, '6-8': 31600, '10-12': 33700, '14-16': 35700, 'S-M': 38600, 'L-XL': 42600, 'XXL': 48700 } },
+      { id: 'p7',  name: '7. Buzo Completo con Polera (Algodón)', prices: { '3-4': 30700, '6-8': 33700, '10-12': 35700, '14-16': 37600, 'S-M': 42600, 'L-XL': 48700, 'XXL': 50700 } },
+      { id: 'p8',  name: '8. Polera Piqué', prices: { '3-4': 8600, '6-8': 8900, '10-12': 9900, '14-16': 10400, 'S-M': 11200, 'L-XL': 12000, 'XXL': 14000 } },
+      { id: 'p9',  name: '9. Falda Escolar', prices: { '3-4': 12800, '6-8': 14800, '10-12': 16800, '14-16': 18800, 'S-M': 20900, 'L-XL': 22900, 'XXL': 24900 } },
+      { id: 'p10', name: '10. Polerón de Polar', prices: { '3-4': 12000, '6-8': 13000, '10-12': 14000, '14-16': 15000, 'S-M': 16000, 'L-XL': 18000, 'XXL': 20100 } },
+      { id: 'p11', name: '11. Cotona o Delantal', prices: { '3-4': 8000, '6-8': 9000, '10-12': 10000, '14-16': 12000, 'S-M': 14000, 'L-XL': 18000, 'XXL': 22100 } },
+      { id: 'p12', name: '12. Short Algodón / Fantasía', prices: { '3-4': 4000, '6-8': 4500, '10-12': 5000, '14-16': 5500, 'S-M': 6000, 'L-XL': 6500, 'XXL': 7000 } }
+    ];
+
+    const DEFAULT_EXTRAS = [
+      { id: 'e15', code: '15', name: 'Bordado nombre', price: 1500 },
+      { id: 'e16', code: '16', name: 'Bordado insignia', price: 3500 },
+      { id: 'e17', code: '17', name: 'Agregar gorro a polerón', price: 1200 },
+      { id: 'e18', code: '18', name: 'Basta pantalón', price: 3000 },
+      { id: 'e19', code: '19', name: 'Ajuste polera', price: 1500 },
+      { id: 'e20', code: '20', name: 'Ajuste polerón', price: 1500 },
+      { id: 'e21', code: '21', name: 'Basta de falda con máquina', price: 3500 },
+      { id: 'e22', code: '22', name: 'Basta de falda a mano', price: 5000 }
+    ];
+
+    const DEFAULT_BANKS = [
+      {
+        label: 'Opción 1 — Banco Estado',
+        holder: 'ELBA ROSA MESA RETAMALES',
+        rut: '11.697.230-1',
+        bank: 'Banco Estado',
+        accountType: 'CuentaRUT',
+        accountNumber: '00011697230',
+        email: 'rosa.mesaretamales@gmail.com'
+      },
+      {
+        label: 'Opción 2 — Banco Falabella',
+        holder: 'Elba Rosa Mesa',
+        rut: '11.697.230-1',
+        bank: 'Banco Falabella',
+        accountType: 'Cuenta Corriente',
+        accountNumber: '1-553-007790-3',
+        email: 'rosa.mesaretamales@gmail.com'
+      }
+    ];
+
+    let settings = loadLocalSettings();
+    let cart = [];
+    let extraQuantities = {};
+    let isAdminAuthenticated = false;
+    let activeSessionHash = '';
+    let inactivityTimer = null;
+
+    // =========================================================================
+    // 2. UTILIDADES CRIPTOGRÁFICAS SHA-256 Y SESIÓN SEGURA
+    // =========================================================================
+    async function sha256Hex(plainText) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(plainText);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getAppsScriptUrl() {
+      const saved = (localStorage.getItem(STORAGE_KEY_SCRIPT) || '').trim();
+      if (saved && !saved.includes('...')) return saved;
+      return DEFAULT_SCRIPT_URL.trim();
+    }
+
+    function resetAdminInactivityTimer() {
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      if (isAdminAuthenticated) {
+        inactivityTimer = setTimeout(() => logoutAdmin(true), 15 * 60 * 1000);
+      }
+    }
+
+    ['click', 'keydown', 'mousemove'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (isAdminAuthenticated) resetAdminInactivityTimer();
+      }, { passive: true });
+    });
+
+    // =========================================================================
+    // 3. INICIALIZACIÓN Y SINCRONIZACIÓN CON LA NUBE
+    // =========================================================================
+    function loadLocalSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            catalog: Array.isArray(parsed.catalog) && parsed.catalog.length ? parsed.catalog : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+            extras: Array.isArray(parsed.extras) && parsed.extras.length ? parsed.extras : JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
+            banks: Array.isArray(parsed.banks) && parsed.banks.length ? parsed.banks : JSON.parse(JSON.stringify(DEFAULT_BANKS))
+          };
+        }
+      } catch (e) {}
+      return {
+        catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+        extras: JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
+        banks: JSON.parse(JSON.stringify(DEFAULT_BANKS))
+      };
+    }
+
+    function saveLocalSettings() {
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+    }
+
+    async function pullFromCloudAppsScript(notify = false) {
+      const url = getAppsScriptUrl();
+      const badge = document.getElementById('cloudSyncBadge');
+      try {
+        badge.textContent = '↻ Sincronizando nube...';
+        const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
+        const data = await res.json();
+        if (data && data.ok && data.settings) {
+          if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) settings.catalog = data.settings.catalog;
+          if (Array.isArray(data.settings.extras) && data.settings.extras.length) settings.extras = data.settings.extras;
+          if (Array.isArray(data.settings.banks) && data.settings.banks.length) settings.banks = data.settings.banks;
+          saveLocalSettings();
+          refreshAllViews();
+          if (notify) showToast('✅ Precios y datos actualizados desde Google Sheets.');
+        }
+        badge.textContent = '● Sincronizado con Nube';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700';
+      } catch (err) {
+        badge.textContent = '● Catálogo oficial activo';
+        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
+        if (notify) showToast('⚠️ Verifica que la URL de Apps Script no esté cortada y tenga acceso "Cualquier persona".');
+      }
+    }
+
+    function initApp() {
+      document.getElementById('appsScriptUrlInput').value = getAppsScriptUrl();
+      refreshFolioBadge();
+      refreshAllViews();
+      pullFromCloudAppsScript(false);
+    }
+
+    function refreshAllViews() {
+      renderProductDropdown();
+      onProductOrSizeChange();
+      renderCart();
+      renderExtrasGrid();
+      renderBankCards();
+      renderOrdersRegistry();
+      if (isAdminAuthenticated) {
+        renderAdminProducts();
+        renderAdminExtras();
+        renderAdminBanks();
+      }
+      recalculateAll();
+    }
+
+    // =========================================================================
+    // 4. LÓGICA CORREGIDA DE TRAMOS DE TALLA, PRECIOS Y CARRITO
+    // =========================================================================
+    function formatCLP(num) {
+      return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
+    }
+
+    function getBracketFromSize(sizeStr) {
+      const clean = String(sizeStr || '').toUpperCase();
+      if (clean.includes('XXL')) return 'XXL';
+      if (clean.includes('14') || clean.includes('16')) return '14-16';
+      if (clean.includes('10') || clean.includes('12')) return '10-12';
+      if (clean.includes('6') || clean.includes('8')) return '6-8';
+      if (clean.includes('3') || clean.includes('4')) return '3-4';
+      if (clean.includes('S') || clean.includes('M')) return 'S-M';
+      if (clean.includes('L')) return 'L-XL';
+      return '3-4';
+    }
+
+    function renderProductDropdown() {
+      const sel = document.getElementById('productSelect');
+      const prev = sel.value;
+      sel.innerHTML = settings.catalog.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      if (prev && settings.catalog.some(p => p.id === prev)) sel.value = prev;
+    }
+
+    function onProductOrSizeChange() {
+      const prodId = document.getElementById('productSelect').value;
+      const sizeStr = document.getElementById('sizeSelect').value;
+      const bracket = getBracketFromSize(sizeStr);
+      document.getElementById('sizeBracketTag').textContent = `Tramo Talla: ${bracket}`;
+
+      const prod = settings.catalog.find(p => p.id === prodId);
+      const price = prod && prod.prices ? (Number(prod.prices[bracket]) || 0) : 0;
+      document.getElementById('unitPricePreview').value = formatCLP(price);
+    }
+
+    function addItemToCart() {
+      const prodId = document.getElementById('productSelect').value;
+      const sizeStr = document.getElementById('sizeSelect').value;
+      const qty = Math.max(1, parseInt(document.getElementById('qtyInput').value, 10) || 1);
+      const prod = settings.catalog.find(p => p.id === prodId);
+      if (!prod) return;
+
+      const bracket = getBracketFromSize(sizeStr);
+      const unitPrice = Number(prod.prices[bracket]) || 0;
+
+      const existing = cart.find(item => item.prodId === prodId && item.size === sizeStr);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({
+          uid: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          prodId,
+          name: prod.name,
+          size: sizeStr,
+          bracket,
+          qty,
+          unitPrice
+        });
+      }
+      document.getElementById('qtyInput').value = 1;
+      renderCart();
+      recalculateAll();
+      showToast(`✅ Agregado: ${qty}x ${prod.name} (${sizeStr}) — ${formatCLP(unitPrice)} c/u`);
+    }
+
+    function removeCartItem(uid) {
+      cart = cart.filter(i => i.uid !== uid);
+      renderCart();
+      recalculateAll();
+    }
+
+    function renderCart() {
+      const tbody = document.getElementById('cartTableBody');
+      const totalGarments = cart.reduce((acc, i) => acc + i.qty, 0);
+      document.getElementById('totalGarmentsBadge').textContent = `${totalGarments} ${totalGarments === 1 ? 'prenda' : 'prendas'}`;
+
+      if (!cart.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">Aún no has agregado prendas al pedido.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = cart.map(item => `
+        <tr class="hover:bg-slate-50/80">
+          <td class="py-2.5 pr-2 font-semibold text-slate-800">${item.name}</td>
+          <td class="py-2.5 px-2 text-xs text-slate-600">${item.size}</td>
+          <td class="py-2.5 px-2 text-center font-bold">${item.qty}</td>
+          <td class="py-2.5 px-2 text-right text-slate-600">${formatCLP(item.unitPrice)}</td>
+          <td class="py-2.5 px-2 text-right font-extrabold text-slate-900">${formatCLP(item.qty * item.unitPrice)}</td>
+          <td class="py-2.5 pl-2 text-center no-print">
+            <button onclick="removeCartItem('${item.uid}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderExtrasGrid() {
+      const grid = document.getElementById('extrasGrid');
+      grid.innerHTML = settings.extras.map(ext => {
+        const q = extraQuantities[ext.id] || 0;
+        return `
+          <div class="flex items-center justify-between p-3 rounded-xl border ${q > 0 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-200 bg-slate-50/40'}">
+            <div class="pr-2">
+              <div class="text-xs font-extrabold text-slate-800">${ext.code ? ext.code + '. ' : ''}${ext.name}</div>
+              <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
+            </div>
+            <div class="flex items-center gap-1.5 no-print">
+              <button onclick="changeExtraQty('${ext.id}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
+              <span class="w-6 text-center text-xs font-extrabold">${q}</span>
+              <button onclick="changeExtraQty('${ext.id}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function changeExtraQty(extraId, delta) {
+      const next = Math.max(0, (extraQuantities[extraId] || 0) + delta);
+      extraQuantities[extraId] = next;
+      renderExtrasGrid();
+      recalculateAll();
+    }
+
+    function recalculateAll() {
+      const garmentsTotal = cart.reduce((sum, item) => sum + item.qty * item.unitPrice, 0);
+      const extrasTotal = settings.extras.reduce((sum, ext) => sum + (extraQuantities[ext.id] || 0) * ext.price, 0);
+      const subtotal = garmentsTotal + extrasTotal;
+      const applyIva = document.getElementById('ivaToggle').checked;
+      const ivaAmount = applyIva ? Math.round(subtotal * 0.19) : 0;
+      const grandTotal = subtotal + ivaAmount;
+      const deposit50 = Math.round(grandTotal * 0.5);
+      const balance50 = grandTotal - deposit50;
+
+      document.getElementById('extrasSubtotalBadge').textContent = `Extras: ${formatCLP(extrasTotal)}`;
+      document.getElementById('summaryGarments').textContent = formatCLP(garmentsTotal);
+      document.getElementById('summaryExtras').textContent = formatCLP(extrasTotal);
+      document.getElementById('summaryIva').textContent = formatCLP(ivaAmount);
+      document.getElementById('summaryTotal').textContent = formatCLP(grandTotal);
+      document.getElementById('summaryDeposit50').textContent = formatCLP(deposit50);
+      document.getElementById('summaryBalance50').textContent = formatCLP(balance50);
+
+      updateConfirmButtonState();
+    }
+
+    // =========================================================================
+    // 5. DATOS BANCARIOS Y ENVÍO DE RESERVA A GOOGLE SHEETS + WHATSAPP
+    // =========================================================================
+    function renderBankCards() {
+      const container = document.getElementById('bankAccountsContainer');
+      container.innerHTML = settings.banks.map((b, idx) => `
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-slate-900">${b.label}</span>
+            <button onclick="copyBankData(${idx})" class="no-print px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px]">
+              📋 Copiar
+            </button>
+          </div>
+          <div><span class="text-slate-500">Titular:</span> <strong>${b.holder}</strong></div>
+          <div><span class="text-slate-500">RUT:</span> <strong>${b.rut}</strong></div>
+          <div><span class="text-slate-500">Banco / Tipo:</span> <strong>${b.bank} — ${b.accountType}</strong></div>
+          <div><span class="text-slate-500">N° Cuenta:</span> <strong>${b.accountNumber}</strong></div>
+          <div><span class="text-slate-500">Correo:</span> <strong>${b.email}</strong></div>
+        </div>
+      `).join('');
+    }
+
+    function copyBankData(idx) {
+      const b = settings.banks[idx];
+      if (!b) return;
+      const text = `${b.holder}\n${b.rut}\n${b.bank}\n${b.accountType}\n${b.accountNumber}\n${b.email}`;
+      navigator.clipboard.writeText(text);
+      showToast(`📋 Datos de ${b.bank} copiados al portapapeles.`);
+    }
+
+    function onSchoolChange() {
+      const val = document.getElementById('schoolSelect').value;
+      document.getElementById('customSchoolInput').classList.toggle('hidden', val !== 'OTRO');
+    }
+
+    function handleReceiptChange() {
+      const input = document.getElementById('receiptInput');
+      const status = document.getElementById('receiptFileStatus');
+      if (input.files && input.files[0]) {
+        status.textContent = `✅ Archivo listo: ${input.files[0].name}`;
+        status.className = 'text-[11px] font-bold text-emerald-700 mt-1';
+      } else {
+        status.textContent = 'Ningún archivo seleccionado aún.';
+        status.className = 'text-[11px] text-slate-500 mt-1';
+      }
+      updateConfirmButtonState();
+    }
+
+    function updateConfirmButtonState() {
+      const hasItems = cart.length > 0 || Object.values(extraQuantities).some(q => q > 0);
+      const hasFile = document.getElementById('receiptInput').files.length > 0;
+      const checked = document.getElementById('confirmReceiptCheck').checked;
+      const btn = document.getElementById('btnConfirmWhatsApp');
+
+      const enabled = hasItems && hasFile && checked;
+      btn.disabled = !enabled;
+      btn.className = enabled
+        ? 'w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-emerald-600 hover:bg-emerald-700 cursor-pointer transition flex items-center justify-center gap-2 shadow-md'
+        : 'w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm';
+    }
+
+    function getCurrentFolio() {
+      const seq = parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10);
+      return 'ROS-' + String(seq).padStart(4, '0');
+    }
+
+    function refreshFolioBadge() {
+      document.getElementById('folioHeaderBadge').textContent = 'Folio: ' + getCurrentFolio();
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve) => {
+        if (!file || file.size > 4 * 1024 * 1024) {
+          resolve('');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function confirmAndSendOrder() {
+      const clientName = document.getElementById('clientName').value.trim();
+      const clientPhone = document.getElementById('clientPhone').value.trim();
+      if (!clientName || !clientPhone) {
+        showToast('⚠️ Ingresa tu nombre completo y teléfono antes de enviar.');
+        return;
+      }
+
+      const btn = document.getElementById('btnConfirmWhatsApp');
+      const feedbackBox = document.getElementById('cloudOrderFeedback');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Subiendo comprobante y registrando pedido...</span>';
+
+      const schoolSel = document.getElementById('schoolSelect').value;
+      const school = schoolSel === 'OTRO' ? (document.getElementById('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
+      const grade = document.getElementById('studentGrade').value.trim();
+      const deliveryWindow = document.getElementById('deliveryWindow').value;
+      const notes = document.getElementById('orderNotes').value.trim();
+      const receiptFile = document.getElementById('receiptInput').files[0];
+
+      const garmentsTotal = cart.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
+      const selectedExtras = settings.extras.filter(e => (extraQuantities[e.id] || 0) > 0).map(e => ({
+        ...e,
+        qty: extraQuantities[e.id]
+      }));
+      const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.qty * e.price, 0);
+      const subtotalParticular = garmentsTotal + extrasTotal;
+      const totalConIva = Math.round(subtotalParticular * 1.19);
+      const applyIva = document.getElementById('ivaToggle').checked;
+      const totalFinal = applyIva ? totalConIva : subtotalParticular;
+      const deposit50 = Math.round(totalFinal * 0.5);
+      const balance50 = totalFinal - deposit50;
+
+      let folio = getCurrentFolio();
+      const itemsSummary = cart.map(i => `${i.qty}x ${i.name} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
+      const extrasSummary = selectedExtras.map(e => `${e.qty}x ${e.name} = ${formatCLP(e.qty * e.price)}`).join(' | ');
+      const receiptBase64 = await readFileAsBase64(receiptFile);
+
+      const payload = {
+        action: 'register_order',
+        order: {
+          folio,
+          clientName,
+          clientPhone,
+          school,
+          grade,
+          deliveryWindow,
+          itemsSummary: itemsSummary || 'Sin prendas base',
+          extrasSummary: extrasSummary || 'Sin extras',
+          subtotalParticular,
+          totalConIva,
+          total: totalFinal,
+          deposit50,
+          balance50,
+          notes,
+          receiptBase64,
+          receiptFileName: receiptFile ? receiptFile.name : '',
+          receiptMimeType: receiptFile ? receiptFile.type : ''
+        }
+      };
+
+      let cloudSaved = false;
+      let cloudReceiptUrl = '';
+      let cloudSheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+      const scriptUrl = getAppsScriptUrl();
+
+      try {
+        const res = await fetch(scriptUrl, {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+          cloudSaved = true;
+          if (data.numeroPedido) folio = data.numeroPedido;
+          if (data.receiptUrl) cloudReceiptUrl = data.receiptUrl;
+          if (data.sheetUrl) cloudSheetUrl = data.sheetUrl;
+        }
+      } catch (err) {
+        try {
+          await fetch(scriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            credentials: 'omit',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          cloudSaved = true;
+        } catch (e2) {}
+      }
+
+      const orderRecord = {
+        folio,
+        date: new Date().toLocaleString('es-CL'),
+        clientName,
+        clientPhone,
+        school,
+        grade,
+        deliveryWindow,
+        itemsSummary: itemsSummary || 'Sin prendas base',
+        extrasSummary: extrasSummary || 'Sin extras',
+        total: totalFinal,
+        deposit50,
+        balance50,
+        receiptUrl: cloudReceiptUrl,
+        status: cloudSaved ? '✅ Guardado en Google Sheets' : '⚠️ Respaldo local'
+      };
+
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      orders.unshift(orderRecord);
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+
+      const nextSeq = (parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10)) + 1;
+      localStorage.setItem(STORAGE_KEY_SEQ, String(nextSeq));
+      refreshFolioBadge();
+      renderOrdersRegistry();
+
+      feedbackBox.classList.remove('hidden');
+      feedbackBox.innerHTML = cloudSaved
+        ? `✅ Reserva <strong>${folio}</strong> registrada en Google Sheets. ${cloudReceiptUrl ? `<a href="${cloudReceiptUrl}" target="_blank" class="underline text-emerald-700 font-extrabold">Ver Comprobante Subido</a>` : ''} Abriendo WhatsApp...`
+        : `⚠️ Pedido ${folio} guardado localmente. Envía el resumen por WhatsApp para confirmar.`;
+
+      const lines = [
+        `*PEDIDO TEXTILES ROSITA — ${folio}*`,
+        `👤 *Cliente:* ${clientName}`,
+        `📞 *Teléfono:* ${clientPhone}`,
+        `🏫 *Colegio:* ${school}${grade ? ' (' + grade + ')' : ''}`,
+        `📅 *Entrega:* ${deliveryWindow}`,
+        ``,
+        `*DETALLE DE PRENDAS:*`,
+        ...(cart.length ? cart.map(i => `• ${i.qty}x ${i.name} [${i.size}] — ${formatCLP(i.qty * i.unitPrice)}`) : ['• Sin prendas']),
+        ...(selectedExtras.length ? ['', '*EXTRAS Y CONFECCIÓN:*', ...selectedExtras.map(e => `• ${e.qty}x ${e.name} — ${formatCLP(e.qty * e.price)}`)] : []),
+        ...(notes ? ['', `📝 *Observaciones:* ${notes}`] : []),
+        ``,
+        `💰 *TOTAL PEDIDO:* ${formatCLP(totalFinal)}`,
+        `✅ *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
+        `⏳ *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
+        ``,
+        cloudReceiptUrl
+          ? `🧾 *Ver Comprobante 50% (Drive):* ${cloudReceiptUrl}`
+          : `📎 *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`,
+        `📊 *Ver en Planilla Google Sheets:* ${cloudSheetUrl}`
+      ];
+
+      btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
+      updateConfirmButtonState();
+
+      const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(waUrl, '_blank');
+    }
+
+    // =========================================================================
+    // 6. REGISTRO HISTÓRICO LOCAL Y EXPORTACIÓN CSV
+    // =========================================================================
+    function renderOrdersRegistry() {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      document.getElementById('ordersCountBadge').textContent = orders.length;
+      const tbody = document.getElementById('ordersRegistryBody');
+
+      if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Aún no hay reservas registradas desde este dispositivo.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-extrabold text-amber-800">${o.folio}</td>
+          <td class="p-3 text-slate-500">${o.date}</td>
+          <td class="p-3"><div class="font-bold text-slate-900">${o.clientName}</div><div class="text-slate-500">${o.clientPhone}</div></td>
+          <td class="p-3"><div class="font-semibold">${o.school}</div><div class="text-slate-500">${o.deliveryWindow}</div></td>
+          <td class="p-3 max-w-xs"><div class="truncate" title="${o.itemsSummary}">${o.itemsSummary}</div><div class="text-emerald-700 truncate">${o.extrasSummary}</div></td>
+          <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
+          <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
+          <td class="p-3 space-y-1">
+            <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${o.status}</span></div>
+            ${o.receiptUrl ? `<div><a href="${o.receiptUrl}" target="_blank" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function exportOrdersCSV() {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      if (!orders.length) {
+        showToast('No hay pedidos locales para exportar.');
+        return;
+      }
+      const headers = ['Numero_pedido', 'Fecha', 'Nombre_cliente', 'Numero_telefonico', 'Colegio', 'Entrega', 'Detalle_pedido', 'Extras', 'Total', 'Abono_50', 'Saldo_50', 'Comprobante_URL', 'Estado'];
+      const rows = orders.map(o => [
+        o.folio, o.date, o.clientName, o.clientPhone, o.school, o.deliveryWindow,
+        o.itemsSummary, o.extrasSummary, o.total, o.deposit50, o.balance50, o.receiptUrl || '', o.status
+      ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
+
+      const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    // =========================================================================
+    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA (COMPATIBLE CON INCÓGNITO)
+    // =========================================================================
+    function handleAdminButtonClick() {
+      if (isAdminAuthenticated) {
+        logoutAdmin(false);
+      } else {
+        document.getElementById('adminLoginError').classList.add('hidden');
+        document.getElementById('adminLoginPasswordInput').value = '';
+        document.getElementById('adminLoginModal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('adminLoginPasswordInput').focus(), 50);
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminLoginModal').classList.add('hidden');
+    }
+
+    async function submitAdminLogin() {
+      const pass = document.getElementById('adminLoginPasswordInput').value;
+      const errEl = document.getElementById('adminLoginError');
+      const btn = document.getElementById('btnSubmitAdminLogin');
+      if (!pass) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+      errEl.classList.add('hidden');
+
+      try {
+        const hash = await sha256Hex(pass);
+        const scriptUrl = getAppsScriptUrl();
+
+        if (!scriptUrl || scriptUrl.includes('...')) {
+          errEl.textContent = 'La URL de Apps Script está incompleta (...). Pega la URL completa en index.html.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
+        const res = await fetch(scriptUrl, {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'verify_login', passwordHash: hash })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          errEl.textContent = data.error || 'Contraseña incorrecta.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
+        isAdminAuthenticated = true;
+        activeSessionHash = hash;
+        closeAdminModal();
+        updateAdminUIState();
+        switchMainTab('admin');
+        resetAdminInactivityTimer();
+        showToast('🔓 Sesión de Administrador iniciada.');
+      } catch (e) {
+        errEl.textContent = 'Error de red al conectar con Apps Script. Verifica que la implementación esté publicada con acceso "Cualquier persona".';
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+      }
+    }
+
+    function logoutAdmin(byTimeout = false) {
+      isAdminAuthenticated = false;
+      activeSessionHash = '';
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      updateAdminUIState();
+      switchMainTab('cotizador');
+      showToast(byTimeout ? '⏱️ Sesión administrador cerrada por inactividad.' : '🔒 Sesión administrador cerrada.');
+    }
+
+    function updateAdminUIState() {
+      const btn = document.getElementById('btnAdminToggle');
+      const icon = document.getElementById('adminBtnIcon');
+      const txt = document.getElementById('adminBtnText');
+      const tabAdmin = document.getElementById('tabBtnAdmin');
+      const timerBadge = document.getElementById('adminSessionTimer');
+
+      if (isAdminAuthenticated) {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-red-600 text-white hover:bg-red-700 border-red-600';
+        icon.textContent = '🔓';
+        txt.textContent = 'Cerrar Sesión Admin';
+        tabAdmin.classList.remove('hidden');
+        timerBadge.classList.remove('hidden');
+        renderAdminProducts();
+        renderAdminExtras();
+        renderAdminBanks();
+      } else {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900';
+        icon.textContent = '🔒';
+        txt.textContent = 'Modo Administrador';
+        tabAdmin.classList.add('hidden');
+        timerBadge.classList.add('hidden');
+      }
+    }
+
+    function switchMainTab(tab) {
+      if (tab === 'admin' && !isAdminAuthenticated) {
+        handleAdminButtonClick();
+        return;
+      }
+      document.getElementById('viewCotizador').classList.toggle('hidden', tab !== 'cotizador');
+      document.getElementById('viewRegistro').classList.toggle('hidden', tab !== 'registro');
+      document.getElementById('viewAdmin').classList.toggle('hidden', tab !== 'admin');
+
+      document.getElementById('tabBtnCotizador').className = tab === 'cotizador'
+        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+
+      document.getElementById('tabBtnRegistro').className = tab === 'registro'
+        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+    }
+
+    function saveAppsScriptUrl() {
+      const url = document.getElementById('appsScriptUrlInput').value.trim();
+      localStorage.setItem(STORAGE_KEY_SCRIPT, url);
+      showToast('✅ URL guardada en este navegador.');
+      pullFromCloudAppsScript(true);
+    }
+
+    async function changeAdminPasswordCloud() {
+      const curr = document.getElementById('adminCurrentPass').value;
+      const next = document.getElementById('adminNewPass').value;
+      const conf = document.getElementById('adminConfirmPass').value;
+
+      if (!curr || !next || next.length < 4) {
+        showToast('⚠️ La nueva contraseña debe tener al menos 4 caracteres.');
+        return;
+      }
+      if (next !== conf) {
+        showToast('⚠️ La confirmación de contraseña no coincide.');
+        return;
+      }
+
+      const currentHash = await sha256Hex(curr);
+      const newHash = await sha256Hex(next);
+
+      try {
+        const res = await fetch(getAppsScriptUrl(), {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'change_password', currentHash, newHash })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          showToast('❌ ' + (data.error || 'No se pudo actualizar la clave.'));
+          return;
+        }
+        activeSessionHash = newHash;
+        document.getElementById('adminCurrentPass').value = '';
+        document.getElementById('adminNewPass').value = '';
+        document.getElementById('adminConfirmPass').value = '';
+        showToast('✅ Contraseña actualizada en la nube para todos tus dispositivos.');
+      } catch (e) {
+        showToast('❌ Error de conexión con Google Apps Script.');
+      }
+    }
+
+    async function pushSettingsToCloud() {
+      saveLocalSettings();
+      refreshAllViews();
+      try {
+        const res = await fetch(getAppsScriptUrl(), {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'save_global_settings',
+            passwordHash: activeSessionHash,
+            settings
+          })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          showToast('❌ ' + (data.error || 'No autorizado para guardar en la nube.'));
+          return;
+        }
+        showToast('☁️ ¡Cambios publicados en la nube! Todos los dispositivos verán los nuevos datos.');
+      } catch (e) {
+        showToast('❌ Error al publicar cambios en Google Apps Script.');
+      }
+    }
+
+    // =========================================================================
+    // 8. EDITORES DEL PANEL ADMINISTRADOR (PRENDAS, EXTRAS, BANCOS)
+    // =========================================================================
+    function renderAdminProducts() {
+      const brackets = ['3-4', '6-8', '10-12', '14-16', 'S-M', 'L-XL', 'XXL'];
+      const tbody = document.getElementById('adminProductsBody');
+      tbody.innerHTML = settings.catalog.map((p, idx) => `
+        <tr>
+          <td class="p-2">
+            <input type="text" value="${p.name}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
+          </td>
+          ${brackets.map(b => `
+            <td class="p-1.5 text-right">
+              <input type="number" value="${p.prices[b] || 0}" onchange="updateProdPrice(${idx}, '${b}', this.value)" class="w-20 rounded border border-slate-300 px-1.5 py-1 text-xs text-right font-bold" />
+            </td>
+          `).join('')}
+          <td class="p-2 text-center">
+            <button onclick="adminDeleteProduct(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateProdName(idx, val) {
+      settings.catalog[idx].name = val.trim() || settings.catalog[idx].name;
+      saveLocalSettings();
+      renderProductDropdown();
+    }
+
+    function updateProdPrice(idx, bracket, val) {
+      settings.catalog[idx].prices[bracket] = Math.max(0, parseInt(val, 10) || 0);
+      saveLocalSettings();
+      onProductOrSizeChange();
+    }
+
+    function adminDeleteProduct(idx) {
+      settings.catalog.splice(idx, 1);
+      saveLocalSettings();
+      refreshAllViews();
+    }
+
+    function adminAddProduct() {
+      const name = document.getElementById('newProdName').value.trim();
+      if (!name) {
+        showToast('⚠️ Escribe el nombre de la nueva prenda.');
+        return;
+      }
+      settings.catalog.push({
+        id: 'p_' + Date.now(),
+        name,
+        prices: {
+          '3-4':   parseInt(document.getElementById('newP_3_4').value, 10) || 0,
+          '6-8':   parseInt(document.getElementById('newP_6_8').value, 10) || 0,
+          '10-12': parseInt(document.getElementById('newP_10_12').value, 10) || 0,
+          '14-16': parseInt(document.getElementById('newP_14_16').value, 10) || 0,
+          'S-M':   parseInt(document.getElementById('newP_S_M').value, 10) || 0,
+          'L-XL':  parseInt(document.getElementById('newP_L_XL').value, 10) || 0,
+          'XXL':   parseInt(document.getElementById('newP_XXL').value, 10) || 0
+        }
+      });
+      ['newProdName','newP_3_4','newP_6_8','newP_10_12','newP_14_16','newP_S_M','newP_L_XL','newP_XXL'].forEach(id => document.getElementById(id).value = '');
+      saveLocalSettings();
+      refreshAllViews();
+      showToast('✅ Prenda agregada. Pulsa "Publicar Cambios en la Nube".');
+    }
+
+    function renderAdminExtras() {
+      const container = document.getElementById('adminExtrasList');
+      container.innerHTML = settings.extras.map((e, idx) => `
+        <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
+          <input type="text" value="${e.name}" onchange="settings.extras[${idx}].name=this.value; saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
+          <input type="number" value="${e.price}" onchange="settings.extras[${idx}].price=parseInt(this.value,10)||0; saveLocalSettings(); renderExtrasGrid(); recalculateAll();" class="w-24 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold bg-white" />
+          <button onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function adminAddExtra() {
+      const name = document.getElementById('newExtraName').value.trim();
+      const price = parseInt(document.getElementById('newExtraPrice').value, 10) || 0;
+      if (!name) return;
+      settings.extras.push({
+        id: 'e_' + Date.now(),
+        code: String(settings.extras.length + 15),
+        name,
+        price
+      });
+      document.getElementById('newExtraName').value = '';
+      document.getElementById('newExtraPrice').value = '';
+      saveLocalSettings();
+      refreshAllViews();
+    }
+
+    function renderAdminBanks() {
+      const container = document.getElementById('adminBanksEditor');
+      container.innerHTML = settings.banks.map((b, idx) => `
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs">
+          <div class="font-extrabold text-slate-800">${b.label}</div>
+          <input type="text" value="${b.holder}" onchange="settings.banks[${idx}].holder=this.value; saveLocalSettings(); renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${b.rut}" onchange="settings.banks[${idx}].rut=this.value; saveLocalSettings(); renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${b.bank}" onchange="settings.banks[${idx}].bank=this.value; saveLocalSettings(); renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${b.accountType}" onchange="settings.banks[${idx}].accountType=this.value; saveLocalSettings(); renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${b.accountNumber}" onchange="settings.banks[${idx}].accountNumber=this.value; saveLocalSettings(); renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          </div>
+          <input type="email" value="${b.email}" onchange="settings.banks[${idx}].email=this.value; saveLocalSettings(); renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 9. TOAST NOTIFICATION
+    // =========================================================================
+    let toastTimeout = null;
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => box.classList.add('hidden'), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
