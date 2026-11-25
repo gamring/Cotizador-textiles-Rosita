@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
     .brand-serif { font-family: 'Playfair Display', serif; }
@@ -19,13 +19,19 @@
       .no-print { display: none !important; }
       body { background: #fff !important; }
       .print-shadow-none { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+      body.printing-ot #appHeader,
+      body.printing-ot #viewCotizador,
+      body.printing-ot #viewRegistro,
+      body.printing-ot .admin-non-ot { display: none !important; }
+      body.printing-ot #viewAdmin { display: block !important; padding: 0 !important; }
+      body.printing-ot #otPrintableArea { border: none !important; box-shadow: none !important; padding: 0 !important; }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
   <!-- ENCABEZADO OFICIAL TEXTILES ROSITA -->
-  <header class="bg-white border-b border-amber-200/80 shadow-sm sticky top-0 z-30">
+  <header id="appHeader" class="bg-white border-b border-amber-200/80 shadow-sm sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-4">
         <div class="stitch-border bg-white p-1.5 rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
@@ -354,202 +360,375 @@
 
     <!-- ==================== PESTAÑA 3: PANEL ADMINISTRADOR CENTRALIZADO ==================== -->
     <section id="viewAdmin" class="hidden space-y-6">
-      
-      <!-- ESTADO DE CONEXIÓN SEGURA MULTI-DISPOSITIVO -->
-      <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-md space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
-              Seguridad Multi-Dispositivo SHA-256 · Cuenta: textiles.rosita.2026@gmail.com
-            </span>
-            <h2 class="text-lg font-extrabold mt-1">Conexión Centralizada con Google Sheets & Drive</h2>
-            <p class="text-xs text-slate-300">
-              Cualquier cliente desde cualquier dispositivo escribe directamente en tu pestaña <code>registro de pedidos</code> y respalda el comprobante en Google Drive.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
-              📊 Ver "registro de pedidos" en Google Sheets
-            </a>
-            <button onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
-              🔄 Sincronizar desde Nube
-            </button>
-            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow">
-              ☁️ Publicar Cambios en la Nube
-            </button>
-          </div>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800">
-          <div class="md:col-span-9">
-            <label class="block text-xs font-bold text-slate-300 mb-1">URL de Implementación Web App Activa</label>
-            <input id="appsScriptUrlInput" type="url" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
-          </div>
-          <div class="md:col-span-3">
-            <button onclick="saveAppsScriptUrl()" class="w-full py-2 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-extrabold">
-              Actualizar URL Local
+      <!-- NAVEGACIÓN INTERNA DE ADMINISTRACIÓN (ORDEN DE TRABAJO VS CONFIGURACIÓN) -->
+      <div class="admin-non-ot bg-white rounded-2xl border border-slate-200 p-2 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+        <div class="flex flex-wrap gap-1.5">
+          <button id="adminSubTabOT" onclick="switchAdminSubTab('ot')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5">
+            <span>📋 Orden de Trabajo Textil (Corte y Confección)</span>
+          </button>
+          <button id="adminSubTabConfig" onclick="switchAdminSubTab('config')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+            <span>⚙️ Configuración de Catálogo, Secciones y Clave</span>
+          </button>
+        </div>
+        <button onclick="loadCloudOrdersForOT(true)" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">
+          🔄 Actualizar Pedidos desde Google Sheets
+        </button>
+      </div>
+
+      <!-- ==================== SUBVISTA ADMIN A: ORDEN DE TRABAJO OPTIMIZADA (OPCIÓN 1) ==================== -->
+      <div id="adminPanelOT" class="space-y-6">
+
+        <!-- BARRA DE FILTROS DE PRODUCCIÓN -->
+        <div class="admin-non-ot bg-slate-900 text-white rounded-2xl p-5 shadow-md space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
+                Planificación de Taller · Opción 1
+              </span>
+              <h2 class="text-lg font-extrabold mt-1">Generador de Orden de Trabajo (OT) Optimizada</h2>
+              <p class="text-xs text-slate-300">Consolida automáticamente los pedidos recibidos por ciclo de entrega, establecimiento y talla para optimizar el corte en tela.</p>
+            </div>
+            <button onclick="printWorkOrder()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow flex items-center gap-2">
+              <span>🖨️ Imprimir Orden de Trabajo (A4)</span>
             </button>
           </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
+            <div class="sm:col-span-4">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">1. Filtrar por Ciclo / Fecha de Entrega</label>
+              <select id="otFilterDelivery" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
+                <option value="ALL">Todos los ciclos de entrega</option>
+              </select>
+            </div>
+            <div class="sm:col-span-4">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">2. Filtrar por Establecimiento Educacional</label>
+              <select id="otFilterSchool" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
+                <option value="ALL">Todos los establecimientos</option>
+              </select>
+            </div>
+            <div class="sm:col-span-4">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">3. Buscar Folio o Apoderado</label>
+              <input id="otFilterSearch" type="text" oninput="renderWorkOrder()" placeholder="Ej. ROS-0004 o María..." class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white" />
+            </div>
+          </div>
+        </div>
+
+        <!-- HOJA IMPRIMIBLE DE ORDEN DE TRABAJO -->
+        <div id="otPrintableArea" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-7">
+          
+          <!-- ENCABEZADO DOCUMENTO OT -->
+          <div class="flex flex-wrap items-start justify-between gap-4 pb-4 border-b-2 border-slate-900">
+            <div>
+              <div class="text-xs font-extrabold tracking-widest text-amber-800 uppercase">TEXTILES ROSITA · TALLER DE CONFECCIÓN</div>
+              <h3 class="text-xl font-black text-slate-900">ORDEN DE TRABAJO (OT) — CORTE, BORDADO Y EMPAQUE</h3>
+              <p id="otSubtitleScope" class="text-xs font-semibold text-slate-600 mt-1">Lote: Todos los ciclos · Todos los colegios</p>
+            </div>
+            <div class="text-right text-xs space-y-1">
+              <div class="font-extrabold text-slate-900" id="otGeneratedDate">Fecha emisión: —</div>
+              <div class="inline-flex gap-2">
+                <span id="otKpiOrders" class="px-2.5 py-1 rounded bg-slate-100 font-extrabold text-slate-800">0 Pedidos</span>
+                <span id="otKpiGarments" class="px-2.5 py-1 rounded bg-amber-100 font-extrabold text-amber-900">0 Prendas</span>
+                <span id="otKpiExtras" class="px-2.5 py-1 rounded bg-emerald-100 font-extrabold text-emerald-900">0 Extras</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 1: MATRIZ DE CORTE CONSOLIDADA POR PRENDA Y TALLA -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-slate-900 text-white text-xs">BLOQUE 1</span>
+                Matriz Consolidada de Corte por Prenda y Talla
+              </h4>
+              <span class="text-[11px] font-semibold text-slate-500">Agrupado para tendido múltiple en mesa de corte</span>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-300 rounded-xl">
+              <table class="w-full text-center border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-900 text-white font-extrabold">
+                    <th class="p-2.5 text-left">Prenda a Cortar</th>
+                    <th class="p-2">3</th>
+                    <th class="p-2">4</th>
+                    <th class="p-2">6</th>
+                    <th class="p-2">8</th>
+                    <th class="p-2">10</th>
+                    <th class="p-2">12</th>
+                    <th class="p-2">14</th>
+                    <th class="p-2">16</th>
+                    <th class="p-2">S</th>
+                    <th class="p-2">M</th>
+                    <th class="p-2">L</th>
+                    <th class="p-2">XL</th>
+                    <th class="p-2">XXL</th>
+                    <th class="p-2.5 bg-amber-600 text-white">TOTAL</th>
+                  </tr>
+                </thead>
+                <tbody id="otCuttingMatrixBody" class="divide-y divide-slate-200 font-semibold">
+                  <tr><td colspan="15" class="p-6 text-slate-400">Cargando pedidos desde la nube...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- BLOQUE 2: HOJA DE RUTA DE BORDADOS, INSIGNIAS Y AJUSTES ESPECIALES -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-700 text-white text-xs">BLOQUE 2</span>
+                Hoja de Ruta de Personalización (Bordados, Insignias, Bastas y Notas)
+              </h4>
+              <span class="text-[11px] font-semibold text-slate-500">Verificar antes de cerrar y embolsar</span>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-300 rounded-xl">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-amber-50 text-amber-950 border-b border-amber-200 font-extrabold">
+                    <th class="p-2.5">Folio</th>
+                    <th class="p-2.5">Establecimiento</th>
+                    <th class="p-2.5">Prendas del Pedido</th>
+                    <th class="p-2.5">Servicios Extras Solicitados</th>
+                    <th class="p-2.5">Texto Bordado / Observación Taller</th>
+                    <th class="p-2.5 text-center">Listo</th>
+                  </tr>
+                </thead>
+                <tbody id="otPersonalizationBody" class="divide-y divide-slate-200">
+                  <tr><td colspan="6" class="p-5 text-center text-slate-400">Sin servicios especiales en este filtro.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- BLOQUE 3: CHECKLIST DE EMPAQUE Y CONTROL DE SALDO CONTRA ENTREGA -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-emerald-700 text-white text-xs">BLOQUE 3</span>
+                Checklist de Empaque Individual y Saldo 50% por Cobrar
+              </h4>
+              <span id="otTotalBalancePending" class="text-xs font-extrabold text-emerald-800">Saldo total lote: $0</span>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-300 rounded-xl">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-800 border-b border-slate-300 font-extrabold">
+                    <th class="p-2.5 text-center w-10">OK</th>
+                    <th class="p-2.5">Folio</th>
+                    <th class="p-2.5">Apoderado / Teléfono</th>
+                    <th class="p-2.5">Colegio / Entrega</th>
+                    <th class="p-2.5">Contenido de Bolsa</th>
+                    <th class="p-2.5 text-right">Abono 50%</th>
+                    <th class="p-2.5 text-right">Cobrar Entrega</th>
+                  </tr>
+                </thead>
+                <tbody id="otPackingListBody" class="divide-y divide-slate-200">
+                  <tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- CAMBIAR CONTRASEÑA DE ADMINISTRADOR (EN LA NUBE) -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h3 class="text-base font-extrabold text-slate-900 mb-1">🔐 Cambiar Contraseña de Administrador (Global para todos tus dispositivos)</h3>
-        <p class="text-xs text-slate-500 mb-4">Al actualizarla aquí, se encripta en SHA-256 y se guarda directamente en la pestaña oculta <code>config_admin</code> de tu Google Sheet.</p>
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña Actual</label>
-            <input id="adminCurrentPass" type="password" placeholder="••••••" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+      <!-- ==================== SUBVISTA ADMIN B: CONFIGURACIÓN GENERAL ==================== -->
+      <div id="adminPanelConfig" class="hidden space-y-6">
+
+        <!-- ESTADO DE CONEXIÓN SEGURA MULTI-DISPOSITIVO -->
+        <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-md space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
+                Seguridad Multi-Dispositivo SHA-256 · Cuenta: textiles.rosita.2026@gmail.com
+              </span>
+              <h2 class="text-lg font-extrabold mt-1">Conexión Centralizada con Google Sheets & Drive</h2>
+              <p class="text-xs text-slate-300">
+                Cualquier cliente desde cualquier dispositivo escribe directamente en tu pestaña <code>registro de pedidos</code> y respalda el comprobante en Google Drive.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
+                📊 Ver "registro de pedidos" en Google Sheets
+              </a>
+              <button onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
+                🔄 Sincronizar desde Nube
+              </button>
+              <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow">
+                ☁️ Publicar Cambios en la Nube
+              </button>
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Contraseña</label>
-            <input id="adminNewPass" type="password" placeholder="Mínimo 4 caracteres" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800">
+            <div class="md:col-span-9">
+              <label class="block text-xs font-bold text-slate-300 mb-1">URL de Implementación Web App Activa</label>
+              <input id="appsScriptUrlInput" type="url" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+            </div>
+            <div class="md:col-span-3">
+              <button onclick="saveAppsScriptUrl()" class="w-full py-2 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-extrabold">
+                Actualizar URL Local
+              </button>
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Confirmar Nueva Contraseña</label>
-            <input id="adminConfirmPass" type="password" placeholder="Repetir nueva clave" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+        </div>
+
+        <!-- CAMBIAR CONTRASEÑA DE ADMINISTRADOR (EN LA NUBE) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">🔐 Cambiar Contraseña de Administrador (Global para todos tus dispositivos)</h3>
+          <p class="text-xs text-slate-500 mb-4">Al actualizarla aquí, se encripta en SHA-256 y se guarda directamente en la pestaña oculta <code>config_admin</code> de tu Google Sheet.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña Actual</label>
+              <input id="adminCurrentPass" type="password" placeholder="••••••" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Contraseña</label>
+              <input id="adminNewPass" type="password" placeholder="Mínimo 4 caracteres" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Confirmar Nueva Contraseña</label>
+              <input id="adminConfirmPass" type="password" placeholder="Repetir nueva clave" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <button onclick="changeAdminPasswordCloud()" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">
+                Actualizar Contraseña
+              </button>
+            </div>
           </div>
-          <div>
-            <button onclick="changeAdminPasswordCloud()" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">
-              Actualizar Contraseña
+        </div>
+
+        <!-- GESTIÓN DE SECCIONES, COLEGIOS Y CICLOS DE ENTREGA -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">🗂️ Edición de Secciones, Colegios y Ciclos de Entrega</h3>
+              <p class="text-xs text-slate-500">Modifica los encabezados visibles y las opciones desplegables. Luego pulsa <strong>Grabar Modificaciones en la Nube</strong>.</p>
+            </div>
+            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+              ☁️ Grabar Modificaciones en la Nube
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 1</label>
+              <input id="editTitleSec1" type="text" onchange="settings.sectionTitles.sec1=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Etiqueta Temporada (Sección 1)</label>
+              <input id="editSeasonTag" type="text" onchange="settings.sectionTitles.seasonTag=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 2</label>
+              <input id="editTitleSec2" type="text" onchange="settings.sectionTitles.sec2=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 3</label>
+              <input id="editTitleSec3" type="text" onchange="settings.sectionTitles.sec3=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 4</label>
+              <input id="editTitleSec4" type="text" onchange="settings.sectionTitles.sec4=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold text-slate-800">🏫 Establecimientos Educacionales</div>
+            <div id="adminSchoolsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+            <div class="flex gap-2 pt-1">
+              <input id="newSchoolName" type="text" placeholder="Nuevo colegio o jardín..." class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
+              <button onclick="adminAddSchool()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Colegio</button>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-slate-100">
+            <div class="text-xs font-extrabold text-slate-800">📅 Ciclos / Fechas de Entrega Programada</div>
+            <div id="adminDeliveryList" class="space-y-2"></div>
+            <div class="flex gap-2 pt-1">
+              <input id="newDeliveryName" type="text" placeholder="Ej. 4° Pedidos — Abril 2027" class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
+              <button onclick="adminAddDelivery()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Ciclo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE CATÁLOGO DE PRENDAS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
+            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+              ☁️ Grabar Prendas en la Nube
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 font-extrabold">
+                  <th class="p-2.5">Prenda</th>
+                  <th class="p-2 text-right">3–4</th>
+                  <th class="p-2 text-right">6–8</th>
+                  <th class="p-2 text-right">10–12</th>
+                  <th class="p-2 text-right">14–16</th>
+                  <th class="p-2 text-right">S–M</th>
+                  <th class="p-2 text-right">L–XL</th>
+                  <th class="p-2 text-right">XXL</th>
+                  <th class="p-2 text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="adminProductsBody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="text-xs font-extrabold text-slate-800">+ Agregar Nueva Prenda al Catálogo</div>
+            <div class="grid grid-cols-2 sm:grid-cols-9 gap-2">
+              <input id="newProdName" type="text" placeholder="Nombre prenda" class="col-span-2 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white" />
+              <input id="newP_3_4" type="number" placeholder="3–4" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_6_8" type="number" placeholder="6–8" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_10_12" type="number" placeholder="10–12" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_14_16" type="number" placeholder="14–16" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_S_M" type="number" placeholder="S–M" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_L_XL" type="number" placeholder="L–XL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+              <input id="newP_XXL" type="number" placeholder="XXL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
+            </div>
+            <button onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+              Agregar Prenda
             </button>
           </div>
         </div>
+
+        <!-- GESTIÓN DE DETALLE EXTRAS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras</h3>
+            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+              ☁️ Grabar Extras en la Nube
+            </button>
+          </div>
+          <div id="adminExtrasList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+            <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+            <input id="newExtraPrice" type="number" placeholder="Precio CLP" class="w-32 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+            <button onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+              + Agregar Extra
+            </button>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE CUENTAS BANCARIAS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+              ☁️ Grabar Cuentas en la Nube
+            </button>
+          </div>
+          <div id="adminBanksEditor" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
       </div>
-
-      <!-- GESTIÓN DE SECCIONES, COLEGIOS Y CICLOS DE ENTREGA -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900">🗂️ Edición de Secciones, Colegios y Ciclos de Entrega</h3>
-            <p class="text-xs text-slate-500">Modifica los encabezados visibles y las opciones desplegables. Luego pulsa <strong>Grabar Modificaciones en la Nube</strong>.</p>
-          </div>
-          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
-            ☁️ Grabar Modificaciones en la Nube
-          </button>
-        </div>
-
-        <!-- Títulos de Secciones -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 1</label>
-            <input id="editTitleSec1" type="text" onchange="settings.sectionTitles.sec1=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Etiqueta Temporada (Sección 1)</label>
-            <input id="editSeasonTag" type="text" onchange="settings.sectionTitles.seasonTag=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 2</label>
-            <input id="editTitleSec2" type="text" onchange="settings.sectionTitles.sec2=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 3</label>
-            <input id="editTitleSec3" type="text" onchange="settings.sectionTitles.sec3=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
-          </div>
-          <div class="sm:col-span-2">
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 4</label>
-            <input id="editTitleSec4" type="text" onchange="settings.sectionTitles.sec4=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
-          </div>
-        </div>
-
-        <!-- Lista de Colegios -->
-        <div class="space-y-2">
-          <div class="text-xs font-extrabold text-slate-800">🏫 Establecimientos Educacionales</div>
-          <div id="adminSchoolsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-          <div class="flex gap-2 pt-1">
-            <input id="newSchoolName" type="text" placeholder="Nuevo colegio o jardín..." class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
-            <button onclick="adminAddSchool()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Colegio</button>
-          </div>
-        </div>
-
-        <!-- Lista de Ciclos de Entrega -->
-        <div class="space-y-2 pt-2 border-t border-slate-100">
-          <div class="text-xs font-extrabold text-slate-800">📅 Ciclos / Fechas de Entrega Programada</div>
-          <div id="adminDeliveryList" class="space-y-2"></div>
-          <div class="flex gap-2 pt-1">
-            <input id="newDeliveryName" type="text" placeholder="Ej. 4° Pedidos — Abril 2027" class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
-            <button onclick="adminAddDelivery()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Ciclo</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- GESTIÓN DE CATÁLOGO DE PRENDAS -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
-          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
-            ☁️ Grabar Prendas en la Nube
-          </button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-slate-100 text-slate-700 font-extrabold">
-                <th class="p-2.5">Prenda</th>
-                <th class="p-2 text-right">3–4</th>
-                <th class="p-2 text-right">6–8</th>
-                <th class="p-2 text-right">10–12</th>
-                <th class="p-2 text-right">14–16</th>
-                <th class="p-2 text-right">S–M</th>
-                <th class="p-2 text-right">L–XL</th>
-                <th class="p-2 text-right">XXL</th>
-                <th class="p-2 text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="adminProductsBody" class="divide-y divide-slate-200"></tbody>
-          </table>
-        </div>
-
-        <!-- AGREGAR NUEVA PRENDA -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-          <div class="text-xs font-extrabold text-slate-800">+ Agregar Nueva Prenda al Catálogo</div>
-          <div class="grid grid-cols-2 sm:grid-cols-9 gap-2">
-            <input id="newProdName" type="text" placeholder="Nombre prenda" class="col-span-2 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs bg-white" />
-            <input id="newP_3_4" type="number" placeholder="3–4" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_6_8" type="number" placeholder="6–8" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_10_12" type="number" placeholder="10–12" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_14_16" type="number" placeholder="14–16" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_S_M" type="number" placeholder="S–M" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_L_XL" type="number" placeholder="L–XL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-            <input id="newP_XXL" type="number" placeholder="XXL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
-          </div>
-          <button onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
-            Agregar Prenda
-          </button>
-        </div>
-      </div>
-
-      <!-- GESTIÓN DE DETALLE EXTRAS -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras</h3>
-          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
-            ☁️ Grabar Extras en la Nube
-          </button>
-        </div>
-        <div id="adminExtrasList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-        <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-          <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
-          <input id="newExtraPrice" type="number" placeholder="Precio CLP" class="w-32 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
-          <button onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
-            + Agregar Extra
-          </button>
-        </div>
-      </div>
-
-      <!-- GESTIÓN DE CUENTAS BANCARIAS -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
-          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
-            ☁️ Grabar Cuentas en la Nube
-          </button>
-        </div>
-        <div id="adminBanksEditor" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-
     </section>
   </main>
 
@@ -590,6 +769,8 @@
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
     const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+
+    const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
 
     const DEFAULT_SCHOOLS = [
       'Polivalente María Pinto',
@@ -668,6 +849,7 @@
     let isAdminAuthenticated = false;
     let activeSessionHash = '';
     let inactivityTimer = null;
+    let cloudOrdersCache = [];
 
     function escapeHtml(str) {
       return String(str || '')
@@ -815,6 +997,7 @@
         renderAdminProducts();
         renderAdminExtras();
         renderAdminBanks();
+        populateOTFilterOptions();
       }
       recalculateAll();
     }
@@ -1191,6 +1374,7 @@
         deliveryWindow,
         itemsSummary: itemsSummary || 'Sin prendas base',
         extrasSummary: extrasSummary || 'Sin extras',
+        notes,
         total: totalFinal,
         deposit50,
         balance50,
@@ -1207,7 +1391,6 @@
       refreshFolioBadge();
       renderOrdersRegistry();
 
-      // Mensaje WhatsApp privado: mantiene enlace al comprobante y omite enlace a planilla interna
       const lines = [
         `*PEDIDO TEXTILES ROSITA — ${folio}*`,
         `\u{1F464} *Cliente:* ${clientName}`,
@@ -1293,7 +1476,7 @@
       const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      a.href = .createObject(blob);
       a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
@@ -1328,15 +1511,15 @@
 
       try {
         const hash = await sha256Hex(pass);
-        const scriptUrl = getAppsScriptUrl();
+        const script = getAppsScript();
 
-        if (!scriptUrl || scriptUrl.includes('...')) {
-          errEl.textContent = 'La URL de Apps Script está incompleta. Pega la URL completa en index.html.';
+        if (!script || script.includes('...')) {
+          errEl.textContent = 'La  de Apps Script está incompleta. Pega la  completa en index.html.';
           errEl.classList.remove('hidden');
           return;
         }
 
-        const res = await fetch(scriptUrl, {
+        const res = await fetch(script, {
           method: 'POST',
           redirect: 'follow',
           credentials: 'omit',
@@ -1355,7 +1538,9 @@
         closeAdminModal();
         updateAdminUIState();
         switchMainTab('admin');
+        switchAdminSubTab('ot');
         resetAdminInactivityTimer();
+        loadCloudOrdersForOT(false);
         showToast('🔓 Sesión de Administrador iniciada.');
       } catch (e) {
         errEl.textContent = 'Error de red al conectar con Apps Script. Verifica que la implementación esté publicada con acceso "Cualquier persona".';
@@ -1392,6 +1577,7 @@
         renderAdminProducts();
         renderAdminExtras();
         renderAdminBanks();
+        populateOTFilterOptions();
       } else {
         btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900';
         icon.textContent = '🔒';
@@ -1419,8 +1605,252 @@
         : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
     }
 
-    function saveAppsScriptUrl() {
-      const url = document.getElementById('appsScriptUrlInput').value.trim();
+    function switchAdminSubTab(subTab) {
+      document.getElementById('adminPanelOT').classList.toggle('hidden', subTab !== 'ot');
+      document.getElementById('adminPanelConfig').classList.toggle('hidden', subTab !== 'config');
+
+      document.getElementById('adminSubTabOT').className = subTab === 'ot'
+        ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5'
+        : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+
+      document.getElementById('adminSubTabConfig').className = subTab === 'config'
+        ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm flex items-center gap-1.5'
+        : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+    }
+
+    // =========================================================================
+    // 8. ORDEN DE TRABAJO OPTIMIZADA (OPCIÓN 1 — CONSOLIDACIÓN POR TALLA Y COLEGIO)
+    // =========================================================================
+    function populateOTFilterOptions() {
+      const delSel = document.getElementById('otFilterDelivery');
+      const schSel = document.getElementById('otFilterSchool');
+      if (!delSel || !schSel) return;
+
+      const prevDel = delSel.value;
+      const prevSch = schSel.value;
+
+      const allDeliveries = Array.from(new Set([
+        ...settings.deliveryWindows,
+        ...cloudOrdersCache.map(o => o.deliveryWindow).filter(Boolean)
+      ]));
+      const allSchools = Array.from(new Set([
+        ...settings.schools,
+        ...cloudOrdersCache.map(o => o.school).filter(Boolean)
+      ]));
+
+      delSel.innerHTML = `<option value="ALL">Todos los ciclos de entrega</option>` +
+        allDeliveries.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+
+      schSel.innerHTML = `<option value="ALL">Todos los establecimientos</option>` +
+        allSchools.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+
+      if (prevDel && Array.from(delSel.options).some(o => o.value === prevDel)) delSel.value = prevDel;
+      if (prevSch && Array.from(schSel.options).some(o => o.value === prevSch)) schSel.value = prevSch;
+    }
+
+    async function loadCloudOrdersForOT(notify = false) {
+      if (!isAdminAuthenticated) return;
+      try {
+        const res = await fetch(getAppsScript(), {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'get_all_orders',
+            passwordHash: activeSessionHash
+          })
+        });
+        const data = await res.json();
+        if (data && data.ok && Array.isArray(data.orders)) {
+          cloudOrdersCache = data.orders;
+          populateOTFilterOptions();
+          renderWorkOrder();
+          if (notify) showToast(`✅ ${cloudOrdersCache.length} pedidos cargados desde Google Sheets.`);
+          return;
+        }
+      } catch (err) {}
+
+      // Fallback: si Apps Script aún no tiene la ruta get_all_orders publicada, usa pedidos locales
+      const localFallback = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      cloudOrdersCache = localFallback;
+      populateOTFilterOptions();
+      renderWorkOrder();
+      if (notify) showToast('ℹ️ Mostrando pedidos locales (actualiza Código.gs para leer toda la nube).');
+    }
+
+    function parseItemsFromSummary(itemsSummary) {
+      // Convierte "2x Buzo Algodón (Talla 10) = $51.800 | 1x Polera Piqué (Talla S) = $11.200"
+      const parsed = [];
+      if (!itemsSummary || itemsSummary === 'Sin prendas base' || itemsSummary === 'Sin prendas') return parsed;
+      const chunks = String(itemsSummary).split('|');
+      chunks.forEach(chunk => {
+        const clean = chunk.trim();
+        const match = clean.match(/^(\d+)x\s+(.+?)\s+\((?:Talla\s*)?([^)]+)\)/i);
+        if (match) {
+          const qty = parseInt(match[1], 10) || 0;
+          const product = stripLeadingNumber(match[2]);
+          const size = String(match[3]).trim().toUpperCase();
+          if (qty > 0 && product) {
+            parsed.push({ qty, product, size });
+          }
+        }
+      });
+      return parsed;
+    }
+
+    function normalizeSizeKey(rawSize) {
+      const s = String(rawSize || '').toUpperCase().replace(/^TALLA\s*/i, '').trim();
+      return ALL_SIZES_ORDER.includes(s) ? s : null;
+    }
+
+    function renderWorkOrder() {
+      const deliveryFilter = document.getElementById('otFilterDelivery').value;
+      const schoolFilter = document.getElementById('otFilterSchool').value;
+      const searchFilter = (document.getElementById('otFilterSearch').value || '').trim().toLowerCase();
+
+      const filtered = cloudOrdersCache.filter(o => {
+        if (deliveryFilter !== 'ALL' && o.deliveryWindow !== deliveryFilter) return false;
+        if (schoolFilter !== 'ALL' && o.school !== schoolFilter) return false;
+        if (searchFilter) {
+          const hay = `${o.folio} ${o.clientName} ${o.clientPhone} ${o.school}`.toLowerCase();
+          if (!hay.includes(searchFilter)) return false;
+        }
+        return true;
+      });
+
+      // Encabezado OT
+      document.getElementById('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
+      document.getElementById('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter}`;
+
+      // 1. Construir Matriz de Corte Consolidada
+      const matrixMap = {}; // { "Buzo Algodón": { '3':0, '4':2, ..., total: 2 } }
+      let totalGarmentsCount = 0;
+
+      filtered.forEach(order => {
+        const items = parseItemsFromSummary(order.itemsSummary);
+        items.forEach(it => {
+          const sizeKey = normalizeSizeKey(it.size);
+          if (!matrixMap[it.product]) {
+            matrixMap[it.product] = { total: 0 };
+            ALL_SIZES_ORDER.forEach(sz => matrixMap[it.product][sz] = 0);
+          }
+          if (sizeKey) {
+            matrixMap[it.product][sizeKey] += it.qty;
+          }
+          matrixMap[it.product].total += it.qty;
+          totalGarmentsCount += it.qty;
+        });
+      });
+
+      const matrixBody = document.getElementById('otCuttingMatrixBody');
+      const productNames = Object.keys(matrixMap);
+
+      if (!productNames.length) {
+        matrixBody.innerHTML = `<tr><td colspan="15" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
+      } else {
+        const colTotals = {};
+        ALL_SIZES_ORDER.forEach(sz => colTotals[sz] = 0);
+        let grandTotalGarments = 0;
+
+        const rowsHtml = productNames.map(prodName => {
+          const row = matrixMap[prodName];
+          ALL_SIZES_ORDER.forEach(sz => colTotals[sz] += row[sz]);
+          grandTotalGarments += row.total;
+
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
+              ${ALL_SIZES_ORDER.map(sz => {
+                const v = row[sz];
+                return `<td class="p-2 ${v > 0 ? 'bg-amber-50/80 text-slate-900 font-black' : 'text-slate-300'}">${v > 0 ? v : '·'}</td>`;
+              }).join('')}
+              <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
+            </tr>
+          `;
+        }).join('');
+
+        const totalRowHtml = `
+          <tr class="bg-slate-900 text-white font-black">
+            <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
+            ${ALL_SIZES_ORDER.map(sz => `<td class="p-2">${colTotals[sz] || 0}</td>`).join('')}
+            <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
+          </tr>
+        `;
+        matrixBody.innerHTML = rowsHtml + totalRowHtml;
+      }
+
+      // 2. Construir Hoja de Ruta de Personalización (Extras y Observaciones)
+      const specialOrders = filtered.filter(o => {
+        const hasExtras = o.extrasSummary && o.extrasSummary !== 'Sin extras';
+        const hasNotes = o.notes && o.notes.trim().length > 0;
+        return hasExtras || hasNotes;
+      });
+
+      const persBody = document.getElementById('otPersonalizationBody');
+      if (!specialOrders.length) {
+        persBody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Ningún pedido de este lote requiere bordados, insignias o ajustes especiales.</td></tr>`;
+      } else {
+        persBody.innerHTML = specialOrders.map(o => `
+          <tr class="hover:bg-amber-50/30">
+            <td class="p-2.5 font-extrabold text-amber-900">${escapeHtml(o.folio)}</td>
+            <td class="p-2.5 font-semibold text-slate-700">${escapeHtml(o.school)}</td>
+            <td class="p-2.5 text-slate-700">${escapeHtml(o.itemsSummary)}</td>
+            <td class="p-2.5 font-bold text-emerald-800">${escapeHtml(o.extrasSummary || '—')}</td>
+            <td class="p-2.5 font-semibold text-slate-900">${escapeHtml(o.notes || '—')}</td>
+            <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-400 rounded"></span></td>
+          </tr>
+        `).join('');
+      }
+
+      // 3. Construir Checklist de Empaque y Saldo 50% por Cobrar
+      const packBody = document.getElementById('otPackingListBody');
+      let totalBalancePending = 0;
+
+      if (!filtered.length) {
+        packBody.innerHTML = `<tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
+      } else {
+        packBody.innerHTML = filtered.map(o => {
+          const bal = Number(o.balance50) || Math.max(0, (Number(o.total) || 0) - (Number(o.deposit50) || 0));
+          totalBalancePending += bal;
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-500 rounded"></span></td>
+              <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
+              <td class="p-2.5">
+                <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
+                <div class="text-slate-500">${escapeHtml(o.clientPhone)}</div>
+              </td>
+              <td class="p-2.5">
+                <div class="font-semibold text-slate-800">${escapeHtml(o.school)}${o.grade ? ' (' + escapeHtml(o.grade) + ')' : ''}</div>
+                <div class="text-[11px] text-amber-800 font-semibold">${escapeHtml(o.deliveryWindow)}</div>
+              </td>
+              <td class="p-2.5">
+                <div class="text-slate-800">${escapeHtml(o.itemsSummary)}</div>
+                ${o.extrasSummary && o.extrasSummary !== 'Sin extras' ? `<div class="text-emerald-700 font-semibold">+ ${escapeHtml(o.extrasSummary)}</div>` : ''}
+                ${o.notes ? `<div class="text-amber-900 italic">Nota: ${escapeHtml(o.notes)}</div>` : ''}
+              </td>
+              <td class="p-2.5 text-right text-slate-600 font-semibold">${formatCLP(o.deposit50)}</td>
+              <td class="p-2.5 text-right font-black text-emerald-800">${formatCLP(bal)}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('otKpiOrders').textContent = `${filtered.length} ${filtered.length === 1 ? 'Pedido' : 'Pedidos'}`;
+      document.getElementById('otKpiGarments').textContent = `${totalGarmentsCount} ${totalGarmentsCount === 1 ? 'Prenda' : 'Prendas'}`;
+      document.getElementById('otKpiExtras').textContent = `${specialOrders.length} con Especiales`;
+      document.getElementById('otTotalBalancePending').textContent = `Saldo 50% por cobrar en este lote: ${formatCLP(totalBalancePending)}`;
+    }
+
+    function printWorkOrder() {
+      document.body.classList.add('printing-ot');
+      window.print();
+      setTimeout(() => document.body.classList.remove('printing-ot'), 500);
+    }
+
+    function saveAppsScript() {
+      const  = document.getElementById('appsScriptUrlInput').value.trim();
       localStorage.setItem(STORAGE_KEY_SCRIPT, url);
       showToast('✅ URL guardada en este navegador.');
       pullFromCloudAppsScript(true);
@@ -1493,7 +1923,7 @@
     }
 
     // =========================================================================
-    // 8. EDITORES DEL PANEL ADMINISTRADOR (SECCIONES, PRENDAS, EXTRAS, BANCOS)
+    // 9. EDITORES DEL PANEL ADMINISTRADOR (SECCIONES, PRENDAS, EXTRAS, BANCOS)
     // =========================================================================
     function renderAdminSectionsEditor() {
       const t = settings.sectionTitles || DEFAULT_SECTION_TITLES;
@@ -1648,7 +2078,7 @@
     }
 
     // =========================================================================
-    // 9. TOAST NOTIFICATION
+    // 10. TOAST NOTIFICATION
     // =========================================================================
     let toastTimeout = null;
     function showToast(msg) {
