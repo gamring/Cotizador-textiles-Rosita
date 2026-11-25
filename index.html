@@ -224,7 +224,7 @@
           </div>
         </div>
 
-        <!-- PASO 4: DETALLE EXTRAS OFICIALES (ÍTEMS 15–22) Y OBSERVACIONES -->
+        <!-- PASO 4: DETALLE EXTRAS OFICIALES Y OBSERVACIONES -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
@@ -801,7 +801,7 @@
         return `
           <div class="flex items-center justify-between p-3 rounded-xl border ${q > 0 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-200 bg-slate-50/40'}">
             <div class="pr-2">
-              <div class="text-xs font-extrabold text-slate-800">${ext.code ? escapeHtml(ext.code) + '. ' : ''}${escapeHtml(ext.name)}</div>
+              <div class="text-xs font-extrabold text-slate-800">${escapeHtml(ext.name)}</div>
               <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
             </div>
             <div class="flex items-center gap-1.5 no-print">
