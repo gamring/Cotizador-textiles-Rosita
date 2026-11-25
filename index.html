@@ -527,17 +527,19 @@
 
   <script>
     // =========================================================================
-    // 1. CONSTANTES Y URL FIJA PARA TODOS LOS DISPOSITIVOS DE CLIENTES
+    // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v6';
-    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v6';
-    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v6';
-    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v6';
+    const SHEET_ID        = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v7';
+    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v7';
+    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v7';
+    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v7';
 
-    // URL OFICIAL DE TU APLICACIÓN WEB PUBLICADA (reemplaza si generas una URL nueva)
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KIUz0I/exec';
+    // PEGA AQUÍ TU URL COMPLETA DE APPS SCRIPT (BOTÓN "COPIAR", SIN PUNTOS SUSPENSIVOS "...")
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
+    // Catálogo exacto sincronizado con hoja "precios temporada 2026_2027"
     const DEFAULT_CATALOG = [
       { id: 'p1',  name: '1. Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
       { id: 'p2',  name: '2. Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
@@ -604,15 +606,15 @@
     }
 
     function getAppsScriptUrl() {
-      return (localStorage.getItem(STORAGE_KEY_SCRIPT) || DEFAULT_SCRIPT_URL).trim();
+      const saved = (localStorage.getItem(STORAGE_KEY_SCRIPT) || '').trim();
+      if (saved && !saved.includes('...')) return saved;
+      return DEFAULT_SCRIPT_URL.trim();
     }
 
     function resetAdminInactivityTimer() {
       if (inactivityTimer) clearTimeout(inactivityTimer);
       if (isAdminAuthenticated) {
-        inactivityTimer = setTimeout(() => {
-          logoutAdmin(true);
-        }, 15 * 60 * 1000);
+        inactivityTimer = setTimeout(() => logoutAdmin(true), 15 * 60 * 1000);
       }
     }
 
@@ -653,7 +655,7 @@
       const badge = document.getElementById('cloudSyncBadge');
       try {
         badge.textContent = '↻ Sincronizando nube...';
-        const res = await fetch(url);
+        const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
         const data = await res.json();
         if (data && data.ok && data.settings) {
           if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) settings.catalog = data.settings.catalog;
@@ -668,7 +670,7 @@
       } catch (err) {
         badge.textContent = '● Catálogo oficial activo';
         badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
-        if (notify) showToast('⚠️ Verifica que la implementación de Apps Script esté publicada con acceso "Cualquier persona".');
+        if (notify) showToast('⚠️ Verifica que la URL de Apps Script no esté cortada y tenga acceso "Cualquier persona".');
       }
     }
 
@@ -695,20 +697,23 @@
     }
 
     // =========================================================================
-    // 4. LÓGICA DE PRECIOS, TALLAS, CARRITO Y EXTRAS
+    // 4. LÓGICA CORREGIDA DE TRAMOS DE TALLA, PRECIOS Y CARRITO
     // =========================================================================
     function formatCLP(num) {
       return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
     }
 
+    // CORREGIDO: Evalúa números de dos dígitos (10, 12, 14, 16) ANTES que un dígito (3, 4, 6, 8)
     function getBracketFromSize(sizeStr) {
-      if (sizeStr.includes('3') || sizeStr.includes('4')) return '3-4';
-      if (sizeStr.includes('6') || sizeStr.includes('8')) return '6-8';
-      if (sizeStr.includes('10') || sizeStr.includes('12')) return '10-12';
-      if (sizeStr.includes('14') || sizeStr.includes('16')) return '14-16';
-      if (sizeStr.includes('S') || sizeStr.includes('M')) return 'S-M';
-      if (sizeStr.includes('L') && !sizeStr.includes('XXL')) return 'L-XL';
-      return 'XXL';
+      const clean = String(sizeStr || '').toUpperCase();
+      if (clean.includes('XXL')) return 'XXL';
+      if (clean.includes('14') || clean.includes('16')) return '14-16';
+      if (clean.includes('10') || clean.includes('12')) return '10-12';
+      if (clean.includes('6') || clean.includes('8')) return '6-8';
+      if (clean.includes('3') || clean.includes('4')) return '3-4';
+      if (clean.includes('S') || clean.includes('M')) return 'S-M';
+      if (clean.includes('L')) return 'L-XL';
+      return '3-4';
     }
 
     function renderProductDropdown() {
@@ -756,7 +761,7 @@
       document.getElementById('qtyInput').value = 1;
       renderCart();
       recalculateAll();
-      showToast(`✅ Agregado: ${qty}x ${prod.name} (${sizeStr})`);
+      showToast(`✅ Agregado: ${qty}x ${prod.name} (${sizeStr}) — ${formatCLP(unitPrice)} c/u`);
     }
 
     function removeCartItem(uid) {
@@ -910,7 +915,7 @@
     function readFileAsBase64(file) {
       return new Promise((resolve) => {
         if (!file || file.size > 4 * 1024 * 1024) {
-          resolve(''); // Evitar archivos mayores a 4MB
+          resolve('');
           return;
         }
         const reader = new FileReader();
@@ -987,6 +992,8 @@
       try {
         const res = await fetch(scriptUrl, {
           method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
@@ -996,11 +1003,11 @@
           if (data.numeroPedido) folio = data.numeroPedido;
         }
       } catch (err) {
-        // Fallback no-cors en caso de políticas estrictas de navegador móvil
         try {
           await fetch(scriptUrl, {
             method: 'POST',
             mode: 'no-cors',
+            credentials: 'omit',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
           });
@@ -1008,7 +1015,6 @@
         } catch (e2) {}
       }
 
-      // Guardar respaldo local en el dispositivo del cliente
       const orderRecord = {
         folio,
         date: new Date().toLocaleString('es-CL'),
@@ -1022,7 +1028,7 @@
         total: totalFinal,
         deposit50,
         balance50,
-        status: cloudSaved ? '✅ Guardado en Google Sheets' : '⚠️ Respaldo local (revisar red)'
+        status: cloudSaved ? '✅ Guardado en Google Sheets' : '⚠️ Respaldo local'
       };
 
       const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
@@ -1039,7 +1045,6 @@
         ? `✅ Reserva ${folio} registrada exitosamente en la planilla de Textiles Rosita. Abriendo WhatsApp...`
         : `⚠️ Pedido ${folio} guardado localmente. Envía el resumen por WhatsApp para confirmar.`;
 
-      // Construir mensaje WhatsApp
       const lines = [
         `*PEDIDO TEXTILES ROSITA — ${folio}*`,
         `👤 *Cliente:* ${clientName}`,
@@ -1113,7 +1118,7 @@
     }
 
     // =========================================================================
-    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA (SHA-256 + GOOGLE APPS SCRIPT)
+    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA (COMPATIBLE CON INCÓGNITO)
     // =========================================================================
     function handleAdminButtonClick() {
       if (isAdminAuthenticated) {
@@ -1144,14 +1149,22 @@
         const hash = await sha256Hex(pass);
         const scriptUrl = getAppsScriptUrl();
 
+        if (!scriptUrl || scriptUrl.includes('...')) {
+          errEl.textContent = 'La URL de Apps Script está incompleta (...). Pega la URL completa en index.html.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+
         const res = await fetch(scriptUrl, {
           method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'verify_login', passwordHash: hash })
         });
         const data = await res.json();
         if (!data.ok) {
-          errEl.textContent = data.error || 'Contraseña incorrecta.';
+          errEl.textContent = data.error || 'Contraseña incorrecta (usa tu clave actualizada, no 1234).';
           errEl.classList.remove('hidden');
           return;
         }
@@ -1164,7 +1177,7 @@
         resetAdminInactivityTimer();
         showToast('🔓 Sesión de Administrador iniciada.');
       } catch (e) {
-        errEl.textContent = 'Error de conexión con Google Apps Script. Verifica la implementación.';
+        errEl.textContent = 'Error de red al conectar con Apps Script. Verifica que la implementación esté publicada con acceso "Cualquier persona".';
         errEl.classList.remove('hidden');
       } finally {
         btn.disabled = false;
@@ -1251,6 +1264,8 @@
       try {
         const res = await fetch(getAppsScriptUrl(), {
           method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'change_password', currentHash, newHash })
         });
@@ -1275,6 +1290,8 @@
       try {
         const res = await fetch(getAppsScriptUrl(), {
           method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: 'save_global_settings',
