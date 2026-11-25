@@ -319,7 +319,7 @@
           </label>
 
           <button id="btnConfirmWhatsApp" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
-            <span>📲 Confirmar, Registrar en Nube y Enviar</span>
+            <span>📲 Confirmar y Enviar por WhatsApp</span>
           </button>
 
           <div id="cloudOrderFeedback" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-semibold"></div>
@@ -1063,7 +1063,7 @@
         `📎 *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`
       ];
 
-      btn.innerHTML = '<span>📲 Confirmar, Registrar en Nube y Enviar</span>';
+      btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
       updateConfirmButtonState();
 
       const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
