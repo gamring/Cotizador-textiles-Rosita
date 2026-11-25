@@ -912,7 +912,7 @@
 
     function readFileAsBase64(file) {
       return new Promise((resolve) => {
-        if (!file || file.size > 4 * 1024 * 1024) {
+        if (!file || file.size > 12 * 1024 * 1024) {
           resolve('');
           return;
         }
