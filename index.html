@@ -28,15 +28,13 @@
   <header class="bg-white border-b border-amber-200/80 shadow-sm sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <div class="stitch-border bg-gradient-to-br from-amber-50 via-white to-amber-100/70 px-4 py-2 rounded-xl flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-amber-700 text-amber-50 flex items-center justify-center font-bold text-lg shadow-inner">
-            TR
-          </div>
-          <div>
-            <div class="text-[11px] font-extrabold tracking-[0.2em] text-amber-800 uppercase leading-none">TEXTILES</div>
-            <div class="brand-serif italic font-extrabold text-2xl text-amber-900 leading-tight">Rosita</div>
-            <div class="text-[10px] text-slate-600 font-medium">Creación, costuras y confección</div>
-          </div>
+        <div class="stitch-border bg-white p-1.5 rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
+          <img
+            src="logo.jpg"
+            alt="Textiles Rosita — Creación, costuras y confección"
+            class="h-14 sm:h-16 w-auto object-contain rounded-lg"
+            onerror="this.onerror=null; this.outerHTML='<div class=\'px-3 py-1 text-center\'><div class=\'text-[11px] font-extrabold tracking-[0.2em] text-amber-800 uppercase\'>TEXTILES</div><div class=\'brand-serif italic font-extrabold text-2xl text-amber-900\'>Rosita</div><div class=\'text-[10px] text-slate-600 font-medium\'>Creación, costuras y confección</div></div>';"
+          />
         </div>
         <div class="hidden md:block">
           <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
@@ -332,18 +330,15 @@
       </div>
     </section>
 
-    <!-- ==================== PESTAÑA 2: REGISTRO DE PEDIDOS ==================== -->
+    <!-- ==================== PESTAÑA 2: REGISTRO DE PEDIDOS (SOLO LOCAL CLIENTE) ==================== -->
     <section id="viewRegistro" class="hidden space-y-4">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div>
             <h2 class="text-lg font-extrabold text-slate-900">Historial de Reservas Realizadas en este Dispositivo</h2>
-            <p class="text-xs text-slate-500">Todas las reservas enviadas por cualquier cliente se guardan automáticamente en la hoja <strong>registro de pedidos</strong> de Google Sheets.</p>
+            <p class="text-xs text-slate-500">Aquí puedes consultar y respaldar las cotizaciones y reservas enviadas desde este navegador.</p>
           </div>
           <div class="flex gap-2">
-            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm">
-              📊 Abrir Planilla Google Sheets (Admin)
-            </a>
             <button onclick="exportOrdersCSV()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm">
               📥 Exportar CSV Local
             </button>
@@ -386,7 +381,7 @@
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
+            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
               📊 Ver "registro de pedidos" en Google Sheets
             </a>
             <button onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
@@ -530,14 +525,12 @@
     // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const SHEET_ID        = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
     const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v8';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
-    // PEGA AQUÍ TU URL COMPLETA DE APPS SCRIPT (COPIADA CON EL BOTÓN "COPIAR", SIN "...")
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const DEFAULT_CATALOG = [
       { id: 'p1',  name: '1. Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
@@ -705,7 +698,7 @@
     }
 
     // =========================================================================
-    // 4. LÓGICA CORREGIDA DE TRAMOS DE TALLA, PRECIOS Y CARRITO
+    // 4. LÓGICA DE TRAMOS DE TALLA, PRECIOS Y CARRITO
     // =========================================================================
     function formatCLP(num) {
       return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
@@ -888,8 +881,15 @@
       const input = document.getElementById('receiptInput');
       const status = document.getElementById('receiptFileStatus');
       if (input.files && input.files[0]) {
-        status.textContent = `✅ Archivo listo: ${input.files[0].name}`;
-        status.className = 'text-[11px] font-bold text-emerald-700 mt-1';
+        const file = input.files[0];
+        if (file.size > 12 * 1024 * 1024) {
+          status.textContent = '⚠️ El archivo supera los 12 MB. Selecciona una imagen más liviana.';
+          status.className = 'text-[11px] font-bold text-red-600 mt-1';
+          input.value = '';
+        } else {
+          status.textContent = `✅ Archivo listo: ${file.name}`;
+          status.className = 'text-[11px] font-bold text-emerald-700 mt-1';
+        }
       } else {
         status.textContent = 'Ningún archivo seleccionado aún.';
         status.className = 'text-[11px] text-slate-500 mt-1';
@@ -995,7 +995,6 @@
 
       let cloudSaved = false;
       let cloudReceiptUrl = '';
-      let cloudSheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
       const scriptUrl = getAppsScriptUrl();
 
       try {
@@ -1011,7 +1010,6 @@
           cloudSaved = true;
           if (data.numeroPedido) folio = data.numeroPedido;
           if (data.receiptUrl) cloudReceiptUrl = data.receiptUrl;
-          if (data.sheetUrl) cloudSheetUrl = data.sheetUrl;
         }
       } catch (err) {
         try {
@@ -1040,7 +1038,7 @@
         deposit50,
         balance50,
         receiptUrl: cloudReceiptUrl,
-        status: cloudSaved ? '✅ Guardado en Google Sheets' : '⚠️ Respaldo local'
+        status: cloudSaved ? '✅ Guardado en Nube' : '⚠️ Respaldo local'
       };
 
       const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
@@ -1052,26 +1050,26 @@
       refreshFolioBadge();
       renderOrdersRegistry();
 
+      // Mensaje WhatsApp privado: mantiene enlace al comprobante y omite enlace a planilla interna
       const lines = [
         `*PEDIDO TEXTILES ROSITA — ${folio}*`,
-        `👤 *Cliente:* ${clientName}`,
-        `📞 *Teléfono:* ${clientPhone}`,
-        `🏫 *Colegio:* ${school}${grade ? ' (' + grade + ')' : ''}`,
-        `📅 *Entrega:* ${deliveryWindow}`,
+        `\u{1F464} *Cliente:* ${clientName}`,
+        `\u{1F4DE} *Teléfono:* ${clientPhone}`,
+        `\u{1F3EB} *Colegio:* ${school}${grade ? ' (' + grade + ')' : ''}`,
+        `\u{1F4C5} *Entrega:* ${deliveryWindow}`,
         ``,
         `*DETALLE DE PRENDAS:*`,
         ...(cart.length ? cart.map(i => `• ${i.qty}x ${i.name} [${i.size}] — ${formatCLP(i.qty * i.unitPrice)}`) : ['• Sin prendas']),
         ...(selectedExtras.length ? ['', '*EXTRAS Y CONFECCIÓN:*', ...selectedExtras.map(e => `• ${e.qty}x ${e.name} — ${formatCLP(e.qty * e.price)}`)] : []),
-        ...(notes ? ['', `📝 *Observaciones:* ${notes}`] : []),
+        ...(notes ? ['', `\u{1F4DD} *Observaciones:* ${notes}`] : []),
         ``,
-        `💰 *TOTAL PEDIDO:* ${formatCLP(totalFinal)}`,
-        `✅ *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
-        `⏳ *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
+        `\u{1F4B0} *TOTAL PEDIDO:* ${formatCLP(totalFinal)}`,
+        `\u2705 *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
+        `\u23F3 *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
         ``,
         cloudReceiptUrl
-          ? `🧾 *Ver Comprobante 50% (Drive):* ${cloudReceiptUrl}`
-          : `📎 *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`,
-        `📊 *Ver en Planilla Google Sheets:* ${cloudSheetUrl}`
+          ? `\u{1F9FE} *Ver Comprobante 50% (Drive):* ${cloudReceiptUrl}`
+          : `\u{1F4CE} *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`
       ];
 
       const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
@@ -1118,7 +1116,7 @@
           <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
           <td class="p-3 space-y-1">
             <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${escapeHtml(o.status)}</span></div>
-            ${o.receiptUrl ? `<div><a href="${escapeHtml(o.receiptUrl)}" target="_blank" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
+            ${o.receiptUrl ? `<div><a href="${escapeHtml(o.receiptUrl)}" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
           </td>
         </tr>
       `).join('');
@@ -1145,7 +1143,7 @@
     }
 
     // =========================================================================
-    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA (COMPATIBLE CON INCÓGNITO)
+    // 7. AUTENTICACIÓN ADMINISTRADOR CENTRALIZADA
     // =========================================================================
     function handleAdminButtonClick() {
       if (isAdminAuthenticated) {
@@ -1177,7 +1175,7 @@
         const scriptUrl = getAppsScriptUrl();
 
         if (!scriptUrl || scriptUrl.includes('...')) {
-          errEl.textContent = 'La URL de Apps Script está incompleta (...). Pega la URL completa en index.html.';
+          errEl.textContent = 'La URL de Apps Script está incompleta. Pega la URL completa en index.html.';
           errEl.classList.remove('hidden');
           return;
         }
