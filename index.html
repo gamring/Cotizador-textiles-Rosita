@@ -593,6 +593,15 @@
     let activeSessionHash = '';
     let inactivityTimer = null;
 
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     // =========================================================================
     // 2. UTILIDADES CRIPTOGRÁFICAS SHA-256 Y SESIÓN SEGURA
     // =========================================================================
@@ -717,7 +726,7 @@
     function renderProductDropdown() {
       const sel = document.getElementById('productSelect');
       const prev = sel.value;
-      sel.innerHTML = settings.catalog.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      sel.innerHTML = settings.catalog.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join('');
       if (prev && settings.catalog.some(p => p.id === prev)) sel.value = prev;
     }
 
@@ -780,13 +789,13 @@
 
       tbody.innerHTML = cart.map(item => `
         <tr class="hover:bg-slate-50/80">
-          <td class="py-2.5 pr-2 font-semibold text-slate-800">${item.name}</td>
-          <td class="py-2.5 px-2 text-xs text-slate-600">${item.size}</td>
+          <td class="py-2.5 pr-2 font-semibold text-slate-800">${escapeHtml(item.name)}</td>
+          <td class="py-2.5 px-2 text-xs text-slate-600">${escapeHtml(item.size)}</td>
           <td class="py-2.5 px-2 text-center font-bold">${item.qty}</td>
           <td class="py-2.5 px-2 text-right text-slate-600">${formatCLP(item.unitPrice)}</td>
           <td class="py-2.5 px-2 text-right font-extrabold text-slate-900">${formatCLP(item.qty * item.unitPrice)}</td>
           <td class="py-2.5 pl-2 text-center no-print">
-            <button onclick="removeCartItem('${item.uid}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
+            <button onclick="removeCartItem('${escapeHtml(item.uid)}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
           </td>
         </tr>
       `).join('');
@@ -799,13 +808,13 @@
         return `
           <div class="flex items-center justify-between p-3 rounded-xl border ${q > 0 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-200 bg-slate-50/40'}">
             <div class="pr-2">
-              <div class="text-xs font-extrabold text-slate-800">${ext.code ? ext.code + '. ' : ''}${ext.name}</div>
+              <div class="text-xs font-extrabold text-slate-800">${ext.code ? escapeHtml(ext.code) + '. ' : ''}${escapeHtml(ext.name)}</div>
               <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
             </div>
             <div class="flex items-center gap-1.5 no-print">
-              <button onclick="changeExtraQty('${ext.id}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
+              <button onclick="changeExtraQty('${escapeHtml(ext.id)}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
               <span class="w-6 text-center text-xs font-extrabold">${q}</span>
-              <button onclick="changeExtraQty('${ext.id}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
+              <button onclick="changeExtraQty('${escapeHtml(ext.id)}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
             </div>
           </div>
         `;
@@ -848,16 +857,16 @@
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
           <div class="flex items-center justify-between">
-            <span class="font-extrabold text-slate-900">${b.label}</span>
+            <span class="font-extrabold text-slate-900">${escapeHtml(b.label)}</span>
             <button onclick="copyBankData(${idx})" class="no-print px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px]">
               📋 Copiar
             </button>
           </div>
-          <div><span class="text-slate-500">Titular:</span> <strong>${b.holder}</strong></div>
-          <div><span class="text-slate-500">RUT:</span> <strong>${b.rut}</strong></div>
-          <div><span class="text-slate-500">Banco / Tipo:</span> <strong>${b.bank} — ${b.accountType}</strong></div>
-          <div><span class="text-slate-500">N° Cuenta:</span> <strong>${b.accountNumber}</strong></div>
-          <div><span class="text-slate-500">Correo:</span> <strong>${b.email}</strong></div>
+          <div><span class="text-slate-500">Titular:</span> <strong>${escapeHtml(b.holder)}</strong></div>
+          <div><span class="text-slate-500">RUT:</span> <strong>${escapeHtml(b.rut)}</strong></div>
+          <div><span class="text-slate-500">Banco / Tipo:</span> <strong>${escapeHtml(b.bank)} — ${escapeHtml(b.accountType)}</strong></div>
+          <div><span class="text-slate-500">N° Cuenta:</span> <strong>${escapeHtml(b.accountNumber)}</strong></div>
+          <div><span class="text-slate-500">Correo:</span> <strong>${escapeHtml(b.email)}</strong></div>
         </div>
       `).join('');
     }
@@ -912,7 +921,7 @@
 
     function readFileAsBase64(file) {
       return new Promise((resolve) => {
-        if (!file || file.size > 4 * 1024 * 1024) {
+        if (!file || file.size > 12 * 1024 * 1024) {
           resolve('');
           return;
         }
@@ -1043,11 +1052,6 @@
       refreshFolioBadge();
       renderOrdersRegistry();
 
-      feedbackBox.classList.remove('hidden');
-      feedbackBox.innerHTML = cloudSaved
-        ? `✅ Reserva <strong>${folio}</strong> registrada en Google Sheets. ${cloudReceiptUrl ? `<a href="${cloudReceiptUrl}" target="_blank" class="underline text-emerald-700 font-extrabold">Ver Comprobante Subido</a>` : ''} Abriendo WhatsApp...`
-        : `⚠️ Pedido ${folio} guardado localmente. Envía el resumen por WhatsApp para confirmar.`;
-
       const lines = [
         `*PEDIDO TEXTILES ROSITA — ${folio}*`,
         `👤 *Cliente:* ${clientName}`,
@@ -1070,11 +1074,24 @@
         `📊 *Ver en Planilla Google Sheets:* ${cloudSheetUrl}`
       ];
 
+      const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
+
+      feedbackBox.classList.remove('hidden');
+      feedbackBox.innerHTML = `
+        <div class="space-y-2">
+          <div>${cloudSaved ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> y comprobante guardados en la nube.` : `⚠️ Pedido <strong>${escapeHtml(folio)}</strong> guardado localmente.`}</div>
+          ${cloudReceiptUrl ? `<div><a href="${escapeHtml(cloudReceiptUrl)}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-700 font-extrabold">🧾 Ver Comprobante Subido en Drive</a></div>` : ''}
+          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-block w-full text-center py-2.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow">
+            📲 Abrir Chat de WhatsApp y Enviar Pedido (${escapeHtml(folio)})
+          </a>
+        </div>
+      `;
+
       btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
       updateConfirmButtonState();
 
-      const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
-      window.open(waUrl, '_blank');
+      // Redirección directa compatible con Safari/iOS/Chrome sin bloqueo de popups
+      window.location.assign(waUrl);
     }
 
     // =========================================================================
@@ -1092,16 +1109,16 @@
 
       tbody.innerHTML = orders.map(o => `
         <tr class="hover:bg-slate-50">
-          <td class="p-3 font-extrabold text-amber-800">${o.folio}</td>
-          <td class="p-3 text-slate-500">${o.date}</td>
-          <td class="p-3"><div class="font-bold text-slate-900">${o.clientName}</div><div class="text-slate-500">${o.clientPhone}</div></td>
-          <td class="p-3"><div class="font-semibold">${o.school}</div><div class="text-slate-500">${o.deliveryWindow}</div></td>
-          <td class="p-3 max-w-xs"><div class="truncate" title="${o.itemsSummary}">${o.itemsSummary}</div><div class="text-emerald-700 truncate">${o.extrasSummary}</div></td>
+          <td class="p-3 font-extrabold text-amber-800">${escapeHtml(o.folio)}</td>
+          <td class="p-3 text-slate-500">${escapeHtml(o.date)}</td>
+          <td class="p-3"><div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div><div class="text-slate-500">${escapeHtml(o.clientPhone)}</div></td>
+          <td class="p-3"><div class="font-semibold">${escapeHtml(o.school)}</div><div class="text-slate-500">${escapeHtml(o.deliveryWindow)}</div></td>
+          <td class="p-3 max-w-xs"><div class="truncate" title="${escapeHtml(o.itemsSummary)}">${escapeHtml(o.itemsSummary)}</div><div class="text-emerald-700 truncate">${escapeHtml(o.extrasSummary)}</div></td>
           <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
           <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
           <td class="p-3 space-y-1">
-            <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${o.status}</span></div>
-            ${o.receiptUrl ? `<div><a href="${o.receiptUrl}" target="_blank" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
+            <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${escapeHtml(o.status)}</span></div>
+            ${o.receiptUrl ? `<div><a href="${escapeHtml(o.receiptUrl)}" target="_blank" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
           </td>
         </tr>
       `).join('');
@@ -1329,7 +1346,7 @@
       tbody.innerHTML = settings.catalog.map((p, idx) => `
         <tr>
           <td class="p-2">
-            <input type="text" value="${p.name}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
+            <input type="text" value="${escapeHtml(p.name)}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
           </td>
           ${brackets.map(b => `
             <td class="p-1.5 text-right">
@@ -1390,7 +1407,7 @@
       const container = document.getElementById('adminExtrasList');
       container.innerHTML = settings.extras.map((e, idx) => `
         <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
-          <input type="text" value="${e.name}" onchange="settings.extras[${idx}].name=this.value; saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
+          <input type="text" value="${escapeHtml(e.name)}" onchange="settings.extras[${idx}].name=this.value; saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
           <input type="number" value="${e.price}" onchange="settings.extras[${idx}].price=parseInt(this.value,10)||0; saveLocalSettings(); renderExtrasGrid(); recalculateAll();" class="w-24 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold bg-white" />
           <button onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
         </div>
@@ -1417,17 +1434,17 @@
       const container = document.getElementById('adminBanksEditor');
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs">
-          <div class="font-extrabold text-slate-800">${b.label}</div>
-          <input type="text" value="${b.holder}" onchange="settings.banks[${idx}].holder=this.value; saveLocalSettings(); renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <div class="font-extrabold text-slate-800">${escapeHtml(b.label)}</div>
+          <input type="text" value="${escapeHtml(b.holder)}" onchange="settings.banks[${idx}].holder=this.value; saveLocalSettings(); renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${b.rut}" onchange="settings.banks[${idx}].rut=this.value; saveLocalSettings(); renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
-            <input type="text" value="${b.bank}" onchange="settings.banks[${idx}].bank=this.value; saveLocalSettings(); renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.rut)}" onchange="settings.banks[${idx}].rut=this.value; saveLocalSettings(); renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.bank)}" onchange="settings.banks[${idx}].bank=this.value; saveLocalSettings(); renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${b.accountType}" onchange="settings.banks[${idx}].accountType=this.value; saveLocalSettings(); renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
-            <input type="text" value="${b.accountNumber}" onchange="settings.banks[${idx}].accountNumber=this.value; saveLocalSettings(); renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.accountType)}" onchange="settings.banks[${idx}].accountType=this.value; saveLocalSettings(); renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.accountNumber)}" onchange="settings.banks[${idx}].accountNumber=this.value; saveLocalSettings(); renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           </div>
-          <input type="email" value="${b.email}" onchange="settings.banks[${idx}].email=this.value; saveLocalSettings(); renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <input type="email" value="${escapeHtml(b.email)}" onchange="settings.banks[${idx}].email=this.value; saveLocalSettings(); renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
         </div>
       `).join('');
     }
