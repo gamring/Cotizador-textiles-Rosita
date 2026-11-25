@@ -341,7 +341,7 @@
             <p class="text-xs text-slate-500">Todas las reservas enviadas por cualquier cliente se guardan automáticamente en la hoja <strong>registro de pedidos</strong> de Google Sheets.</p>
           </div>
           <div class="flex gap-2">
-            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit#gid=0" target="_blank" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm">
+            <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm">
               📊 Abrir Planilla Google Sheets (Admin)
             </a>
             <button onclick="exportOrdersCSV()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm">
@@ -361,7 +361,7 @@
                 <th class="p-3">Detalle</th>
                 <th class="p-3 text-right">Total</th>
                 <th class="p-3 text-right">Abono 50%</th>
-                <th class="p-3">Estado Nube</th>
+                <th class="p-3">Comprobante / Estado</th>
               </tr>
             </thead>
             <tbody id="ordersRegistryBody" class="divide-y divide-slate-100"></tbody>
@@ -382,7 +382,7 @@
             </span>
             <h2 class="text-lg font-extrabold mt-1">Conexión Centralizada con Google Sheets & Drive</h2>
             <p class="text-xs text-slate-300">
-              Cualquier cliente desde cualquier dispositivo escribe directamente en tu pestaña <code>registro de pedidos</code>. Solo tú puedes ver la hoja completa con tu cuenta Google y entrar aquí con tu clave.
+              Cualquier cliente desde cualquier dispositivo escribe directamente en tu pestaña <code>registro de pedidos</code> y respalda el comprobante en Google Drive.
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
@@ -400,7 +400,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800">
           <div class="md:col-span-9">
-            <label class="block text-xs font-bold text-slate-300 mb-1">URL de Implementación Web App Activa (Fija para todos los usuarios)</label>
+            <label class="block text-xs font-bold text-slate-300 mb-1">URL de Implementación Web App Activa</label>
             <input id="appsScriptUrlInput" type="url" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
           </div>
           <div class="md:col-span-3">
@@ -531,15 +531,14 @@
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
     const SHEET_ID        = '15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v7';
-    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v7';
-    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v7';
-    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v7';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v8';
+    const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
+    const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
+    const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
-    // PEGA AQUÍ TU URL COMPLETA DE APPS SCRIPT (BOTÓN "COPIAR", SIN PUNTOS SUSPENSIVOS "...")
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    // PEGA AQUÍ TU URL COMPLETA DE APPS SCRIPT (COPIADA CON EL BOTÓN "COPIAR", SIN "...")
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
-    // Catálogo exacto sincronizado con hoja "precios temporada 2026_2027"
     const DEFAULT_CATALOG = [
       { id: 'p1',  name: '1. Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
       { id: 'p2',  name: '2. Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
@@ -703,7 +702,6 @@
       return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
     }
 
-    // CORREGIDO: Evalúa números de dos dígitos (10, 12, 14, 16) ANTES que un dígito (3, 4, 6, 8)
     function getBracketFromSize(sizeStr) {
       const clean = String(sizeStr || '').toUpperCase();
       if (clean.includes('XXL')) return 'XXL';
@@ -936,7 +934,7 @@
       const btn = document.getElementById('btnConfirmWhatsApp');
       const feedbackBox = document.getElementById('cloudOrderFeedback');
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Registrando reserva en Google Sheets...</span>';
+      btn.innerHTML = '<span>⏳ Subiendo comprobante y registrando pedido...</span>';
 
       const schoolSel = document.getElementById('schoolSelect').value;
       const school = schoolSel === 'OTRO' ? (document.getElementById('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
@@ -987,6 +985,8 @@
       };
 
       let cloudSaved = false;
+      let cloudReceiptUrl = '';
+      let cloudSheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
       const scriptUrl = getAppsScriptUrl();
 
       try {
@@ -1001,6 +1001,8 @@
         if (data && data.ok) {
           cloudSaved = true;
           if (data.numeroPedido) folio = data.numeroPedido;
+          if (data.receiptUrl) cloudReceiptUrl = data.receiptUrl;
+          if (data.sheetUrl) cloudSheetUrl = data.sheetUrl;
         }
       } catch (err) {
         try {
@@ -1028,6 +1030,7 @@
         total: totalFinal,
         deposit50,
         balance50,
+        receiptUrl: cloudReceiptUrl,
         status: cloudSaved ? '✅ Guardado en Google Sheets' : '⚠️ Respaldo local'
       };
 
@@ -1041,8 +1044,8 @@
       renderOrdersRegistry();
 
       feedbackBox.classList.remove('hidden');
-      feedbackBox.textContent = cloudSaved
-        ? `✅ Reserva ${folio} registrada exitosamente en la planilla de Textiles Rosita. Abriendo WhatsApp...`
+      feedbackBox.innerHTML = cloudSaved
+        ? `✅ Reserva <strong>${folio}</strong> registrada en Google Sheets. ${cloudReceiptUrl ? `<a href="${cloudReceiptUrl}" target="_blank" class="underline text-emerald-700 font-extrabold">Ver Comprobante Subido</a>` : ''} Abriendo WhatsApp...`
         : `⚠️ Pedido ${folio} guardado localmente. Envía el resumen por WhatsApp para confirmar.`;
 
       const lines = [
@@ -1060,7 +1063,11 @@
         `💰 *TOTAL PEDIDO:* ${formatCLP(totalFinal)}`,
         `✅ *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
         `⏳ *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
-        `📎 *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`
+        ``,
+        cloudReceiptUrl
+          ? `🧾 *Ver Comprobante 50% (Drive):* ${cloudReceiptUrl}`
+          : `📎 *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`,
+        `📊 *Ver en Planilla Google Sheets:* ${cloudSheetUrl}`
       ];
 
       btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
@@ -1092,7 +1099,10 @@
           <td class="p-3 max-w-xs"><div class="truncate" title="${o.itemsSummary}">${o.itemsSummary}</div><div class="text-emerald-700 truncate">${o.extrasSummary}</div></td>
           <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
           <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${o.status}</span></td>
+          <td class="p-3 space-y-1">
+            <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${o.status}</span></div>
+            ${o.receiptUrl ? `<div><a href="${o.receiptUrl}" target="_blank" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
+          </td>
         </tr>
       `).join('');
     }
@@ -1103,10 +1113,10 @@
         showToast('No hay pedidos locales para exportar.');
         return;
       }
-      const headers = ['Numero_pedido', 'Fecha', 'Nombre_cliente', 'Numero_telefonico', 'Colegio', 'Entrega', 'Detalle_pedido', 'Extras', 'Total', 'Abono_50', 'Saldo_50', 'Estado'];
+      const headers = ['Numero_pedido', 'Fecha', 'Nombre_cliente', 'Numero_telefonico', 'Colegio', 'Entrega', 'Detalle_pedido', 'Extras', 'Total', 'Abono_50', 'Saldo_50', 'Comprobante_URL', 'Estado'];
       const rows = orders.map(o => [
         o.folio, o.date, o.clientName, o.clientPhone, o.school, o.deliveryWindow,
-        o.itemsSummary, o.extrasSummary, o.total, o.deposit50, o.balance50, o.status
+        o.itemsSummary, o.extrasSummary, o.total, o.deposit50, o.balance50, o.receiptUrl || '', o.status
       ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
 
       const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
@@ -1164,7 +1174,7 @@
         });
         const data = await res.json();
         if (!data.ok) {
-          errEl.textContent = data.error || 'Contraseña incorrecta (usa tu clave actualizada, no 1234).';
+          errEl.textContent = data.error || 'Contraseña incorrecta.';
           errEl.classList.remove('hidden');
           return;
         }
