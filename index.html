@@ -95,9 +95,9 @@
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">1</span>
-              Datos del Apoderado / Cliente y Ventana de Entrega
+              <span id="titleSec1">Datos del Apoderado / Cliente y Ventana de Entrega</span>
             </h2>
-            <span class="text-xs font-semibold text-slate-400">Temporada 2026–2027</span>
+            <span id="seasonBadgeText" class="text-xs font-semibold text-slate-400">Temporada 2026–2027</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -111,16 +111,7 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Establecimiento Educacional *</label>
-              <select id="schoolSelect" onchange="onSchoolChange()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-500 outline-none">
-                <option value="Polivalente María Pinto">Polivalente María Pinto</option>
-                <option value="Colegio y Jardín Flores de Bollenar">Colegio y Jardín Flores de Bollenar</option>
-                <option value="Escuela Chorombo Alto">Escuela Chorombo Alto</option>
-                <option value="Escuela Chorombo Bajo">Escuela Chorombo Bajo</option>
-                <option value="Escuela Las Mercedes">Escuela Las Mercedes</option>
-                <option value="Escuela Los Rulos">Escuela Los Rulos</option>
-                <option value="Escuela Santa Emilia">Escuela Santa Emilia</option>
-                <option value="OTRO">Otro establecimiento (especificar)...</option>
-              </select>
+              <select id="schoolSelect" onchange="onSchoolChange()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-500 outline-none"></select>
               <input id="customSchoolInput" type="text" placeholder="Nombre del colegio o jardín..." class="hidden mt-2 w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
             </div>
             <div>
@@ -129,11 +120,7 @@
             </div>
             <div class="sm:col-span-2">
               <label class="block text-xs font-bold text-slate-700 mb-1">Fecha / Ciclo de Entrega Programada *</label>
-              <select id="deliveryWindow" onchange="recalculateAll()" class="w-full rounded-xl border border-amber-300 bg-amber-50/40 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
-                <option value="1° Pedidos — Fines de Enero">1° Pedidos — Fines de Enero</option>
-                <option value="2° Pedidos — Fines de Febrero a principios de Marzo">2° Pedidos — Fines de Febrero a principios de Marzo</option>
-                <option value="3° Rezagados — Después del 15 de Marzo">3° Rezagados — Después del 15 de Marzo</option>
-              </select>
+              <select id="deliveryWindow" onchange="recalculateAll()" class="w-full rounded-xl border border-amber-300 bg-amber-50/40 px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-amber-500 outline-none"></select>
             </div>
           </div>
         </div>
@@ -143,7 +130,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">2</span>
-              Agregar Prendas del Catálogo Oficial
+              <span id="titleSec2">Agregar Prendas del Catálogo Oficial</span>
             </h2>
             <span id="sizeBracketTag" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">
               Tramo Talla: 3–4
@@ -185,7 +172,7 @@
 
           <div class="mt-4 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
             <p class="text-xs text-slate-500">
-              Tarifas oficiales temporada 2026–2027 sincronizadas con Textiles Rosita.
+              Tarifas oficiales sincronizadas con Textiles Rosita.
             </p>
             <button onclick="addItemToCart()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-extrabold shadow-sm transition flex items-center gap-2">
               <span>+ Agregar al Pedido</span>
@@ -198,7 +185,7 @@
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">3</span>
-              Detalle de Prendas Seleccionadas
+              <span id="titleSec3">Detalle de Prendas Seleccionadas</span>
             </h2>
             <span id="totalGarmentsBadge" class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold">0 prendas</span>
           </div>
@@ -229,7 +216,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
               <span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center font-bold">4</span>
-              Detalle Extras Oficiales (Ítems 15–22) y Observaciones
+              <span id="titleSec4">Detalle Extras Oficiales y Observaciones</span>
             </h2>
             <span id="extrasSubtotalBadge" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-bold">
               Extras: $0
@@ -261,7 +248,7 @@
               <span id="summaryGarments" class="font-bold text-slate-900">$0</span>
             </div>
             <div class="flex justify-between text-slate-600">
-              <span>Subtotal Extras (15–22):</span>
+              <span>Subtotal Extras:</span>
               <span id="summaryExtras" class="font-bold text-slate-900">$0</span>
             </div>
 
@@ -431,9 +418,71 @@
         </div>
       </div>
 
+      <!-- GESTIÓN DE SECCIONES, COLEGIOS Y CICLOS DE ENTREGA -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">🗂️ Edición de Secciones, Colegios y Ciclos de Entrega</h3>
+            <p class="text-xs text-slate-500">Modifica los encabezados visibles y las opciones desplegables. Luego pulsa <strong>Grabar Modificaciones en la Nube</strong>.</p>
+          </div>
+          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            ☁️ Grabar Modificaciones en la Nube
+          </button>
+        </div>
+
+        <!-- Títulos de Secciones -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 1</label>
+            <input id="editTitleSec1" type="text" onchange="settings.sectionTitles.sec1=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Etiqueta Temporada (Sección 1)</label>
+            <input id="editSeasonTag" type="text" onchange="settings.sectionTitles.seasonTag=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 2</label>
+            <input id="editTitleSec2" type="text" onchange="settings.sectionTitles.sec2=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 3</label>
+            <input id="editTitleSec3" type="text" onchange="settings.sectionTitles.sec3=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Título Sección 4</label>
+            <input id="editTitleSec4" type="text" onchange="settings.sectionTitles.sec4=this.value; saveLocalSettings(); renderDynamicSections();" class="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs bg-white" />
+          </div>
+        </div>
+
+        <!-- Lista de Colegios -->
+        <div class="space-y-2">
+          <div class="text-xs font-extrabold text-slate-800">🏫 Establecimientos Educacionales</div>
+          <div id="adminSchoolsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+          <div class="flex gap-2 pt-1">
+            <input id="newSchoolName" type="text" placeholder="Nuevo colegio o jardín..." class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
+            <button onclick="adminAddSchool()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Colegio</button>
+          </div>
+        </div>
+
+        <!-- Lista de Ciclos de Entrega -->
+        <div class="space-y-2 pt-2 border-t border-slate-100">
+          <div class="text-xs font-extrabold text-slate-800">📅 Ciclos / Fechas de Entrega Programada</div>
+          <div id="adminDeliveryList" class="space-y-2"></div>
+          <div class="flex gap-2 pt-1">
+            <input id="newDeliveryName" type="text" placeholder="Ej. 4° Pedidos — Abril 2027" class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
+            <button onclick="adminAddDelivery()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Ciclo</button>
+          </div>
+        </div>
+      </div>
+
       <!-- GESTIÓN DE CATÁLOGO DE PRENDAS -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
+          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            ☁️ Grabar Prendas en la Nube
+          </button>
+        </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
@@ -472,9 +521,14 @@
         </div>
       </div>
 
-      <!-- GESTIÓN DE DETALLE EXTRAS (ÍTEMS 15–22) -->
+      <!-- GESTIÓN DE DETALLE EXTRAS -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras (Ítems 15–22)</h3>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras</h3>
+          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            ☁️ Grabar Extras en la Nube
+          </button>
+        </div>
         <div id="adminExtrasList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
         <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
           <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
@@ -487,7 +541,12 @@
 
       <!-- GESTIÓN DE CUENTAS BANCARIAS -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-        <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+          <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            ☁️ Grabar Cuentas en la Nube
+          </button>
+        </div>
         <div id="adminBanksEditor" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
@@ -525,37 +584,61 @@
     // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v8';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v9';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
+
+    const DEFAULT_SCHOOLS = [
+      'Polivalente María Pinto',
+      'Colegio y Jardín Flores de Bollenar',
+      'Escuela Chorombo Alto',
+      'Escuela Chorombo Bajo',
+      'Escuela Las Mercedes',
+      'Escuela Los Rulos',
+      'Escuela Santa Emilia'
+    ];
+
+    const DEFAULT_DELIVERY_WINDOWS = [
+      '1° Pedidos — Fines de Enero',
+      '2° Pedidos — Fines de Febrero a principios de Marzo',
+      '3° Rezagados — Después del 15 de Marzo'
+    ];
+
+    const DEFAULT_SECTION_TITLES = {
+      sec1: 'Datos del Apoderado / Cliente y Ventana de Entrega',
+      sec2: 'Agregar Prendas del Catálogo Oficial',
+      sec3: 'Detalle de Prendas Seleccionadas',
+      sec4: 'Detalle Extras Oficiales y Observaciones',
+      seasonTag: 'Temporada 2026–2027'
+    };
 
     const DEFAULT_CATALOG = [
-      { id: 'p1',  name: ' Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
-      { id: 'p2',  name: ' Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
-      { id: 'p3',  name: ' Polera Deporte', prices: { '3-4': 7800, '6-8': 8800, '10-12': 9800, '14-16': 10800, 'S-M': 11800, 'L-XL': 12800, 'XXL': 13800 } },
-      { id: 'p4',  name: ' Pantalón Solo', prices: { '3-4': 12800, '6-8': 13500, '10-12': 14000, '14-16': 15800, 'S-M': 16800, 'L-XL': 17800, 'XXL': 18000 } },
-      { id: 'p5',  name: ' Polerón Solo', prices: { '3-4': 13800, '6-8': 14500, '10-12': 15800, '14-16': 16800, 'S-M': 17800, 'L-XL': 18800, 'XXL': 19800 } },
-      { id: 'p6',  name: ' Buzo Completo con Polera (Fantasía)', prices: { '3-4': 28700, '6-8': 31600, '10-12': 33700, '14-16': 35700, 'S-M': 38600, 'L-XL': 42600, 'XXL': 48700 } },
-      { id: 'p7',  name: ' Buzo Completo con Polera (Algodón)', prices: { '3-4': 30700, '6-8': 33700, '10-12': 35700, '14-16': 37600, 'S-M': 42600, 'L-XL': 48700, 'XXL': 50700 } },
-      { id: 'p8',  name: ' Polera Piqué', prices: { '3-4': 8600, '6-8': 8900, '10-12': 9900, '14-16': 10400, 'S-M': 11200, 'L-XL': 12000, 'XXL': 14000 } },
-      { id: 'p9',  name: ' Falda Escolar', prices: { '3-4': 12800, '6-8': 14800, '10-12': 16800, '14-16': 18800, 'S-M': 20900, 'L-XL': 22900, 'XXL': 24900 } },
-      { id: 'p10', name: ' Polerón de Polar', prices: { '3-4': 12000, '6-8': 13000, '10-12': 14000, '14-16': 15000, 'S-M': 16000, 'L-XL': 18000, 'XXL': 20100 } },
-      { id: 'p11', name: ' Cotona o Delantal', prices: { '3-4': 8000, '6-8': 9000, '10-12': 10000, '14-16': 12000, 'S-M': 14000, 'L-XL': 18000, 'XXL': 22100 } },
-      { id: 'p12', name: ' Short Algodón / Fantasía', prices: { '3-4': 4000, '6-8': 4500, '10-12': 5000, '14-16': 5500, 'S-M': 6000, 'L-XL': 6500, 'XXL': 7000 } }
+      { id: 'p1',  name: 'Buzo Algodón (Polerón y Pantalón)', prices: { '3-4': 22900, '6-8': 24900, '10-12': 25900, '14-16': 26800, 'S-M': 30800, 'L-XL': 35900, 'XXL': 36900 } },
+      { id: 'p2',  name: 'Buzo Fantasía (Polerón y Pantalón)', prices: { '3-4': 20900, '6-8': 22800, '10-12': 23900, '14-16': 24900, 'S-M': 26800, 'L-XL': 30900, 'XXL': 34900 } },
+      { id: 'p3',  name: 'Polera Deporte', prices: { '3-4': 7800, '6-8': 8800, '10-12': 9800, '14-16': 10800, 'S-M': 11800, 'L-XL': 12800, 'XXL': 13800 } },
+      { id: 'p4',  name: 'Pantalón Solo', prices: { '3-4': 12800, '6-8': 13500, '10-12': 14000, '14-16': 15800, 'S-M': 16800, 'L-XL': 17800, 'XXL': 18000 } },
+      { id: 'p5',  name: 'Polerón Solo', prices: { '3-4': 13800, '6-8': 14500, '10-12': 15800, '14-16': 16800, 'S-M': 17800, 'L-XL': 18800, 'XXL': 19800 } },
+      { id: 'p6',  name: 'Buzo Completo con Polera (Fantasía)', prices: { '3-4': 28700, '6-8': 31600, '10-12': 33700, '14-16': 35700, 'S-M': 38600, 'L-XL': 42600, 'XXL': 48700 } },
+      { id: 'p7',  name: 'Buzo Completo con Polera (Algodón)', prices: { '3-4': 30700, '6-8': 33700, '10-12': 35700, '14-16': 37600, 'S-M': 42600, 'L-XL': 48700, 'XXL': 50700 } },
+      { id: 'p8',  name: 'Polera Piqué', prices: { '3-4': 8600, '6-8': 8900, '10-12': 9900, '14-16': 10400, 'S-M': 11200, 'L-XL': 12000, 'XXL': 14000 } },
+      { id: 'p9',  name: 'Falda Escolar', prices: { '3-4': 12800, '6-8': 14800, '10-12': 16800, '14-16': 18800, 'S-M': 20900, 'L-XL': 22900, 'XXL': 24900 } },
+      { id: 'p10', name: 'Polerón de Polar', prices: { '3-4': 12000, '6-8': 13000, '10-12': 14000, '14-16': 15000, 'S-M': 16000, 'L-XL': 18000, 'XXL': 20100 } },
+      { id: 'p11', name: 'Cotona o Delantal', prices: { '3-4': 8000, '6-8': 9000, '10-12': 10000, '14-16': 12000, 'S-M': 14000, 'L-XL': 18000, 'XXL': 22100 } },
+      { id: 'p12', name: 'Short Algodón / Fantasía', prices: { '3-4': 4000, '6-8': 4500, '10-12': 5000, '14-16': 5500, 'S-M': 6000, 'L-XL': 6500, 'XXL': 7000 } }
     ];
 
     const DEFAULT_EXTRAS = [
-      { id: 'e15', code: '15', name: 'Bordado nombre', price: 1500 },
-      { id: 'e16', code: '16', name: 'Bordado insignia', price: 3500 },
-      { id: 'e17', code: '17', name: 'Agregar gorro a polerón', price: 1200 },
-      { id: 'e18', code: '18', name: 'Basta pantalón', price: 3000 },
-      { id: 'e19', code: '19', name: 'Ajuste polera', price: 1500 },
-      { id: 'e20', code: '20', name: 'Ajuste polerón', price: 1500 },
-      { id: 'e21', code: '21', name: 'Basta de falda con máquina', price: 3500 },
-      { id: 'e22', code: '22', name: 'Basta de falda a mano', price: 5000 }
+      { id: 'e15', name: 'Bordado nombre', price: 1500 },
+      { id: 'e16', name: 'Bordado insignia', price: 3500 },
+      { id: 'e17', name: 'Agregar gorro a polerón', price: 1200 },
+      { id: 'e18', name: 'Basta pantalón', price: 3000 },
+      { id: 'e19', name: 'Ajuste polera', price: 1500 },
+      { id: 'e20', name: 'Ajuste polerón', price: 1500 },
+      { id: 'e21', name: 'Basta de falda con máquina', price: 3500 },
+      { id: 'e22', name: 'Basta de falda a mano', price: 5000 }
     ];
 
     const DEFAULT_BANKS = [
@@ -593,6 +676,10 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    function stripLeadingNumber(str) {
+      return String(str || '').replace(/^\d+\.\s*/, '').trim();
     }
 
     // =========================================================================
@@ -634,16 +721,34 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
-            catalog: Array.isArray(parsed.catalog) && parsed.catalog.length ? parsed.catalog : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
-            extras: Array.isArray(parsed.extras) && parsed.extras.length ? parsed.extras : JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
-            banks: Array.isArray(parsed.banks) && parsed.banks.length ? parsed.banks : JSON.parse(JSON.stringify(DEFAULT_BANKS))
+            catalog: Array.isArray(parsed.catalog) && parsed.catalog.length
+              ? parsed.catalog.map(p => ({ ...p, name: stripLeadingNumber(p.name) }))
+              : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
+            extras: Array.isArray(parsed.extras) && parsed.extras.length
+              ? parsed.extras.map(e => ({ ...e, name: stripLeadingNumber(e.name) }))
+              : JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
+            banks: Array.isArray(parsed.banks) && parsed.banks.length
+              ? parsed.banks
+              : JSON.parse(JSON.stringify(DEFAULT_BANKS)),
+            schools: Array.isArray(parsed.schools) && parsed.schools.length
+              ? parsed.schools
+              : [...DEFAULT_SCHOOLS],
+            deliveryWindows: Array.isArray(parsed.deliveryWindows) && parsed.deliveryWindows.length
+              ? parsed.deliveryWindows
+              : [...DEFAULT_DELIVERY_WINDOWS],
+            sectionTitles: parsed.sectionTitles
+              ? { ...DEFAULT_SECTION_TITLES, ...parsed.sectionTitles }
+              : { ...DEFAULT_SECTION_TITLES }
           };
         }
       } catch (e) {}
       return {
         catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
         extras: JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
-        banks: JSON.parse(JSON.stringify(DEFAULT_BANKS))
+        banks: JSON.parse(JSON.stringify(DEFAULT_BANKS)),
+        schools: [...DEFAULT_SCHOOLS],
+        deliveryWindows: [...DEFAULT_DELIVERY_WINDOWS],
+        sectionTitles: { ...DEFAULT_SECTION_TITLES }
       };
     }
 
@@ -659,12 +764,27 @@
         const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
         const data = await res.json();
         if (data && data.ok && data.settings) {
-          if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) settings.catalog = data.settings.catalog;
-          if (Array.isArray(data.settings.extras) && data.settings.extras.length) settings.extras = data.settings.extras;
-          if (Array.isArray(data.settings.banks) && data.settings.banks.length) settings.banks = data.settings.banks;
+          if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) {
+            settings.catalog = data.settings.catalog.map(p => ({ ...p, name: stripLeadingNumber(p.name) }));
+          }
+          if (Array.isArray(data.settings.extras) && data.settings.extras.length) {
+            settings.extras = data.settings.extras.map(e => ({ ...e, name: stripLeadingNumber(e.name) }));
+          }
+          if (Array.isArray(data.settings.banks) && data.settings.banks.length) {
+            settings.banks = data.settings.banks;
+          }
+          if (Array.isArray(data.settings.schools) && data.settings.schools.length) {
+            settings.schools = data.settings.schools;
+          }
+          if (Array.isArray(data.settings.deliveryWindows) && data.settings.deliveryWindows.length) {
+            settings.deliveryWindows = data.settings.deliveryWindows;
+          }
+          if (data.settings.sectionTitles) {
+            settings.sectionTitles = { ...DEFAULT_SECTION_TITLES, ...data.settings.sectionTitles };
+          }
           saveLocalSettings();
           refreshAllViews();
-          if (notify) showToast('✅ Precios y datos actualizados desde Google Sheets.');
+          if (notify) showToast('✅ Precios y datos actualizados desde la nube.');
         }
         badge.textContent = '● Sincronizado con Nube';
         badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700';
@@ -683,6 +803,7 @@
     }
 
     function refreshAllViews() {
+      renderDynamicSections();
       renderProductDropdown();
       onProductOrSizeChange();
       renderCart();
@@ -690,6 +811,7 @@
       renderBankCards();
       renderOrdersRegistry();
       if (isAdminAuthenticated) {
+        renderAdminSectionsEditor();
         renderAdminProducts();
         renderAdminExtras();
         renderAdminBanks();
@@ -698,8 +820,37 @@
     }
 
     // =========================================================================
-    // 4. LÓGICA DE TRAMOS DE TALLA, PRECIOS Y CARRITO
+    // 4. RENDERIZADO DINÁMICO DE SECCIONES, TRAMOS DE TALLA, PRECIOS Y CARRITO
     // =========================================================================
+    function renderDynamicSections() {
+      const t = settings.sectionTitles || DEFAULT_SECTION_TITLES;
+      const el1 = document.getElementById('titleSec1');
+      const el2 = document.getElementById('titleSec2');
+      const el3 = document.getElementById('titleSec3');
+      const el4 = document.getElementById('titleSec4');
+      const elSeason = document.getElementById('seasonBadgeText');
+      if (el1) el1.textContent = t.sec1;
+      if (el2) el2.textContent = t.sec2;
+      if (el3) el3.textContent = t.sec3;
+      if (el4) el4.textContent = t.sec4;
+      if (elSeason) elSeason.textContent = t.seasonTag;
+
+      const schoolSel = document.getElementById('schoolSelect');
+      const prevSchool = schoolSel.value;
+      schoolSel.innerHTML = settings.schools.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('') +
+        `<option value="OTRO">Otro establecimiento (especificar)...</option>`;
+      if (prevSchool && ([...settings.schools, 'OTRO'].includes(prevSchool))) {
+        schoolSel.value = prevSchool;
+      }
+
+      const delSel = document.getElementById('deliveryWindow');
+      const prevDel = delSel.value;
+      delSel.innerHTML = settings.deliveryWindows.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+      if (prevDel && settings.deliveryWindows.includes(prevDel)) {
+        delSel.value = prevDel;
+      }
+    }
+
     function formatCLP(num) {
       return '$' + Math.round(Number(num) || 0).toLocaleString('es-CL');
     }
@@ -720,7 +871,7 @@
       const sel = document.getElementById('productSelect');
       const prev = sel.value;
       sel.innerHTML = settings.catalog.map(p => {
-        const cleanName = String(p.name || '').replace(/^\d+\.\s*/, '');
+        const cleanName = stripLeadingNumber(p.name);
         return `<option value="${escapeHtml(p.id)}">${escapeHtml(cleanName)}</option>`;
       }).join('');
       if (prev && settings.catalog.some(p => p.id === prev)) sel.value = prev;
@@ -746,6 +897,7 @@
 
       const bracket = getBracketFromSize(sizeStr);
       const unitPrice = Number(prod.prices[bracket]) || 0;
+      const cleanName = stripLeadingNumber(prod.name);
 
       const existing = cart.find(item => item.prodId === prodId && item.size === sizeStr);
       if (existing) {
@@ -754,7 +906,7 @@
         cart.push({
           uid: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
           prodId,
-          name: prod.name,
+          name: cleanName,
           size: sizeStr,
           bracket,
           qty,
@@ -764,7 +916,7 @@
       document.getElementById('qtyInput').value = 1;
       renderCart();
       recalculateAll();
-      showToast(`✅ Agregado: ${qty}x ${prod.name} (${sizeStr}) — ${formatCLP(unitPrice)} c/u`);
+      showToast(`✅ Agregado: ${qty}x ${cleanName} (${sizeStr}) — ${formatCLP(unitPrice)} c/u`);
     }
 
     function removeCartItem(uid) {
@@ -785,7 +937,7 @@
 
       tbody.innerHTML = cart.map(item => `
         <tr class="hover:bg-slate-50/80">
-          <td class="py-2.5 pr-2 font-semibold text-slate-800">${escapeHtml(item.name)}</td>
+          <td class="py-2.5 pr-2 font-semibold text-slate-800">${escapeHtml(stripLeadingNumber(item.name))}</td>
           <td class="py-2.5 px-2 text-xs text-slate-600">${escapeHtml(item.size)}</td>
           <td class="py-2.5 px-2 text-center font-bold">${item.qty}</td>
           <td class="py-2.5 px-2 text-right text-slate-600">${formatCLP(item.unitPrice)}</td>
@@ -801,10 +953,11 @@
       const grid = document.getElementById('extrasGrid');
       grid.innerHTML = settings.extras.map(ext => {
         const q = extraQuantities[ext.id] || 0;
+        const cleanExtraName = stripLeadingNumber(ext.name);
         return `
           <div class="flex items-center justify-between p-3 rounded-xl border ${q > 0 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-200 bg-slate-50/40'}">
             <div class="pr-2">
-              <div class="text-xs font-extrabold text-slate-800">${escapeHtml(ext.name)}</div>
+              <div class="text-xs font-extrabold text-slate-800">${escapeHtml(cleanExtraName)}</div>
               <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
             </div>
             <div class="flex items-center gap-1.5 no-print">
@@ -958,6 +1111,7 @@
       const garmentsTotal = cart.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
       const selectedExtras = settings.extras.filter(e => (extraQuantities[e.id] || 0) > 0).map(e => ({
         ...e,
+        name: stripLeadingNumber(e.name),
         qty: extraQuantities[e.id]
       }));
       const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.qty * e.price, 0);
@@ -969,7 +1123,7 @@
       const balance50 = totalFinal - deposit50;
 
       let folio = getCurrentFolio();
-      const itemsSummary = cart.map(i => `${i.qty}x ${i.name} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
+      const itemsSummary = cart.map(i => `${i.qty}x ${stripLeadingNumber(i.name)} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
       const extrasSummary = selectedExtras.map(e => `${e.qty}x ${e.name} = ${formatCLP(e.qty * e.price)}`).join(' | ');
       const receiptBase64 = await readFileAsBase64(receiptFile);
 
@@ -1062,7 +1216,7 @@
         `\u{1F4C5} *Entrega:* ${deliveryWindow}`,
         ``,
         `*DETALLE DE PRENDAS:*`,
-        ...(cart.length ? cart.map(i => `• ${i.qty}x ${i.name} [${i.size}] — ${formatCLP(i.qty * i.unitPrice)}`) : ['• Sin prendas']),
+        ...(cart.length ? cart.map(i => `• ${i.qty}x ${stripLeadingNumber(i.name)} [${i.size}] — ${formatCLP(i.qty * i.unitPrice)}`) : ['• Sin prendas']),
         ...(selectedExtras.length ? ['', '*EXTRAS Y CONFECCIÓN:*', ...selectedExtras.map(e => `• ${e.qty}x ${e.name} — ${formatCLP(e.qty * e.price)}`)] : []),
         ...(notes ? ['', `\u{1F4DD} *Observaciones:* ${notes}`] : []),
         ``,
@@ -1091,7 +1245,6 @@
       btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
       updateConfirmButtonState();
 
-      // Redirección directa compatible con Safari/iOS/Chrome sin bloqueo de popups
       window.location.assign(waUrl);
     }
 
@@ -1235,6 +1388,7 @@
         txt.textContent = 'Cerrar Sesión Admin';
         tabAdmin.classList.remove('hidden');
         timerBadge.classList.remove('hidden');
+        renderAdminSectionsEditor();
         renderAdminProducts();
         renderAdminExtras();
         renderAdminBanks();
@@ -1339,15 +1493,58 @@
     }
 
     // =========================================================================
-    // 8. EDITORES DEL PANEL ADMINISTRADOR (PRENDAS, EXTRAS, BANCOS)
+    // 8. EDITORES DEL PANEL ADMINISTRADOR (SECCIONES, PRENDAS, EXTRAS, BANCOS)
     // =========================================================================
+    function renderAdminSectionsEditor() {
+      const t = settings.sectionTitles || DEFAULT_SECTION_TITLES;
+      document.getElementById('editTitleSec1').value = t.sec1;
+      document.getElementById('editSeasonTag').value = t.seasonTag;
+      document.getElementById('editTitleSec2').value = t.sec2;
+      document.getElementById('editTitleSec3').value = t.sec3;
+      document.getElementById('editTitleSec4').value = t.sec4;
+
+      document.getElementById('adminSchoolsList').innerHTML = settings.schools.map((s, idx) => `
+        <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
+          <input type="text" value="${escapeHtml(s)}" onchange="settings.schools[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
+          <button onclick="settings.schools.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
+        </div>
+      `).join('');
+
+      document.getElementById('adminDeliveryList').innerHTML = settings.deliveryWindows.map((w, idx) => `
+        <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
+          <input type="text" value="${escapeHtml(w)}" onchange="settings.deliveryWindows[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
+          <button onclick="settings.deliveryWindows.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function adminAddSchool() {
+      const val = document.getElementById('newSchoolName').value.trim();
+      if (!val) return;
+      settings.schools.push(val);
+      document.getElementById('newSchoolName').value = '';
+      saveLocalSettings();
+      refreshAllViews();
+      showToast('✅ Colegio agregado. Pulsa "Grabar Modificaciones en la Nube".');
+    }
+
+    function adminAddDelivery() {
+      const val = document.getElementById('newDeliveryName').value.trim();
+      if (!val) return;
+      settings.deliveryWindows.push(val);
+      document.getElementById('newDeliveryName').value = '';
+      saveLocalSettings();
+      refreshAllViews();
+      showToast('✅ Ciclo de entrega agregado. Pulsa "Grabar Modificaciones en la Nube".');
+    }
+
     function renderAdminProducts() {
       const brackets = ['3-4', '6-8', '10-12', '14-16', 'S-M', 'L-XL', 'XXL'];
       const tbody = document.getElementById('adminProductsBody');
       tbody.innerHTML = settings.catalog.map((p, idx) => `
         <tr>
           <td class="p-2">
-            <input type="text" value="${escapeHtml(p.name)}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
+            <input type="text" value="${escapeHtml(stripLeadingNumber(p.name))}" onchange="updateProdName(${idx}, this.value)" class="w-48 rounded border border-slate-300 px-2 py-1 text-xs font-semibold" />
           </td>
           ${brackets.map(b => `
             <td class="p-1.5 text-right">
@@ -1362,7 +1559,7 @@
     }
 
     function updateProdName(idx, val) {
-      settings.catalog[idx].name = val.trim() || settings.catalog[idx].name;
+      settings.catalog[idx].name = stripLeadingNumber(val) || settings.catalog[idx].name;
       saveLocalSettings();
       renderProductDropdown();
     }
@@ -1380,7 +1577,7 @@
     }
 
     function adminAddProduct() {
-      const name = document.getElementById('newProdName').value.trim();
+      const name = stripLeadingNumber(document.getElementById('newProdName').value);
       if (!name) {
         showToast('⚠️ Escribe el nombre de la nueva prenda.');
         return;
@@ -1401,14 +1598,14 @@
       ['newProdName','newP_3_4','newP_6_8','newP_10_12','newP_14_16','newP_S_M','newP_L_XL','newP_XXL'].forEach(id => document.getElementById(id).value = '');
       saveLocalSettings();
       refreshAllViews();
-      showToast('✅ Prenda agregada. Pulsa "Publicar Cambios en la Nube".');
+      showToast('✅ Prenda agregada. Pulsa "Grabar Prendas en la Nube".');
     }
 
     function renderAdminExtras() {
       const container = document.getElementById('adminExtrasList');
       container.innerHTML = settings.extras.map((e, idx) => `
         <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
-          <input type="text" value="${escapeHtml(e.name)}" onchange="settings.extras[${idx}].name=this.value; saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
+          <input type="text" value="${escapeHtml(stripLeadingNumber(e.name))}" onchange="settings.extras[${idx}].name=stripLeadingNumber(this.value); saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
           <input type="number" value="${e.price}" onchange="settings.extras[${idx}].price=parseInt(this.value,10)||0; saveLocalSettings(); renderExtrasGrid(); recalculateAll();" class="w-24 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold bg-white" />
           <button onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
         </div>
@@ -1416,12 +1613,11 @@
     }
 
     function adminAddExtra() {
-      const name = document.getElementById('newExtraName').value.trim();
+      const name = stripLeadingNumber(document.getElementById('newExtraName').value);
       const price = parseInt(document.getElementById('newExtraPrice').value, 10) || 0;
       if (!name) return;
       settings.extras.push({
         id: 'e_' + Date.now(),
-        code: String(settings.extras.length + 15),
         name,
         price
       });
@@ -1429,6 +1625,7 @@
       document.getElementById('newExtraPrice').value = '';
       saveLocalSettings();
       refreshAllViews();
+      showToast('✅ Extra agregado. Pulsa "Grabar Extras en la Nube".');
     }
 
     function renderAdminBanks() {
