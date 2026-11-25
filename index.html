@@ -51,7 +51,7 @@
             <span>•</span>
             <span class="font-semibold text-emerald-700">WhatsApp Taller: +56 9 8951 0679</span>
             <span id="cloudSyncBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
-              ● Conectado a Nube
+              ● Catálogo Oficial Activo
             </span>
           </p>
         </div>
@@ -61,7 +61,7 @@
         <span id="folioHeaderBadge" class="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold">
           Folio: ROS-0001
         </span>
-        <button id="btnAdminToggle" onclick="handleAdminButtonClick()" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900">
+        <button id="btnAdminToggle" type="button" onclick="handleAdminButtonClick()" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900">
           <span id="adminBtnIcon">🔒</span>
           <span id="adminBtnText">Modo Administrador</span>
         </button>
@@ -71,13 +71,13 @@
     <!-- NAVEGACIÓN PRINCIPAL -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 border-t border-slate-100 flex items-center justify-between overflow-x-auto no-print">
       <div class="flex gap-1 py-1.5">
-        <button id="tabBtnCotizador" onclick="switchMainTab('cotizador')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm">
+        <button id="tabBtnCotizador" type="button" onclick="switchMainTab('cotizador')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm">
           1. Cotizador y Reserva
         </button>
-        <button id="tabBtnRegistro" onclick="switchMainTab('registro')" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100">
+        <button id="tabBtnRegistro" type="button" onclick="switchMainTab('registro')" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100">
           2. Mis Reservas en este Dispositivo (<span id="ordersCountBadge">0</span>)
         </button>
-        <button id="tabBtnAdmin" onclick="switchMainTab('admin')" class="hidden px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm">
+        <button id="tabBtnAdmin" type="button" onclick="switchMainTab('admin')" class="hidden px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm">
           ⚙️ Panel Administrador (Nube)
         </button>
       </div>
@@ -180,7 +180,7 @@
             <p class="text-xs text-slate-500">
               Tarifas oficiales sincronizadas con Textiles Rosita.
             </p>
-            <button onclick="addItemToCart()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-extrabold shadow-sm transition flex items-center gap-2">
+            <button type="button" onclick="addItemToCart()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-extrabold shadow-sm transition flex items-center gap-2">
               <span>+ Agregar al Pedido</span>
             </button>
           </div>
@@ -309,13 +309,13 @@
             <span>Confirmo que adjuntaré el comprobante de transferencia del <strong>50% de abono</strong> en el chat de WhatsApp de Textiles Rosita para validar la orden.</span>
           </label>
 
-          <button id="btnConfirmWhatsApp" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
+          <button id="btnConfirmWhatsApp" type="button" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
             <span>📲 Confirmar y Enviar por WhatsApp</span>
           </button>
 
           <div id="cloudOrderFeedback" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-semibold"></div>
 
-          <button onclick="window.print()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+          <button type="button" onclick="window.print()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
             🖨️ Imprimir / Guardar Comprobante PDF
           </button>
         </div>
@@ -332,7 +332,7 @@
             <p class="text-xs text-slate-500">Aquí puedes consultar y respaldar las cotizaciones y reservas enviadas desde este navegador.</p>
           </div>
           <div class="flex gap-2">
-            <button onclick="exportOrdersCSV()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm">
+            <button type="button" onclick="exportOrdersCSV()" class="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm">
               📥 Exportar CSV Local
             </button>
           </div>
@@ -364,14 +364,14 @@
       <!-- NAVEGACIÓN INTERNA DE ADMINISTRACIÓN (ORDEN DE TRABAJO VS CONFIGURACIÓN) -->
       <div class="admin-non-ot bg-white rounded-2xl border border-slate-200 p-2 flex flex-wrap items-center justify-between gap-2 shadow-sm">
         <div class="flex flex-wrap gap-1.5">
-          <button id="adminSubTabOT" onclick="switchAdminSubTab('ot')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5">
+          <button id="adminSubTabOT" type="button" onclick="switchAdminSubTab('ot')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5">
             <span>📋 Orden de Trabajo Textil (Corte y Confección)</span>
           </button>
-          <button id="adminSubTabConfig" onclick="switchAdminSubTab('config')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
+          <button id="adminSubTabConfig" type="button" onclick="switchAdminSubTab('config')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5">
             <span>⚙️ Configuración de Catálogo, Secciones y Clave</span>
           </button>
         </div>
-        <button onclick="loadCloudOrdersForOT(true)" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">
+        <button type="button" onclick="loadCloudOrdersForOT(true)" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">
           🔄 Actualizar Pedidos desde Google Sheets
         </button>
       </div>
@@ -389,7 +389,7 @@
               <h2 class="text-lg font-extrabold mt-1">Generador de Orden de Trabajo (OT) Optimizada</h2>
               <p class="text-xs text-slate-300">Consolida automáticamente los pedidos recibidos por ciclo de entrega, establecimiento y talla para optimizar el corte en tela.</p>
             </div>
-            <button onclick="printWorkOrder()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow flex items-center gap-2">
+            <button type="button" onclick="printWorkOrder()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow flex items-center gap-2">
               <span>🖨️ Imprimir Orden de Trabajo (A4)</span>
             </button>
           </div>
@@ -553,10 +553,10 @@
               <a href="https://docs.google.com/spreadsheets/d/15chhfBqCmpN_yPmCk_CeMsguUah_U6tkV96wC9fL_l8/edit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-extrabold">
                 📊 Ver "registro de pedidos" en Google Sheets
               </a>
-              <button onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
+              <button type="button" onclick="pullFromCloudAppsScript(true)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold">
                 🔄 Sincronizar desde Nube
               </button>
-              <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow">
+              <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow">
                 ☁️ Publicar Cambios en la Nube
               </button>
             </div>
@@ -568,7 +568,7 @@
               <input id="appsScriptUrlInput" type="url" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3.5 py-2 text-xs text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
             </div>
             <div class="md:col-span-3">
-              <button onclick="saveAppsScriptUrl()" class="w-full py-2 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-extrabold">
+              <button type="button" onclick="saveAppsScriptUrl()" class="w-full py-2 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-extrabold">
                 Actualizar URL Local
               </button>
             </div>
@@ -593,7 +593,7 @@
               <input id="adminConfirmPass" type="password" placeholder="Repetir nueva clave" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
             </div>
             <div>
-              <button onclick="changeAdminPasswordCloud()" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">
+              <button type="button" onclick="changeAdminPasswordCloud()" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">
                 Actualizar Contraseña
               </button>
             </div>
@@ -607,7 +607,7 @@
               <h3 class="text-base font-extrabold text-slate-900">🗂️ Edición de Secciones, Colegios y Ciclos de Entrega</h3>
               <p class="text-xs text-slate-500">Modifica los encabezados visibles y las opciones desplegables. Luego pulsa <strong>Grabar Modificaciones en la Nube</strong>.</p>
             </div>
-            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Modificaciones en la Nube
             </button>
           </div>
@@ -640,7 +640,7 @@
             <div id="adminSchoolsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
             <div class="flex gap-2 pt-1">
               <input id="newSchoolName" type="text" placeholder="Nuevo colegio o jardín..." class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
-              <button onclick="adminAddSchool()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Colegio</button>
+              <button type="button" onclick="adminAddSchool()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Colegio</button>
             </div>
           </div>
 
@@ -649,7 +649,7 @@
             <div id="adminDeliveryList" class="space-y-2"></div>
             <div class="flex gap-2 pt-1">
               <input id="newDeliveryName" type="text" placeholder="Ej. 4° Pedidos — Abril 2027" class="flex-1 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" />
-              <button onclick="adminAddDelivery()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Ciclo</button>
+              <button type="button" onclick="adminAddDelivery()" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">+ Agregar Ciclo</button>
             </div>
           </div>
         </div>
@@ -658,7 +658,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-base font-extrabold text-slate-900">👕 Gestión de Prendas y Tarifas por Tramo de Talla</h3>
-            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Prendas en la Nube
             </button>
           </div>
@@ -693,7 +693,7 @@
               <input id="newP_L_XL" type="number" placeholder="L–XL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
               <input id="newP_XXL" type="number" placeholder="XXL" class="rounded-lg border border-slate-300 px-2 py-1.5 text-xs bg-white" />
             </div>
-            <button onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            <button type="button" onclick="adminAddProduct()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
               Agregar Prenda
             </button>
           </div>
@@ -703,7 +703,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-base font-extrabold text-slate-900">🧵 Gestión de Detalle Extras</h3>
-            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Extras en la Nube
             </button>
           </div>
@@ -711,7 +711,7 @@
           <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
             <input id="newExtraName" type="text" placeholder="Nombre del nuevo servicio extra..." class="flex-1 min-w-[200px] rounded-xl border border-slate-300 px-3 py-2 text-xs" />
             <input id="newExtraPrice" type="number" placeholder="Precio CLP" class="w-32 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
-            <button onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
+            <button type="button" onclick="adminAddExtra()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold">
               + Agregar Extra
             </button>
           </div>
@@ -721,7 +721,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
-            <button onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
+            <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Cuentas en la Nube
             </button>
           </div>
@@ -737,7 +737,7 @@
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-base font-extrabold text-slate-900">🔐 Acceso Privado Administrador</h3>
-        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+        <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
       </div>
       <p class="text-xs text-slate-500">
         Ingresa tu contraseña de administrador de <strong>Textiles Rosita</strong>. La validación se realiza mediante SHA-256 en la nube.
@@ -747,8 +747,8 @@
         <p id="adminLoginError" class="hidden text-xs font-bold text-red-600 mt-1.5"></p>
       </div>
       <div class="flex justify-end gap-2">
-        <button onclick="closeAdminModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
-        <button id="btnSubmitAdminLogin" onclick="submitAdminLogin()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 hover:bg-slate-800 text-white">
+        <button type="button" onclick="closeAdminModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button id="btnSubmitAdminLogin" type="button" onclick="submitAdminLogin()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 hover:bg-slate-800 text-white">
           Ingresar
         </button>
       </div>
@@ -763,7 +763,7 @@
     // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v9';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v10';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
@@ -843,13 +843,9 @@
       }
     ];
 
-    let settings = loadLocalSettings();
-    let cart = [];
-    let extraQuantities = {};
-    let isAdminAuthenticated = false;
-    let activeSessionHash = '';
-    let inactivityTimer = null;
-    let cloudOrdersCache = [];
+    function byId(id) {
+      return document.getElementById(id);
+    }
 
     function escapeHtml(str) {
       return String(str || '')
@@ -864,20 +860,55 @@
       return String(str || '').replace(/^\d+\.\s*/, '').trim();
     }
 
+    function sanitizeCatalogList(list) {
+      if (!Array.isArray(list) || !list.length) {
+        return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+      }
+      return list.map((p, i) => ({
+        id: p && p.id ? String(p.id) : 'p_' + i,
+        name: stripLeadingNumber(p && p.name ? p.name : 'Prenda'),
+        prices: (p && p.prices && typeof p.prices === 'object') ? p.prices : { '3-4': 0, '6-8': 0, '10-12': 0, '14-16': 0, 'S-M': 0, 'L-XL': 0, 'XXL': 0 }
+      }));
+    }
+
+    function sanitizeExtrasList(list) {
+      if (!Array.isArray(list) || !list.length) {
+        return JSON.parse(JSON.stringify(DEFAULT_EXTRAS));
+      }
+      return list.map((e, i) => ({
+        id: e && e.id ? String(e.id) : 'e_' + i,
+        name: stripLeadingNumber(e && e.name ? e.name : 'Extra'),
+        price: Number(e && e.price) || 0
+      }));
+    }
+
+    let settings = loadLocalSettings();
+    let cart = [];
+    let extraQuantities = {};
+    let isAdminAuthenticated = false;
+    let activeSessionHash = '';
+    let inactivityTimer = null;
+    let cloudOrdersCache = [];
+
     // =========================================================================
     // 2. UTILIDADES CRIPTOGRÁFICAS SHA-256 Y SESIÓN SEGURA
     // =========================================================================
     async function sha256Hex(plainText) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(plainText);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      if (window.crypto && window.crypto.subtle) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(plainText);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      throw new Error('Navegador sin soporte WebCrypto SHA-256 (requiere HTTPS).');
     }
 
     function getAppsScriptUrl() {
       const saved = (localStorage.getItem(STORAGE_KEY_SCRIPT) || '').trim();
-      if (saved && !saved.includes('...')) return saved;
+      if (saved && saved.startsWith('https://script.google.com/') && !saved.includes('...')) {
+        return saved;
+      }
       return DEFAULT_SCRIPT_URL.trim();
     }
 
@@ -903,22 +934,12 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           return {
-            catalog: Array.isArray(parsed.catalog) && parsed.catalog.length
-              ? parsed.catalog.map(p => ({ ...p, name: stripLeadingNumber(p.name) }))
-              : JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
-            extras: Array.isArray(parsed.extras) && parsed.extras.length
-              ? parsed.extras.map(e => ({ ...e, name: stripLeadingNumber(e.name) }))
-              : JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
-            banks: Array.isArray(parsed.banks) && parsed.banks.length
-              ? parsed.banks
-              : JSON.parse(JSON.stringify(DEFAULT_BANKS)),
-            schools: Array.isArray(parsed.schools) && parsed.schools.length
-              ? parsed.schools
-              : [...DEFAULT_SCHOOLS],
-            deliveryWindows: Array.isArray(parsed.deliveryWindows) && parsed.deliveryWindows.length
-              ? parsed.deliveryWindows
-              : [...DEFAULT_DELIVERY_WINDOWS],
-            sectionTitles: parsed.sectionTitles
+            catalog: sanitizeCatalogList(parsed.catalog),
+            extras: sanitizeExtrasList(parsed.extras),
+            banks: Array.isArray(parsed.banks) && parsed.banks.length ? parsed.banks : JSON.parse(JSON.stringify(DEFAULT_BANKS)),
+            schools: Array.isArray(parsed.schools) && parsed.schools.length ? parsed.schools : [...DEFAULT_SCHOOLS],
+            deliveryWindows: Array.isArray(parsed.deliveryWindows) && parsed.deliveryWindows.length ? parsed.deliveryWindows : [...DEFAULT_DELIVERY_WINDOWS],
+            sectionTitles: (parsed.sectionTitles && typeof parsed.sectionTitles === 'object')
               ? { ...DEFAULT_SECTION_TITLES, ...parsed.sectionTitles }
               : { ...DEFAULT_SECTION_TITLES }
           };
@@ -935,22 +956,24 @@
     }
 
     function saveLocalSettings() {
-      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      try {
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      } catch (e) {}
     }
 
     async function pullFromCloudAppsScript(notify = false) {
       const url = getAppsScriptUrl();
-      const badge = document.getElementById('cloudSyncBadge');
+      const badge = byId('cloudSyncBadge');
       try {
-        badge.textContent = '↻ Sincronizando nube...';
+        if (badge) badge.textContent = '↻ Sincronizando nube...';
         const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
         const data = await res.json();
         if (data && data.ok && data.settings) {
           if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) {
-            settings.catalog = data.settings.catalog.map(p => ({ ...p, name: stripLeadingNumber(p.name) }));
+            settings.catalog = sanitizeCatalogList(data.settings.catalog);
           }
           if (Array.isArray(data.settings.extras) && data.settings.extras.length) {
-            settings.extras = data.settings.extras.map(e => ({ ...e, name: stripLeadingNumber(e.name) }));
+            settings.extras = sanitizeExtrasList(data.settings.extras);
           }
           if (Array.isArray(data.settings.banks) && data.settings.banks.length) {
             settings.banks = data.settings.banks;
@@ -961,45 +984,54 @@
           if (Array.isArray(data.settings.deliveryWindows) && data.settings.deliveryWindows.length) {
             settings.deliveryWindows = data.settings.deliveryWindows;
           }
-          if (data.settings.sectionTitles) {
+          if (data.settings.sectionTitles && typeof data.settings.sectionTitles === 'object') {
             settings.sectionTitles = { ...DEFAULT_SECTION_TITLES, ...data.settings.sectionTitles };
           }
           saveLocalSettings();
           refreshAllViews();
           if (notify) showToast('✅ Precios y datos actualizados desde la nube.');
         }
-        badge.textContent = '● Sincronizado con Nube';
-        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700';
+        if (badge) {
+          badge.textContent = '● Sincronizado con Nube';
+          badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700';
+        }
       } catch (err) {
-        badge.textContent = '● Catálogo oficial activo';
-        badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
-        if (notify) showToast('⚠️ Verifica que la URL de Apps Script no esté cortada y tenga acceso "Cualquier persona".');
+        if (badge) {
+          badge.textContent = '● Catálogo oficial activo';
+          badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
+        }
+        if (notify) showToast('⚠️ No se pudo conectar con Google Apps Script.');
       }
     }
 
     function initApp() {
-      document.getElementById('appsScriptUrlInput').value = getAppsScriptUrl();
-      refreshFolioBadge();
-      refreshAllViews();
-      pullFromCloudAppsScript(false);
+      try {
+        const urlInput = byId('appsScriptUrlInput');
+        if (urlInput) urlInput.value = getAppsScriptUrl();
+        refreshFolioBadge();
+        refreshAllViews();
+        pullFromCloudAppsScript(false);
+      } catch (err) {
+        console.error('Error al inicializar:', err);
+      }
     }
 
     function refreshAllViews() {
-      renderDynamicSections();
-      renderProductDropdown();
-      onProductOrSizeChange();
-      renderCart();
-      renderExtrasGrid();
-      renderBankCards();
-      renderOrdersRegistry();
+      try { renderDynamicSections(); } catch (e) { console.error(e); }
+      try { renderProductDropdown(); } catch (e) { console.error(e); }
+      try { onProductOrSizeChange(); } catch (e) { console.error(e); }
+      try { renderCart(); } catch (e) { console.error(e); }
+      try { renderExtrasGrid(); } catch (e) { console.error(e); }
+      try { renderBankCards(); } catch (e) { console.error(e); }
+      try { renderOrdersRegistry(); } catch (e) { console.error(e); }
       if (isAdminAuthenticated) {
-        renderAdminSectionsEditor();
-        renderAdminProducts();
-        renderAdminExtras();
-        renderAdminBanks();
-        populateOTFilterOptions();
+        try { renderAdminSectionsEditor(); } catch (e) { console.error(e); }
+        try { renderAdminProducts(); } catch (e) { console.error(e); }
+        try { renderAdminExtras(); } catch (e) { console.error(e); }
+        try { renderAdminBanks(); } catch (e) { console.error(e); }
+        try { populateOTFilterOptions(); } catch (e) { console.error(e); }
       }
-      recalculateAll();
+      try { recalculateAll(); } catch (e) { console.error(e); }
     }
 
     // =========================================================================
@@ -1007,30 +1039,29 @@
     // =========================================================================
     function renderDynamicSections() {
       const t = settings.sectionTitles || DEFAULT_SECTION_TITLES;
-      const el1 = document.getElementById('titleSec1');
-      const el2 = document.getElementById('titleSec2');
-      const el3 = document.getElementById('titleSec3');
-      const el4 = document.getElementById('titleSec4');
-      const elSeason = document.getElementById('seasonBadgeText');
-      if (el1) el1.textContent = t.sec1;
-      if (el2) el2.textContent = t.sec2;
-      if (el3) el3.textContent = t.sec3;
-      if (el4) el4.textContent = t.sec4;
-      if (elSeason) elSeason.textContent = t.seasonTag;
+      if (byId('titleSec1')) byId('titleSec1').textContent = t.sec1;
+      if (byId('titleSec2')) byId('titleSec2').textContent = t.sec2;
+      if (byId('titleSec3')) byId('titleSec3').textContent = t.sec3;
+      if (byId('titleSec4')) byId('titleSec4').textContent = t.sec4;
+      if (byId('seasonBadgeText')) byId('seasonBadgeText').textContent = t.seasonTag;
 
-      const schoolSel = document.getElementById('schoolSelect');
-      const prevSchool = schoolSel.value;
-      schoolSel.innerHTML = settings.schools.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('') +
-        `<option value="OTRO">Otro establecimiento (especificar)...</option>`;
-      if (prevSchool && ([...settings.schools, 'OTRO'].includes(prevSchool))) {
-        schoolSel.value = prevSchool;
+      const schoolSel = byId('schoolSelect');
+      if (schoolSel) {
+        const prevSchool = schoolSel.value;
+        schoolSel.innerHTML = settings.schools.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('') +
+          `<option value="OTRO">Otro establecimiento (especificar)...</option>`;
+        if (prevSchool && ([...settings.schools, 'OTRO'].includes(prevSchool))) {
+          schoolSel.value = prevSchool;
+        }
       }
 
-      const delSel = document.getElementById('deliveryWindow');
-      const prevDel = delSel.value;
-      delSel.innerHTML = settings.deliveryWindows.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
-      if (prevDel && settings.deliveryWindows.includes(prevDel)) {
-        delSel.value = prevDel;
+      const delSel = byId('deliveryWindow');
+      if (delSel) {
+        const prevDel = delSel.value;
+        delSel.innerHTML = settings.deliveryWindows.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+        if (prevDel && settings.deliveryWindows.includes(prevDel)) {
+          delSel.value = prevDel;
+        }
       }
     }
 
@@ -1051,7 +1082,8 @@
     }
 
     function renderProductDropdown() {
-      const sel = document.getElementById('productSelect');
+      const sel = byId('productSelect');
+      if (!sel) return;
       const prev = sel.value;
       sel.innerHTML = settings.catalog.map(p => {
         const cleanName = stripLeadingNumber(p.name);
@@ -1061,20 +1093,28 @@
     }
 
     function onProductOrSizeChange() {
-      const prodId = document.getElementById('productSelect').value;
-      const sizeStr = document.getElementById('sizeSelect').value;
+      const prodSel = byId('productSelect');
+      const sizeSel = byId('sizeSelect');
+      if (!prodSel || !sizeSel) return;
+
+      const prodId = prodSel.value;
+      const sizeStr = sizeSel.value;
       const bracket = getBracketFromSize(sizeStr);
-      document.getElementById('sizeBracketTag').textContent = `Tramo Talla: ${bracket}`;
+      if (byId('sizeBracketTag')) byId('sizeBracketTag').textContent = `Tramo Talla: ${bracket}`;
 
       const prod = settings.catalog.find(p => p.id === prodId);
       const price = prod && prod.prices ? (Number(prod.prices[bracket]) || 0) : 0;
-      document.getElementById('unitPricePreview').value = formatCLP(price);
+      if (byId('unitPricePreview')) byId('unitPricePreview').value = formatCLP(price);
     }
 
     function addItemToCart() {
-      const prodId = document.getElementById('productSelect').value;
-      const sizeStr = document.getElementById('sizeSelect').value;
-      const qty = Math.max(1, parseInt(document.getElementById('qtyInput').value, 10) || 1);
+      const prodSel = byId('productSelect');
+      const sizeSel = byId('sizeSelect');
+      if (!prodSel || !sizeSel) return;
+
+      const prodId = prodSel.value;
+      const sizeStr = sizeSel.value;
+      const qty = Math.max(1, parseInt((byId('qtyInput') && byId('qtyInput').value) || '1', 10) || 1);
       const prod = settings.catalog.find(p => p.id === prodId);
       if (!prod) return;
 
@@ -1096,7 +1136,7 @@
           unitPrice
         });
       }
-      document.getElementById('qtyInput').value = 1;
+      if (byId('qtyInput')) byId('qtyInput').value = 1;
       renderCart();
       recalculateAll();
       showToast(`✅ Agregado: ${qty}x ${cleanName} (${sizeStr}) — ${formatCLP(unitPrice)} c/u`);
@@ -1109,9 +1149,12 @@
     }
 
     function renderCart() {
-      const tbody = document.getElementById('cartTableBody');
+      const tbody = byId('cartTableBody');
+      if (!tbody) return;
       const totalGarments = cart.reduce((acc, i) => acc + i.qty, 0);
-      document.getElementById('totalGarmentsBadge').textContent = `${totalGarments} ${totalGarments === 1 ? 'prenda' : 'prendas'}`;
+      if (byId('totalGarmentsBadge')) {
+        byId('totalGarmentsBadge').textContent = `${totalGarments} ${totalGarments === 1 ? 'prenda' : 'prendas'}`;
+      }
 
       if (!cart.length) {
         tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">Aún no has agregado prendas al pedido.</td></tr>`;
@@ -1126,14 +1169,15 @@
           <td class="py-2.5 px-2 text-right text-slate-600">${formatCLP(item.unitPrice)}</td>
           <td class="py-2.5 px-2 text-right font-extrabold text-slate-900">${formatCLP(item.qty * item.unitPrice)}</td>
           <td class="py-2.5 pl-2 text-center no-print">
-            <button onclick="removeCartItem('${escapeHtml(item.uid)}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
+            <button type="button" onclick="removeCartItem('${escapeHtml(item.uid)}')" class="text-red-500 hover:text-red-700 font-bold px-2 py-0.5 rounded">✕</button>
           </td>
         </tr>
       `).join('');
     }
 
     function renderExtrasGrid() {
-      const grid = document.getElementById('extrasGrid');
+      const grid = byId('extrasGrid');
+      if (!grid) return;
       grid.innerHTML = settings.extras.map(ext => {
         const q = extraQuantities[ext.id] || 0;
         const cleanExtraName = stripLeadingNumber(ext.name);
@@ -1144,9 +1188,9 @@
               <div class="text-xs font-bold text-amber-800">${formatCLP(ext.price)} c/u</div>
             </div>
             <div class="flex items-center gap-1.5 no-print">
-              <button onclick="changeExtraQty('${escapeHtml(ext.id)}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
+              <button type="button" onclick="changeExtraQty('${escapeHtml(ext.id)}', -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-300 font-bold text-slate-700 hover:bg-slate-100">−</button>
               <span class="w-6 text-center text-xs font-extrabold">${q}</span>
-              <button onclick="changeExtraQty('${escapeHtml(ext.id)}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
+              <button type="button" onclick="changeExtraQty('${escapeHtml(ext.id)}', 1)" class="w-7 h-7 rounded-lg bg-amber-600 text-white font-bold hover:bg-amber-700">+</button>
             </div>
           </div>
         `;
@@ -1164,19 +1208,19 @@
       const garmentsTotal = cart.reduce((sum, item) => sum + item.qty * item.unitPrice, 0);
       const extrasTotal = settings.extras.reduce((sum, ext) => sum + (extraQuantities[ext.id] || 0) * ext.price, 0);
       const subtotal = garmentsTotal + extrasTotal;
-      const applyIva = document.getElementById('ivaToggle').checked;
+      const applyIva = Boolean(byId('ivaToggle') && byId('ivaToggle').checked);
       const ivaAmount = applyIva ? Math.round(subtotal * 0.19) : 0;
       const grandTotal = subtotal + ivaAmount;
       const deposit50 = Math.round(grandTotal * 0.5);
       const balance50 = grandTotal - deposit50;
 
-      document.getElementById('extrasSubtotalBadge').textContent = `Extras: ${formatCLP(extrasTotal)}`;
-      document.getElementById('summaryGarments').textContent = formatCLP(garmentsTotal);
-      document.getElementById('summaryExtras').textContent = formatCLP(extrasTotal);
-      document.getElementById('summaryIva').textContent = formatCLP(ivaAmount);
-      document.getElementById('summaryTotal').textContent = formatCLP(grandTotal);
-      document.getElementById('summaryDeposit50').textContent = formatCLP(deposit50);
-      document.getElementById('summaryBalance50').textContent = formatCLP(balance50);
+      if (byId('extrasSubtotalBadge')) byId('extrasSubtotalBadge').textContent = `Extras: ${formatCLP(extrasTotal)}`;
+      if (byId('summaryGarments')) byId('summaryGarments').textContent = formatCLP(garmentsTotal);
+      if (byId('summaryExtras')) byId('summaryExtras').textContent = formatCLP(extrasTotal);
+      if (byId('summaryIva')) byId('summaryIva').textContent = formatCLP(ivaAmount);
+      if (byId('summaryTotal')) byId('summaryTotal').textContent = formatCLP(grandTotal);
+      if (byId('summaryDeposit50')) byId('summaryDeposit50').textContent = formatCLP(deposit50);
+      if (byId('summaryBalance50')) byId('summaryBalance50').textContent = formatCLP(balance50);
 
       updateConfirmButtonState();
     }
@@ -1185,12 +1229,13 @@
     // 5. DATOS BANCARIOS Y ENVÍO DE RESERVA A GOOGLE SHEETS + WHATSAPP
     // =========================================================================
     function renderBankCards() {
-      const container = document.getElementById('bankAccountsContainer');
+      const container = byId('bankAccountsContainer');
+      if (!container) return;
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
           <div class="flex items-center justify-between">
             <span class="font-extrabold text-slate-900">${escapeHtml(b.label)}</span>
-            <button onclick="copyBankData(${idx})" class="no-print px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px]">
+            <button type="button" onclick="copyBankData(${idx})" class="no-print px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px]">
               📋 Copiar
             </button>
           </div>
@@ -1212,13 +1257,15 @@
     }
 
     function onSchoolChange() {
-      const val = document.getElementById('schoolSelect').value;
-      document.getElementById('customSchoolInput').classList.toggle('hidden', val !== 'OTRO');
+      const sel = byId('schoolSelect');
+      const inp = byId('customSchoolInput');
+      if (sel && inp) inp.classList.toggle('hidden', sel.value !== 'OTRO');
     }
 
     function handleReceiptChange() {
-      const input = document.getElementById('receiptInput');
-      const status = document.getElementById('receiptFileStatus');
+      const input = byId('receiptInput');
+      const status = byId('receiptFileStatus');
+      if (!input || !status) return;
       if (input.files && input.files[0]) {
         const file = input.files[0];
         if (file.size > 12 * 1024 * 1024) {
@@ -1237,10 +1284,13 @@
     }
 
     function updateConfirmButtonState() {
+      const btn = byId('btnConfirmWhatsApp');
+      if (!btn) return;
       const hasItems = cart.length > 0 || Object.values(extraQuantities).some(q => q > 0);
-      const hasFile = document.getElementById('receiptInput').files.length > 0;
-      const checked = document.getElementById('confirmReceiptCheck').checked;
-      const btn = document.getElementById('btnConfirmWhatsApp');
+      const receiptEl = byId('receiptInput');
+      const checkEl = byId('confirmReceiptCheck');
+      const hasFile = Boolean(receiptEl && receiptEl.files && receiptEl.files.length > 0);
+      const checked = Boolean(checkEl && checkEl.checked);
 
       const enabled = hasItems && hasFile && checked;
       btn.disabled = !enabled;
@@ -1255,7 +1305,7 @@
     }
 
     function refreshFolioBadge() {
-      document.getElementById('folioHeaderBadge').textContent = 'Folio: ' + getCurrentFolio();
+      if (byId('folioHeaderBadge')) byId('folioHeaderBadge').textContent = 'Folio: ' + getCurrentFolio();
     }
 
     function readFileAsBase64(file) {
@@ -1272,24 +1322,24 @@
     }
 
     async function confirmAndSendOrder() {
-      const clientName = document.getElementById('clientName').value.trim();
-      const clientPhone = document.getElementById('clientPhone').value.trim();
+      const clientName = (byId('clientName') && byId('clientName').value.trim()) || '';
+      const clientPhone = (byId('clientPhone') && byId('clientPhone').value.trim()) || '';
       if (!clientName || !clientPhone) {
         showToast('⚠️ Ingresa tu nombre completo y teléfono antes de enviar.');
         return;
       }
 
-      const btn = document.getElementById('btnConfirmWhatsApp');
-      const feedbackBox = document.getElementById('cloudOrderFeedback');
+      const btn = byId('btnConfirmWhatsApp');
+      const feedbackBox = byId('cloudOrderFeedback');
       btn.disabled = true;
       btn.innerHTML = '<span>⏳ Subiendo comprobante y registrando pedido...</span>';
 
-      const schoolSel = document.getElementById('schoolSelect').value;
-      const school = schoolSel === 'OTRO' ? (document.getElementById('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
-      const grade = document.getElementById('studentGrade').value.trim();
-      const deliveryWindow = document.getElementById('deliveryWindow').value;
-      const notes = document.getElementById('orderNotes').value.trim();
-      const receiptFile = document.getElementById('receiptInput').files[0];
+      const schoolSel = byId('schoolSelect').value;
+      const school = schoolSel === 'OTRO' ? (byId('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
+      const grade = byId('studentGrade').value.trim();
+      const deliveryWindow = byId('deliveryWindow').value;
+      const notes = byId('orderNotes').value.trim();
+      const receiptFile = byId('receiptInput').files[0];
 
       const garmentsTotal = cart.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
       const selectedExtras = settings.extras.filter(e => (extraQuantities[e.id] || 0) > 0).map(e => ({
@@ -1300,7 +1350,7 @@
       const extrasTotal = selectedExtras.reduce((sum, e) => sum + e.qty * e.price, 0);
       const subtotalParticular = garmentsTotal + extrasTotal;
       const totalConIva = Math.round(subtotalParticular * 1.19);
-      const applyIva = document.getElementById('ivaToggle').checked;
+      const applyIva = byId('ivaToggle').checked;
       const totalFinal = applyIva ? totalConIva : subtotalParticular;
       const deposit50 = Math.round(totalFinal * 0.5);
       const balance50 = totalFinal - deposit50;
@@ -1436,8 +1486,9 @@
     // =========================================================================
     function renderOrdersRegistry() {
       const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
-      document.getElementById('ordersCountBadge').textContent = orders.length;
-      const tbody = document.getElementById('ordersRegistryBody');
+      if (byId('ordersCountBadge')) byId('ordersCountBadge').textContent = orders.length;
+      const tbody = byId('ordersRegistryBody');
+      if (!tbody) return;
 
       if (!orders.length) {
         tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Aún no hay reservas registradas desde este dispositivo.</td></tr>`;
@@ -1476,7 +1527,7 @@
       const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
-      a.href = .createObject(blob);
+      a.href = URL.createObjectURL(blob);
       a.download = `registro_pedidos_textiles_rosita_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
@@ -1488,48 +1539,57 @@
       if (isAdminAuthenticated) {
         logoutAdmin(false);
       } else {
-        document.getElementById('adminLoginError').classList.add('hidden');
-        document.getElementById('adminLoginPasswordInput').value = '';
-        document.getElementById('adminLoginModal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('adminLoginPasswordInput').focus(), 50);
+        const modal = byId('adminLoginModal');
+        const errEl = byId('adminLoginError');
+        const inp = byId('adminLoginPasswordInput');
+        if (errEl) errEl.classList.add('hidden');
+        if (inp) inp.value = '';
+        if (modal) modal.classList.remove('hidden');
+        if (inp) setTimeout(() => inp.focus(), 50);
       }
     }
 
     function closeAdminModal() {
-      document.getElementById('adminLoginModal').classList.add('hidden');
+      const modal = byId('adminLoginModal');
+      if (modal) modal.classList.add('hidden');
     }
 
     async function submitAdminLogin() {
-      const pass = document.getElementById('adminLoginPasswordInput').value;
-      const errEl = document.getElementById('adminLoginError');
-      const btn = document.getElementById('btnSubmitAdminLogin');
+      const inp = byId('adminLoginPasswordInput');
+      const errEl = byId('adminLoginError');
+      const btn = byId('btnSubmitAdminLogin');
+      const pass = inp ? inp.value : '';
       if (!pass) return;
 
       btn.disabled = true;
       btn.textContent = 'Verificando...';
-      errEl.classList.add('hidden');
+      if (errEl) errEl.classList.add('hidden');
 
       try {
         const hash = await sha256Hex(pass);
-        const script = getAppsScript();
+        const scriptUrl = getAppsScriptUrl();
 
-        if (!script || script.includes('...')) {
-          errEl.textContent = 'La  de Apps Script está incompleta. Pega la  completa en index.html.';
-          errEl.classList.remove('hidden');
-          return;
-        }
-
-        const res = await fetch(script, {
+        const res = await fetch(scriptUrl, {
           method: 'POST',
           redirect: 'follow',
           credentials: 'omit',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'verify_login', passwordHash: hash })
         });
-        const data = await res.json();
-        if (!data.ok) {
-          errEl.textContent = data.error || 'Contraseña incorrecta.';
-          errEl.classList.remove('hidden');
+
+        const rawText = await res.text();
+        let data = null;
+        try {
+          data = JSON.parse(rawText);
+        } catch (parseErr) {
+          throw new Error('Google Apps Script devolvió una página HTML en vez de JSON. Revisa que esté publicado como "Cualquier persona".');
+        }
+
+        if (!data || !data.ok) {
+          if (errEl) {
+            errEl.textContent = (data && data.error) ? data.error : 'Contraseña incorrecta.';
+            errEl.classList.remove('hidden');
+          }
           return;
         }
 
@@ -1543,8 +1603,10 @@
         loadCloudOrdersForOT(false);
         showToast('🔓 Sesión de Administrador iniciada.');
       } catch (e) {
-        errEl.textContent = 'Error de red al conectar con Apps Script. Verifica que la implementación esté publicada con acceso "Cualquier persona".';
-        errEl.classList.remove('hidden');
+        if (errEl) {
+          errEl.textContent = e.message || 'Error de red al conectar con Apps Script.';
+          errEl.classList.remove('hidden');
+        }
       } finally {
         btn.disabled = false;
         btn.textContent = 'Ingresar';
@@ -1561,29 +1623,29 @@
     }
 
     function updateAdminUIState() {
-      const btn = document.getElementById('btnAdminToggle');
-      const icon = document.getElementById('adminBtnIcon');
-      const txt = document.getElementById('adminBtnText');
-      const tabAdmin = document.getElementById('tabBtnAdmin');
-      const timerBadge = document.getElementById('adminSessionTimer');
+      const btn = byId('btnAdminToggle');
+      const icon = byId('adminBtnIcon');
+      const txt = byId('adminBtnText');
+      const tabAdmin = byId('tabBtnAdmin');
+      const timerBadge = byId('adminSessionTimer');
 
       if (isAdminAuthenticated) {
-        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-red-600 text-white hover:bg-red-700 border-red-600';
-        icon.textContent = '🔓';
-        txt.textContent = 'Cerrar Sesión Admin';
-        tabAdmin.classList.remove('hidden');
-        timerBadge.classList.remove('hidden');
+        if (btn) btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-red-600 text-white hover:bg-red-700 border-red-600';
+        if (icon) icon.textContent = '🔓';
+        if (txt) txt.textContent = 'Cerrar Sesión Admin';
+        if (tabAdmin) tabAdmin.classList.remove('hidden');
+        if (timerBadge) timerBadge.classList.remove('hidden');
         renderAdminSectionsEditor();
         renderAdminProducts();
         renderAdminExtras();
         renderAdminBanks();
         populateOTFilterOptions();
       } else {
-        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900';
-        icon.textContent = '🔒';
-        txt.textContent = 'Modo Administrador';
-        tabAdmin.classList.add('hidden');
-        timerBadge.classList.add('hidden');
+        if (btn) btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 bg-slate-900 text-white hover:bg-slate-800 border-slate-900';
+        if (icon) icon.textContent = '🔒';
+        if (txt) txt.textContent = 'Modo Administrador';
+        if (tabAdmin) tabAdmin.classList.add('hidden');
+        if (timerBadge) timerBadge.classList.add('hidden');
       }
     }
 
@@ -1592,38 +1654,46 @@
         handleAdminButtonClick();
         return;
       }
-      document.getElementById('viewCotizador').classList.toggle('hidden', tab !== 'cotizador');
-      document.getElementById('viewRegistro').classList.toggle('hidden', tab !== 'registro');
-      document.getElementById('viewAdmin').classList.toggle('hidden', tab !== 'admin');
+      if (byId('viewCotizador')) byId('viewCotizador').classList.toggle('hidden', tab !== 'cotizador');
+      if (byId('viewRegistro')) byId('viewRegistro').classList.toggle('hidden', tab !== 'registro');
+      if (byId('viewAdmin')) byId('viewAdmin').classList.toggle('hidden', tab !== 'admin');
 
-      document.getElementById('tabBtnCotizador').className = tab === 'cotizador'
-        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
-        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+      if (byId('tabBtnCotizador')) {
+        byId('tabBtnCotizador').className = tab === 'cotizador'
+          ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+          : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+      }
 
-      document.getElementById('tabBtnRegistro').className = tab === 'registro'
-        ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
-        : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+      if (byId('tabBtnRegistro')) {
+        byId('tabBtnRegistro').className = tab === 'registro'
+          ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
+          : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
+      }
     }
 
     function switchAdminSubTab(subTab) {
-      document.getElementById('adminPanelOT').classList.toggle('hidden', subTab !== 'ot');
-      document.getElementById('adminPanelConfig').classList.toggle('hidden', subTab !== 'config');
+      if (byId('adminPanelOT')) byId('adminPanelOT').classList.toggle('hidden', subTab !== 'ot');
+      if (byId('adminPanelConfig')) byId('adminPanelConfig').classList.toggle('hidden', subTab !== 'config');
 
-      document.getElementById('adminSubTabOT').className = subTab === 'ot'
-        ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5'
-        : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+      if (byId('adminSubTabOT')) {
+        byId('adminSubTabOT').className = subTab === 'ot'
+          ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5'
+          : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+      }
 
-      document.getElementById('adminSubTabConfig').className = subTab === 'config'
-        ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm flex items-center gap-1.5'
-        : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+      if (byId('adminSubTabConfig')) {
+        byId('adminSubTabConfig').className = subTab === 'config'
+          ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm flex items-center gap-1.5'
+          : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+      }
     }
 
     // =========================================================================
     // 8. ORDEN DE TRABAJO OPTIMIZADA (OPCIÓN 1 — CONSOLIDACIÓN POR TALLA Y COLEGIO)
     // =========================================================================
     function populateOTFilterOptions() {
-      const delSel = document.getElementById('otFilterDelivery');
-      const schSel = document.getElementById('otFilterSchool');
+      const delSel = byId('otFilterDelivery');
+      const schSel = byId('otFilterSchool');
       if (!delSel || !schSel) return;
 
       const prevDel = delSel.value;
@@ -1651,7 +1721,7 @@
     async function loadCloudOrdersForOT(notify = false) {
       if (!isAdminAuthenticated) return;
       try {
-        const res = await fetch(getAppsScript(), {
+        const res = await fetch(getAppsScriptUrl(), {
           method: 'POST',
           redirect: 'follow',
           credentials: 'omit',
@@ -1671,16 +1741,14 @@
         }
       } catch (err) {}
 
-      // Fallback: si Apps Script aún no tiene la ruta get_all_orders publicada, usa pedidos locales
       const localFallback = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
       cloudOrdersCache = localFallback;
       populateOTFilterOptions();
       renderWorkOrder();
-      if (notify) showToast('ℹ️ Mostrando pedidos locales (actualiza Código.gs para leer toda la nube).');
+      if (notify) showToast('ℹ️ Mostrando pedidos locales (publica Nueva Versión en Código.gs para leer toda la nube).');
     }
 
     function parseItemsFromSummary(itemsSummary) {
-      // Convierte "2x Buzo Algodón (Talla 10) = $51.800 | 1x Polera Piqué (Talla S) = $11.200"
       const parsed = [];
       if (!itemsSummary || itemsSummary === 'Sin prendas base' || itemsSummary === 'Sin prendas') return parsed;
       const chunks = String(itemsSummary).split('|');
@@ -1705,9 +1773,9 @@
     }
 
     function renderWorkOrder() {
-      const deliveryFilter = document.getElementById('otFilterDelivery').value;
-      const schoolFilter = document.getElementById('otFilterSchool').value;
-      const searchFilter = (document.getElementById('otFilterSearch').value || '').trim().toLowerCase();
+      const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
+      const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
+      const searchFilter = ((byId('otFilterSearch') && byId('otFilterSearch').value) || '').trim().toLowerCase();
 
       const filtered = cloudOrdersCache.filter(o => {
         if (deliveryFilter !== 'ALL' && o.deliveryWindow !== deliveryFilter) return false;
@@ -1719,12 +1787,10 @@
         return true;
       });
 
-      // Encabezado OT
-      document.getElementById('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
-      document.getElementById('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter}`;
+      if (byId('otGeneratedDate')) byId('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
+      if (byId('otSubtitleScope')) byId('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter}`;
 
-      // 1. Construir Matriz de Corte Consolidada
-      const matrixMap = {}; // { "Buzo Algodón": { '3':0, '4':2, ..., total: 2 } }
+      const matrixMap = {};
       let totalGarmentsCount = 0;
 
       filtered.forEach(order => {
@@ -1743,104 +1809,108 @@
         });
       });
 
-      const matrixBody = document.getElementById('otCuttingMatrixBody');
+      const matrixBody = byId('otCuttingMatrixBody');
       const productNames = Object.keys(matrixMap);
 
-      if (!productNames.length) {
-        matrixBody.innerHTML = `<tr><td colspan="15" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
-      } else {
-        const colTotals = {};
-        ALL_SIZES_ORDER.forEach(sz => colTotals[sz] = 0);
-        let grandTotalGarments = 0;
+      if (matrixBody) {
+        if (!productNames.length) {
+          matrixBody.innerHTML = `<tr><td colspan="15" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
+        } else {
+          const colTotals = {};
+          ALL_SIZES_ORDER.forEach(sz => colTotals[sz] = 0);
+          let grandTotalGarments = 0;
 
-        const rowsHtml = productNames.map(prodName => {
-          const row = matrixMap[prodName];
-          ALL_SIZES_ORDER.forEach(sz => colTotals[sz] += row[sz]);
-          grandTotalGarments += row.total;
+          const rowsHtml = productNames.map(prodName => {
+            const row = matrixMap[prodName];
+            ALL_SIZES_ORDER.forEach(sz => colTotals[sz] += row[sz]);
+            grandTotalGarments += row.total;
 
-          return `
-            <tr class="hover:bg-slate-50">
-              <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
-              ${ALL_SIZES_ORDER.map(sz => {
-                const v = row[sz];
-                return `<td class="p-2 ${v > 0 ? 'bg-amber-50/80 text-slate-900 font-black' : 'text-slate-300'}">${v > 0 ? v : '·'}</td>`;
-              }).join('')}
-              <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
+            return `
+              <tr class="hover:bg-slate-50">
+                <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
+                ${ALL_SIZES_ORDER.map(sz => {
+                  const v = row[sz];
+                  return `<td class="p-2 ${v > 0 ? 'bg-amber-50/80 text-slate-900 font-black' : 'text-slate-300'}">${v > 0 ? v : '·'}</td>`;
+                }).join('')}
+                <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
+              </tr>
+            `;
+          }).join('');
+
+          const totalRowHtml = `
+            <tr class="bg-slate-900 text-white font-black">
+              <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
+              ${ALL_SIZES_ORDER.map(sz => `<td class="p-2">${colTotals[sz] || 0}</td>`).join('')}
+              <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
             </tr>
           `;
-        }).join('');
-
-        const totalRowHtml = `
-          <tr class="bg-slate-900 text-white font-black">
-            <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
-            ${ALL_SIZES_ORDER.map(sz => `<td class="p-2">${colTotals[sz] || 0}</td>`).join('')}
-            <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
-          </tr>
-        `;
-        matrixBody.innerHTML = rowsHtml + totalRowHtml;
+          matrixBody.innerHTML = rowsHtml + totalRowHtml;
+        }
       }
 
-      // 2. Construir Hoja de Ruta de Personalización (Extras y Observaciones)
       const specialOrders = filtered.filter(o => {
         const hasExtras = o.extrasSummary && o.extrasSummary !== 'Sin extras';
         const hasNotes = o.notes && o.notes.trim().length > 0;
         return hasExtras || hasNotes;
       });
 
-      const persBody = document.getElementById('otPersonalizationBody');
-      if (!specialOrders.length) {
-        persBody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Ningún pedido de este lote requiere bordados, insignias o ajustes especiales.</td></tr>`;
-      } else {
-        persBody.innerHTML = specialOrders.map(o => `
-          <tr class="hover:bg-amber-50/30">
-            <td class="p-2.5 font-extrabold text-amber-900">${escapeHtml(o.folio)}</td>
-            <td class="p-2.5 font-semibold text-slate-700">${escapeHtml(o.school)}</td>
-            <td class="p-2.5 text-slate-700">${escapeHtml(o.itemsSummary)}</td>
-            <td class="p-2.5 font-bold text-emerald-800">${escapeHtml(o.extrasSummary || '—')}</td>
-            <td class="p-2.5 font-semibold text-slate-900">${escapeHtml(o.notes || '—')}</td>
-            <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-400 rounded"></span></td>
-          </tr>
-        `).join('');
+      const persBody = byId('otPersonalizationBody');
+      if (persBody) {
+        if (!specialOrders.length) {
+          persBody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Ningún pedido de este lote requiere bordados, insignias o ajustes especiales.</td></tr>`;
+        } else {
+          persBody.innerHTML = specialOrders.map(o => `
+            <tr class="hover:bg-amber-50/30">
+              <td class="p-2.5 font-extrabold text-amber-900">${escapeHtml(o.folio)}</td>
+              <td class="p-2.5 font-semibold text-slate-700">${escapeHtml(o.school)}</td>
+              <td class="p-2.5 text-slate-700">${escapeHtml(o.itemsSummary)}</td>
+              <td class="p-2.5 font-bold text-emerald-800">${escapeHtml(o.extrasSummary || '—')}</td>
+              <td class="p-2.5 font-semibold text-slate-900">${escapeHtml(o.notes || '—')}</td>
+              <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-400 rounded"></span></td>
+            </tr>
+          `).join('');
+        }
       }
 
-      // 3. Construir Checklist de Empaque y Saldo 50% por Cobrar
-      const packBody = document.getElementById('otPackingListBody');
+      const packBody = byId('otPackingListBody');
       let totalBalancePending = 0;
 
-      if (!filtered.length) {
-        packBody.innerHTML = `<tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
-      } else {
-        packBody.innerHTML = filtered.map(o => {
-          const bal = Number(o.balance50) || Math.max(0, (Number(o.total) || 0) - (Number(o.deposit50) || 0));
-          totalBalancePending += bal;
-          return `
-            <tr class="hover:bg-slate-50">
-              <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-500 rounded"></span></td>
-              <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
-              <td class="p-2.5">
-                <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
-                <div class="text-slate-500">${escapeHtml(o.clientPhone)}</div>
-              </td>
-              <td class="p-2.5">
-                <div class="font-semibold text-slate-800">${escapeHtml(o.school)}${o.grade ? ' (' + escapeHtml(o.grade) + ')' : ''}</div>
-                <div class="text-[11px] text-amber-800 font-semibold">${escapeHtml(o.deliveryWindow)}</div>
-              </td>
-              <td class="p-2.5">
-                <div class="text-slate-800">${escapeHtml(o.itemsSummary)}</div>
-                ${o.extrasSummary && o.extrasSummary !== 'Sin extras' ? `<div class="text-emerald-700 font-semibold">+ ${escapeHtml(o.extrasSummary)}</div>` : ''}
-                ${o.notes ? `<div class="text-amber-900 italic">Nota: ${escapeHtml(o.notes)}</div>` : ''}
-              </td>
-              <td class="p-2.5 text-right text-slate-600 font-semibold">${formatCLP(o.deposit50)}</td>
-              <td class="p-2.5 text-right font-black text-emerald-800">${formatCLP(bal)}</td>
-            </tr>
-          `;
-        }).join('');
+      if (packBody) {
+        if (!filtered.length) {
+          packBody.innerHTML = `<tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
+        } else {
+          packBody.innerHTML = filtered.map(o => {
+            const bal = Number(o.balance50) || Math.max(0, (Number(o.total) || 0) - (Number(o.deposit50) || 0));
+            totalBalancePending += bal;
+            return `
+              <tr class="hover:bg-slate-50">
+                <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-500 rounded"></span></td>
+                <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
+                <td class="p-2.5">
+                  <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
+                  <div class="text-slate-500">${escapeHtml(o.clientPhone)}</div>
+                </td>
+                <td class="p-2.5">
+                  <div class="font-semibold text-slate-800">${escapeHtml(o.school)}${o.grade ? ' (' + escapeHtml(o.grade) + ')' : ''}</div>
+                  <div class="text-[11px] text-amber-800 font-semibold">${escapeHtml(o.deliveryWindow)}</div>
+                </td>
+                <td class="p-2.5">
+                  <div class="text-slate-800">${escapeHtml(o.itemsSummary)}</div>
+                  ${o.extrasSummary && o.extrasSummary !== 'Sin extras' ? `<div class="text-emerald-700 font-semibold">+ ${escapeHtml(o.extrasSummary)}</div>` : ''}
+                  ${o.notes ? `<div class="text-amber-900 italic">Nota: ${escapeHtml(o.notes)}</div>` : ''}
+                </td>
+                <td class="p-2.5 text-right text-slate-600 font-semibold">${formatCLP(o.deposit50)}</td>
+                <td class="p-2.5 text-right font-black text-emerald-800">${formatCLP(bal)}</td>
+              </tr>
+            `;
+          }).join('');
+        }
       }
 
-      document.getElementById('otKpiOrders').textContent = `${filtered.length} ${filtered.length === 1 ? 'Pedido' : 'Pedidos'}`;
-      document.getElementById('otKpiGarments').textContent = `${totalGarmentsCount} ${totalGarmentsCount === 1 ? 'Prenda' : 'Prendas'}`;
-      document.getElementById('otKpiExtras').textContent = `${specialOrders.length} con Especiales`;
-      document.getElementById('otTotalBalancePending').textContent = `Saldo 50% por cobrar en este lote: ${formatCLP(totalBalancePending)}`;
+      if (byId('otKpiOrders')) byId('otKpiOrders').textContent = `${filtered.length} ${filtered.length === 1 ? 'Pedido' : 'Pedidos'}`;
+      if (byId('otKpiGarments')) byId('otKpiGarments').textContent = `${totalGarmentsCount} ${totalGarmentsCount === 1 ? 'Prenda' : 'Prendas'}`;
+      if (byId('otKpiExtras')) byId('otKpiExtras').textContent = `${specialOrders.length} con Especiales`;
+      if (byId('otTotalBalancePending')) byId('otTotalBalancePending').textContent = `Saldo 50% por cobrar en este lote: ${formatCLP(totalBalancePending)}`;
     }
 
     function printWorkOrder() {
@@ -1849,17 +1919,17 @@
       setTimeout(() => document.body.classList.remove('printing-ot'), 500);
     }
 
-    function saveAppsScript() {
-      const  = document.getElementById('appsScriptUrlInput').value.trim();
+    function saveAppsScriptUrl() {
+      const url = byId('appsScriptUrlInput').value.trim();
       localStorage.setItem(STORAGE_KEY_SCRIPT, url);
       showToast('✅ URL guardada en este navegador.');
       pullFromCloudAppsScript(true);
     }
 
     async function changeAdminPasswordCloud() {
-      const curr = document.getElementById('adminCurrentPass').value;
-      const next = document.getElementById('adminNewPass').value;
-      const conf = document.getElementById('adminConfirmPass').value;
+      const curr = byId('adminCurrentPass').value;
+      const next = byId('adminNewPass').value;
+      const conf = byId('adminConfirmPass').value;
 
       if (!curr || !next || next.length < 4) {
         showToast('⚠️ La nueva contraseña debe tener al menos 4 caracteres.');
@@ -1887,9 +1957,9 @@
           return;
         }
         activeSessionHash = newHash;
-        document.getElementById('adminCurrentPass').value = '';
-        document.getElementById('adminNewPass').value = '';
-        document.getElementById('adminConfirmPass').value = '';
+        byId('adminCurrentPass').value = '';
+        byId('adminNewPass').value = '';
+        byId('adminConfirmPass').value = '';
         showToast('✅ Contraseña actualizada en la nube para todos tus dispositivos.');
       } catch (e) {
         showToast('❌ Error de conexión con Google Apps Script.');
@@ -1927,42 +1997,46 @@
     // =========================================================================
     function renderAdminSectionsEditor() {
       const t = settings.sectionTitles || DEFAULT_SECTION_TITLES;
-      document.getElementById('editTitleSec1').value = t.sec1;
-      document.getElementById('editSeasonTag').value = t.seasonTag;
-      document.getElementById('editTitleSec2').value = t.sec2;
-      document.getElementById('editTitleSec3').value = t.sec3;
-      document.getElementById('editTitleSec4').value = t.sec4;
+      if (byId('editTitleSec1')) byId('editTitleSec1').value = t.sec1;
+      if (byId('editSeasonTag')) byId('editSeasonTag').value = t.seasonTag;
+      if (byId('editTitleSec2')) byId('editTitleSec2').value = t.sec2;
+      if (byId('editTitleSec3')) byId('editTitleSec3').value = t.sec3;
+      if (byId('editTitleSec4')) byId('editTitleSec4').value = t.sec4;
 
-      document.getElementById('adminSchoolsList').innerHTML = settings.schools.map((s, idx) => `
-        <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
-          <input type="text" value="${escapeHtml(s)}" onchange="settings.schools[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
-          <button onclick="settings.schools.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
-        </div>
-      `).join('');
+      if (byId('adminSchoolsList')) {
+        byId('adminSchoolsList').innerHTML = settings.schools.map((s, idx) => `
+          <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
+            <input type="text" value="${escapeHtml(s)}" onchange="settings.schools[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
+            <button type="button" onclick="settings.schools.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
+          </div>
+        `).join('');
+      }
 
-      document.getElementById('adminDeliveryList').innerHTML = settings.deliveryWindows.map((w, idx) => `
-        <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
-          <input type="text" value="${escapeHtml(w)}" onchange="settings.deliveryWindows[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
-          <button onclick="settings.deliveryWindows.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
-        </div>
-      `).join('');
+      if (byId('adminDeliveryList')) {
+        byId('adminDeliveryList').innerHTML = settings.deliveryWindows.map((w, idx) => `
+          <div class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
+            <input type="text" value="${escapeHtml(w)}" onchange="settings.deliveryWindows[${idx}]=this.value.trim(); saveLocalSettings(); renderDynamicSections();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs bg-white" />
+            <button type="button" onclick="settings.deliveryWindows.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-1.5">✕</button>
+          </div>
+        `).join('');
+      }
     }
 
     function adminAddSchool() {
-      const val = document.getElementById('newSchoolName').value.trim();
+      const val = byId('newSchoolName').value.trim();
       if (!val) return;
       settings.schools.push(val);
-      document.getElementById('newSchoolName').value = '';
+      byId('newSchoolName').value = '';
       saveLocalSettings();
       refreshAllViews();
       showToast('✅ Colegio agregado. Pulsa "Grabar Modificaciones en la Nube".');
     }
 
     function adminAddDelivery() {
-      const val = document.getElementById('newDeliveryName').value.trim();
+      const val = byId('newDeliveryName').value.trim();
       if (!val) return;
       settings.deliveryWindows.push(val);
-      document.getElementById('newDeliveryName').value = '';
+      byId('newDeliveryName').value = '';
       saveLocalSettings();
       refreshAllViews();
       showToast('✅ Ciclo de entrega agregado. Pulsa "Grabar Modificaciones en la Nube".');
@@ -1970,7 +2044,8 @@
 
     function renderAdminProducts() {
       const brackets = ['3-4', '6-8', '10-12', '14-16', 'S-M', 'L-XL', 'XXL'];
-      const tbody = document.getElementById('adminProductsBody');
+      const tbody = byId('adminProductsBody');
+      if (!tbody) return;
       tbody.innerHTML = settings.catalog.map((p, idx) => `
         <tr>
           <td class="p-2">
@@ -1982,7 +2057,7 @@
             </td>
           `).join('')}
           <td class="p-2 text-center">
-            <button onclick="adminDeleteProduct(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs">Eliminar</button>
+            <button type="button" onclick="adminDeleteProduct(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs">Eliminar</button>
           </td>
         </tr>
       `).join('');
@@ -2007,7 +2082,7 @@
     }
 
     function adminAddProduct() {
-      const name = stripLeadingNumber(document.getElementById('newProdName').value);
+      const name = stripLeadingNumber(byId('newProdName').value);
       if (!name) {
         showToast('⚠️ Escribe el nombre de la nueva prenda.');
         return;
@@ -2016,50 +2091,54 @@
         id: 'p_' + Date.now(),
         name,
         prices: {
-          '3-4':   parseInt(document.getElementById('newP_3_4').value, 10) || 0,
-          '6-8':   parseInt(document.getElementById('newP_6_8').value, 10) || 0,
-          '10-12': parseInt(document.getElementById('newP_10_12').value, 10) || 0,
-          '14-16': parseInt(document.getElementById('newP_14_16').value, 10) || 0,
-          'S-M':   parseInt(document.getElementById('newP_S_M').value, 10) || 0,
-          'L-XL':  parseInt(document.getElementById('newP_L_XL').value, 10) || 0,
-          'XXL':   parseInt(document.getElementById('newP_XXL').value, 10) || 0
+          '3-4':   parseInt(byId('newP_3_4').value, 10) || 0,
+          '6-8':   parseInt(byId('newP_6_8').value, 10) || 0,
+          '10-12': parseInt(byId('newP_10_12').value, 10) || 0,
+          '14-16': parseInt(byId('newP_14_16').value, 10) || 0,
+          'S-M':   parseInt(byId('newP_S_M').value, 10) || 0,
+          'L-XL':  parseInt(byId('newP_L_XL').value, 10) || 0,
+          'XXL':   parseInt(byId('newP_XXL').value, 10) || 0
         }
       });
-      ['newProdName','newP_3_4','newP_6_8','newP_10_12','newP_14_16','newP_S_M','newP_L_XL','newP_XXL'].forEach(id => document.getElementById(id).value = '');
+      ['newProdName','newP_3_4','newP_6_8','newP_10_12','newP_14_16','newP_S_M','newP_L_XL','newP_XXL'].forEach(id => {
+        if (byId(id)) byId(id).value = '';
+      });
       saveLocalSettings();
       refreshAllViews();
       showToast('✅ Prenda agregada. Pulsa "Grabar Prendas en la Nube".');
     }
 
     function renderAdminExtras() {
-      const container = document.getElementById('adminExtrasList');
+      const container = byId('adminExtrasList');
+      if (!container) return;
       container.innerHTML = settings.extras.map((e, idx) => `
         <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50">
           <input type="text" value="${escapeHtml(stripLeadingNumber(e.name))}" onchange="settings.extras[${idx}].name=stripLeadingNumber(this.value); saveLocalSettings(); renderExtrasGrid();" class="flex-1 rounded border border-slate-300 px-2 py-1 text-xs font-semibold bg-white" />
           <input type="number" value="${e.price}" onchange="settings.extras[${idx}].price=parseInt(this.value,10)||0; saveLocalSettings(); renderExtrasGrid(); recalculateAll();" class="w-24 rounded border border-slate-300 px-2 py-1 text-xs text-right font-bold bg-white" />
-          <button onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
+          <button type="button" onclick="settings.extras.splice(${idx},1); saveLocalSettings(); refreshAllViews();" class="text-red-600 font-bold text-xs px-2">✕</button>
         </div>
       `).join('');
     }
 
     function adminAddExtra() {
-      const name = stripLeadingNumber(document.getElementById('newExtraName').value);
-      const price = parseInt(document.getElementById('newExtraPrice').value, 10) || 0;
+      const name = stripLeadingNumber(byId('newExtraName').value);
+      const price = parseInt(byId('newExtraPrice').value, 10) || 0;
       if (!name) return;
       settings.extras.push({
         id: 'e_' + Date.now(),
         name,
         price
       });
-      document.getElementById('newExtraName').value = '';
-      document.getElementById('newExtraPrice').value = '';
+      byId('newExtraName').value = '';
+      byId('newExtraPrice').value = '';
       saveLocalSettings();
       refreshAllViews();
       showToast('✅ Extra agregado. Pulsa "Grabar Extras en la Nube".');
     }
 
     function renderAdminBanks() {
-      const container = document.getElementById('adminBanksEditor');
+      const container = byId('adminBanksEditor');
+      if (!container) return;
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs">
           <div class="font-extrabold text-slate-800">${escapeHtml(b.label)}</div>
@@ -2082,14 +2161,19 @@
     // =========================================================================
     let toastTimeout = null;
     function showToast(msg) {
-      const box = document.getElementById('toastBox');
+      const box = byId('toastBox');
+      if (!box) return;
       box.textContent = msg;
       box.classList.remove('hidden');
       if (toastTimeout) clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => box.classList.add('hidden'), 4000);
     }
 
-    document.addEventListener('DOMContentLoaded', initApp);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
   </script>
 </body>
 </html>
