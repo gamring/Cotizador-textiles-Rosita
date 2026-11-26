@@ -130,7 +130,7 @@
 
     <!-- ==================== PESTAÑA 1: COTIZADOR Y RESERVA ==================== -->
     <section id="viewCotizador" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
+
       <!-- COLUMNA IZQUIERDA (8 COLS) -->
       <div class="lg:col-span-8 space-y-6">
 
@@ -399,7 +399,7 @@
     <!-- ==================== PESTAÑA 3: PANEL ADMINISTRADOR CENTRALIZADO ==================== -->
     <section id="viewAdmin" class="hidden space-y-6">
 
-      <!-- NAVEGACIÓN INTERNA DE ADMINISTRACIÓN (ORDEN DE TRABAJO VS CONFIGURACIÓN) -->
+      <!-- NAVEGACIÓN INTERNA DE ADMINISTRACIÓN -->
       <div class="admin-non-ot bg-white rounded-2xl border border-slate-200 p-2 flex flex-wrap items-center justify-between gap-2 shadow-sm">
         <div class="flex flex-wrap gap-1.5">
           <button id="adminSubTabOT" type="button" onclick="switchAdminSubTab('ot')" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 text-white shadow-sm flex items-center gap-1.5">
@@ -481,7 +481,7 @@
 
         <!-- HOJA IMPRIMIBLE DE ORDEN DE TRABAJO -->
         <div id="otPrintableArea" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-7">
-          
+
           <!-- ENCABEZADO DOCUMENTO OT -->
           <div class="flex flex-wrap items-start justify-between gap-4 pb-4 border-b-2 border-slate-900">
             <div>
@@ -834,9 +834,10 @@
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
+    const API_TIMEOUT_MS       = 15000;
 
     // Reemplaza esta URL si generas una nueva implementación en Apps Script
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
     const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
@@ -960,7 +961,7 @@
     let cloudOrdersCache = [];
 
     // =========================================================================
-    // 2. UTILIDADES CRIPTOGRÁFICAS SHA-256 Y SESIÓN SEGURA
+    // 2. CLIENTE DE RED BLINDADO (TIMEOUT + VALIDACIÓN JSON + SHA-256)
     // =========================================================================
     async function sha256Hex(plainText) {
       if (window.crypto && window.crypto.subtle) {
@@ -979,6 +980,50 @@
         return saved;
       }
       return DEFAULT_SCRIPT_URL.trim();
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = API_TIMEOUT_MS) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, {
+          ...options,
+          redirect: 'follow',
+          credentials: 'omit',
+          signal: controller.signal
+        });
+      } catch (err) {
+        if (err && err.name === 'AbortError') {
+          throw new Error('Tiempo de espera agotado al conectar con Google Apps Script.');
+        }
+        throw new Error('No se pudo conectar con Google Apps Script (revisa URL /exec, acceso "Cualquier persona" o red/bloqueadores).');
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function parseJsonResponse(rawText) {
+      try {
+        return JSON.parse(rawText);
+      } catch (err) {
+        throw new Error('Google Apps Script devolvió una respuesta no-JSON (revisa permisos de publicación o errores en Código.gs).');
+      }
+    }
+
+    async function apiGet(timeoutMs = API_TIMEOUT_MS) {
+      const res = await fetchWithTimeout(getAppsScriptUrl(), { method: 'GET' }, timeoutMs);
+      const text = await res.text();
+      return parseJsonResponse(text);
+    }
+
+    async function apiPost(payloadObj, timeoutMs = API_TIMEOUT_MS) {
+      const res = await fetchWithTimeout(getAppsScriptUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payloadObj || {})
+      }, timeoutMs);
+      const text = await res.text();
+      return parseJsonResponse(text);
     }
 
     function resetAdminInactivityTimer() {
@@ -1031,12 +1076,10 @@
     }
 
     async function pullFromCloudAppsScript(notify = false) {
-      const url = getAppsScriptUrl();
       const badge = byId('cloudSyncBadge');
       try {
         if (badge) badge.textContent = '↻ Sincronizando nube...';
-        const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
-        const data = await res.json();
+        const data = await apiGet();
         if (data && data.ok) {
           if (data.nextFolioPreview && byId('folioHeaderBadge')) {
             byId('folioHeaderBadge').textContent = 'Folio: ' + data.nextFolioPreview;
@@ -1074,7 +1117,7 @@
           badge.textContent = '● Catálogo oficial activo';
           badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800';
         }
-        if (notify) showToast('⚠️ No se pudo conectar con Google Apps Script.');
+        if (notify) showToast('⚠️ ' + (err.message || 'No se pudo conectar con Google Apps Script.'));
       }
     }
 
@@ -1300,7 +1343,7 @@
     }
 
     // =========================================================================
-    // 5. DATOS BANCARIOS Y ENVÍO DE RESERVA A GOOGLE SHEETS + WHATSAPP
+    // 5. DATOS BANCARIOS, COMPRESIÓN DE COMPROBANTE Y ENVÍO A NUBE + WHATSAPP
     // =========================================================================
     function renderBankCards() {
       const container = byId('bankAccountsContainer');
@@ -1342,8 +1385,8 @@
       if (!input || !status) return;
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        if (file.size > 12 * 1024 * 1024) {
-          status.textContent = '⚠️ El archivo supera los 12 MB. Selecciona una imagen más liviana.';
+        if (file.size > 15 * 1024 * 1024) {
+          status.textContent = '⚠️ El archivo supera los 15 MB. Selecciona un archivo más liviano.';
           status.className = 'text-[11px] font-bold text-red-600 mt-1';
           input.value = '';
         } else {
@@ -1382,9 +1425,48 @@
       if (byId('folioHeaderBadge')) byId('folioHeaderBadge').textContent = 'Folio: ' + getCurrentFolio();
     }
 
+    function compressImageIfNeeded(file, maxWidth = 1280, quality = 0.82) {
+      return new Promise((resolve) => {
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+          resolve(null);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              resolve(null);
+              return;
+            }
+            ctx.drawImage(img, 0, 0, width, height);
+            try {
+              const dataUrl = canvas.toDataURL('image/jpeg', quality);
+              resolve({ dataUrl, mimeType: 'image/jpeg', ext: '.jpg' });
+            } catch (e) {
+              resolve(null);
+            }
+          };
+          img.onerror = () => resolve(null);
+          img.src = String(ev.target.result || '');
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
     function readFileAsBase64(file) {
       return new Promise((resolve) => {
-        if (!file || file.size > 12 * 1024 * 1024) {
+        if (!file || file.size > 15 * 1024 * 1024) {
           resolve('');
           return;
         }
@@ -1393,6 +1475,25 @@
         reader.onerror = () => resolve('');
         reader.readAsDataURL(file);
       });
+    }
+
+    async function prepareReceiptPayload(file) {
+      if (!file) return { base64: '', fileName: '', mimeType: '' };
+      const compressed = await compressImageIfNeeded(file);
+      if (compressed && compressed.dataUrl) {
+        const cleanBase = file.name.replace(/\.[^/.]+$/, '');
+        return {
+          base64: compressed.dataUrl,
+          fileName: `${cleanBase}${compressed.ext}`,
+          mimeType: compressed.mimeType
+        };
+      }
+      const rawBase64 = await readFileAsBase64(file);
+      return {
+        base64: rawBase64,
+        fileName: file.name,
+        mimeType: file.type || 'application/octet-stream'
+      };
     }
 
     async function confirmAndSendOrder() {
@@ -1406,7 +1507,7 @@
       const btn = byId('btnConfirmWhatsApp');
       const feedbackBox = byId('cloudOrderFeedback');
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Subiendo comprobante y registrando pedido...</span>';
+      btn.innerHTML = '<span>⏳ Preparando comprobante y registrando pedido...</span>';
 
       const schoolSel = byId('schoolSelect').value;
       const school = schoolSel === 'OTRO' ? (byId('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
@@ -1432,7 +1533,7 @@
       let folio = getCurrentFolio();
       const itemsSummary = cart.map(i => `${i.qty}x ${stripLeadingNumber(i.name)} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
       const extrasSummary = selectedExtras.map(e => `${e.qty}x ${e.name} = ${formatCLP(e.qty * e.price)}`).join(' | ');
-      const receiptBase64 = await readFileAsBase64(receiptFile);
+      const receiptPayload = await prepareReceiptPayload(receiptFile);
 
       const payload = {
         action: 'register_order',
@@ -1451,41 +1552,27 @@
           deposit50,
           balance50,
           notes,
-          receiptBase64,
-          receiptFileName: receiptFile ? receiptFile.name : '',
-          receiptMimeType: receiptFile ? receiptFile.type : ''
+          receiptBase64: receiptPayload.base64,
+          receiptFileName: receiptPayload.fileName,
+          receiptMimeType: receiptPayload.mimeType
         }
       };
 
       let cloudSaved = false;
       let cloudReceiptUrl = '';
-      const scriptUrl = getAppsScriptUrl();
+      let cloudErrorMsg = '';
 
       try {
-        const res = await fetch(scriptUrl, {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
+        const data = await apiPost(payload, 25000);
         if (data && data.ok) {
           cloudSaved = true;
           if (data.numeroPedido) folio = data.numeroPedido;
           if (data.receiptUrl) cloudReceiptUrl = data.receiptUrl;
+        } else {
+          cloudErrorMsg = (data && data.error) ? data.error : 'No se pudo guardar en la nube.';
         }
       } catch (err) {
-        try {
-          await fetch(scriptUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            credentials: 'omit',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-          });
-          cloudSaved = true;
-        } catch (e2) {}
+        cloudErrorMsg = err.message || 'Error de conexión con la nube.';
       }
 
       const orderRecord = {
@@ -1542,7 +1629,9 @@
       feedbackBox.classList.remove('hidden');
       feedbackBox.innerHTML = `
         <div class="space-y-2">
-          <div>${cloudSaved ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> y comprobante guardados en la nube.` : `⚠️ Pedido <strong>${escapeHtml(folio)}</strong> guardado localmente.`}</div>
+          <div>${cloudSaved
+            ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> y comprobante guardados en la nube.`
+            : `⚠️ Pedido <strong>${escapeHtml(folio)}</strong> guardado localmente (${escapeHtml(cloudErrorMsg)}).`}</div>
           ${cloudReceiptUrl ? `<div><a href="${escapeHtml(cloudReceiptUrl)}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-700 font-extrabold">🧾 Ver Comprobante Subido en Drive</a></div>` : ''}
           <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-block w-full text-center py-2.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow">
             📲 Abrir Chat de WhatsApp y Enviar Pedido (${escapeHtml(folio)})
@@ -1642,23 +1731,7 @@
 
       try {
         const hash = await sha256Hex(pass);
-        const scriptUrl = getAppsScriptUrl();
-
-        const res = await fetch(scriptUrl, {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'verify_login', passwordHash: hash })
-        });
-
-        const rawText = await res.text();
-        let data = null;
-        try {
-          data = JSON.parse(rawText);
-        } catch (parseErr) {
-          throw new Error('Google Apps Script devolvió una página HTML en vez de JSON. Revisa que esté publicado como "Cualquier persona".');
-        }
+        const data = await apiPost({ action: 'verify_login', passwordHash: hash });
 
         if (!data || !data.ok) {
           if (errEl) {
@@ -1764,7 +1837,7 @@
     }
 
     // =========================================================================
-    // 8. ORDEN DE TRABAJO OPTIMIZADA (CONSOLIDACIÓN POR TALLA, COLEGIO Y ESTADO)
+    // 8. ORDEN DE TRABAJO OPTIMIZADA (PARSER DETERMINISTA + ESTADO EN NUBE)
     // =========================================================================
     function populateOTFilterOptions() {
       const delSel = byId('otFilterDelivery');
@@ -1796,17 +1869,10 @@
     async function loadCloudOrdersForOT(notify = false) {
       if (!isAdminAuthenticated) return;
       try {
-        const res = await fetch(getAppsScriptUrl(), {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'get_all_orders',
-            passwordHash: activeSessionHash
-          })
+        const data = await apiPost({
+          action: 'get_all_orders',
+          passwordHash: activeSessionHash
         });
-        const data = await res.json();
         if (data && data.ok && Array.isArray(data.orders)) {
           cloudOrdersCache = data.orders;
           populateOTFilterOptions();
@@ -1826,19 +1892,12 @@
     async function changeOrderStatusCloud(folio, newStatus) {
       showToast(`⏳ Guardando estado de ${folio}...`);
       try {
-        const res = await fetch(getAppsScriptUrl(), {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'update_order_status',
-            passwordHash: activeSessionHash,
-            folio: folio,
-            status: newStatus
-          })
+        const data = await apiPost({
+          action: 'update_order_status',
+          passwordHash: activeSessionHash,
+          folio: folio,
+          status: newStatus
         });
-        const data = await res.json();
         if (data && data.ok) {
           const item = cloudOrdersCache.find(x => x.folio === folio);
           if (item) item.status = newStatus;
@@ -1848,19 +1907,26 @@
           showToast('❌ ' + (data.error || 'No se pudo actualizar el estado.'));
         }
       } catch (err) {
-        showToast('❌ Error de red al actualizar estado.');
+        showToast('❌ ' + (err.message || 'Error de red al actualizar estado.'));
       }
     }
 
     function normalizeSizeKey(rawSize) {
-      let s = String(rawSize || '')
+      const cleaned = String(rawSize || '')
         .toUpperCase()
         .replace(/TALLA/g, '')
         .replace(/TRAMO/g, '')
         .replace(/[^A-Z0-9]/g, '')
         .trim();
 
-      if (ALL_SIZES_ORDER.includes(s)) return s;
+      if (!cleaned) return null;
+      if (ALL_SIZES_ORDER.includes(cleaned)) return cleaned;
+
+      // Extrae token válido si viene combinado, ej. "10M" o "XXL"
+      const match = cleaned.match(/(XXL|XL|16|14|12|10|8|6|4|3|M|L|S)$/);
+      if (match && ALL_SIZES_ORDER.includes(match[1])) {
+        return match[1];
+      }
       return null;
     }
 
@@ -1873,38 +1939,50 @@
         const clean = chunk.trim();
         if (!clean) return;
 
-        // 1. Formato con paréntesis o corchetes: "2x Buzo Fantasía (Talla 10)" o "2x Buzo Fantasía [10]"
-        let match = clean.match(/^(\d+)\s*x\s+(.+?)\s*[\(\[]([^\)\]]+)[\)\]]/i);
-        if (match) {
-          const qty = parseInt(match[1], 10) || 0;
-          const product = stripLeadingNumber(match[2]);
-          const size = normalizeSizeKey(match[3]) || 'S/T';
-          if (qty > 0 && product) {
-            parsed.push({ qty, product, size });
-            return;
+        // Formato esperado: "1x Buzo Completo con Polera (Algodón) (Talla M) = $42.600"
+        const headMatch = clean.match(/^(\d+)\s*x\s+(.+?)(?:\s*=\s*\$[\d.,]+)?$/i);
+        if (!headMatch) return;
+
+        const qty = parseInt(headMatch[1], 10) || 0;
+        let desc = headMatch[2].trim();
+        if (qty <= 0 || !desc) return;
+
+        let detectedSize = 'S/T';
+
+        // 1. Buscar explícitamente "(Talla X)" o "[Talla X]" en cualquier posición del ítem
+        const explicitTallaMatch = desc.match(/[\(\[]\s*Talla\s+([A-Z0-9]+)\s*[\)\]]/i);
+        if (explicitTallaMatch) {
+          const norm = normalizeSizeKey(explicitTallaMatch[1]);
+          if (norm) {
+            detectedSize = norm;
+            desc = desc.replace(explicitTallaMatch[0], '').trim();
+          }
+        } else {
+          // 2. Si no dice "Talla", revisar el último grupo entre paréntesis/corchetes (ej. "(M)" o "(10)")
+          const groupMatches = [...desc.matchAll(/[\(\[]([^\)\]]+)[\)\]]/g)];
+          if (groupMatches.length > 0) {
+            const last = groupMatches[groupMatches.length - 1];
+            const norm = normalizeSizeKey(last[1]);
+            if (norm) {
+              detectedSize = norm;
+              desc = (desc.slice(0, last.index) + desc.slice(last.index + last[0].length)).trim();
+            }
+          } else {
+            // 3. Formato sin paréntesis: "... Talla M" al final
+            const trailingTalla = desc.match(/^(.*?)\s+Talla\s+([A-Z0-9]+)$/i);
+            if (trailingTalla) {
+              const norm = normalizeSizeKey(trailingTalla[2]);
+              if (norm) {
+                detectedSize = norm;
+                desc = trailingTalla[1].trim();
+              }
+            }
           }
         }
 
-        // 2. Formato sin paréntesis: "2x Buzo Fantasía Talla 10"
-        match = clean.match(/^(\d+)\s*x\s+(.+?)\s+Talla\s+([A-Z0-9]+)/i);
-        if (match) {
-          const qty = parseInt(match[1], 10) || 0;
-          const product = stripLeadingNumber(match[2]);
-          const size = normalizeSizeKey(match[3]) || 'S/T';
-          if (qty > 0 && product) {
-            parsed.push({ qty, product, size });
-            return;
-          }
-        }
-
-        // 3. Respaldo si no viene talla especificada: "2x Buzo Fantasía"
-        match = clean.match(/^(\d+)\s*x\s+([^=$]+)/i);
-        if (match) {
-          const qty = parseInt(match[1], 10) || 0;
-          const product = stripLeadingNumber(match[2]);
-          if (qty > 0 && product) {
-            parsed.push({ qty, product, size: 'S/T' });
-          }
+        const product = stripLeadingNumber(desc.replace(/\s{2,}/g, ' '));
+        if (product) {
+          parsed.push({ qty, product, size: detectedSize });
         }
       });
       return parsed;
@@ -2127,18 +2205,10 @@
         return;
       }
 
-      const currentHash = await sha256Hex(curr);
-      const newHash = await sha256Hex(next);
-
       try {
-        const res = await fetch(getAppsScriptUrl(), {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'change_password', currentHash, newHash })
-        });
-        const data = await res.json();
+        const currentHash = await sha256Hex(curr);
+        const newHash = await sha256Hex(next);
+        const data = await apiPost({ action: 'change_password', currentHash, newHash });
         if (!data.ok) {
           showToast('❌ ' + (data.error || 'No se pudo actualizar la clave.'));
           return;
@@ -2149,7 +2219,7 @@
         byId('adminConfirmPass').value = '';
         showToast('✅ Contraseña actualizada en la nube para todos tus dispositivos.');
       } catch (e) {
-        showToast('❌ Error de conexión con Google Apps Script.');
+        showToast('❌ ' + (e.message || 'Error de conexión con Google Apps Script.'));
       }
     }
 
@@ -2157,25 +2227,18 @@
       saveLocalSettings();
       refreshAllViews();
       try {
-        const res = await fetch(getAppsScriptUrl(), {
-          method: 'POST',
-          redirect: 'follow',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'save_global_settings',
-            passwordHash: activeSessionHash,
-            settings
-          })
+        const data = await apiPost({
+          action: 'save_global_settings',
+          passwordHash: activeSessionHash,
+          settings
         });
-        const data = await res.json();
         if (!data.ok) {
           showToast('❌ ' + (data.error || 'No autorizado para guardar en la nube.'));
           return;
         }
         showToast('☁️ ¡Cambios publicados en la nube! Todos los dispositivos verán los nuevos datos.');
       } catch (e) {
-        showToast('❌ Error al publicar cambios en Google Apps Script.');
+        showToast('❌ ' + (e.message || 'Error al publicar cambios en Google Apps Script.'));
       }
     }
 
