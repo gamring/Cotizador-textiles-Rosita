@@ -394,25 +394,43 @@
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
-            <div class="sm:col-span-4">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">1. Filtrar por Ciclo / Fecha de Entrega</label>
+<div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">1. Ciclo / Fecha de Entrega</label>
               <select id="otFilterDelivery" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
                 <option value="ALL">Todos los ciclos de entrega</option>
               </select>
             </div>
-            <div class="sm:col-span-4">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">2. Filtrar por Establecimiento Educacional</label>
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">2. Establecimiento Educacional</label>
               <select id="otFilterSchool" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
                 <option value="ALL">Todos los establecimientos</option>
               </select>
             </div>
-            <div class="sm:col-span-4">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">3. Buscar Folio o Apoderado</label>
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">3. Filtrar por Talla</label>
+              <select id="otFilterSize" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-amber-300 font-bold">
+                <option value="ALL">Todas las tallas (3 a XXL)</option>
+                <option value="3">Talla 3</option>
+                <option value="4">Talla 4</option>
+                <option value="6">Talla 6</option>
+                <option value="8">Talla 8</option>
+                <option value="10">Talla 10</option>
+                <option value="12">Talla 12</option>
+                <option value="14">Talla 14</option>
+                <option value="16">Talla 16</option>
+                <option value="S">Talla S</option>
+                <option value="M">Talla M</option>
+                <option value="L">Talla L</option>
+                <option value="XL">Talla XL</option>
+                <option value="XXL">Talla XXL</option>
+              </select>
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">4. Buscar Folio o Apoderado</label>
               <input id="otFilterSearch" type="text" oninput="renderWorkOrder()" placeholder="Ej. ROS-0004 o María..." class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white" />
             </div>
           </div>
-        </div>
 
         <!-- HOJA IMPRIMIBLE DE ORDEN DE TRABAJO -->
         <div id="otPrintableArea" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-7">
@@ -1772,14 +1790,20 @@
       return ALL_SIZES_ORDER.includes(s) ? s : null;
     }
 
-    function renderWorkOrder() {
+function renderWorkOrder() {
       const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
       const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
+      const sizeFilter = (byId('otFilterSize') && byId('otFilterSize').value) || 'ALL';
       const searchFilter = ((byId('otFilterSearch') && byId('otFilterSearch').value) || '').trim().toLowerCase();
 
       const filtered = cloudOrdersCache.filter(o => {
         if (deliveryFilter !== 'ALL' && o.deliveryWindow !== deliveryFilter) return false;
         if (schoolFilter !== 'ALL' && o.school !== schoolFilter) return false;
+        if (sizeFilter !== 'ALL') {
+          const items = parseItemsFromSummary(o.itemsSummary);
+          const hasMatchingSize = items.some(it => normalizeSizeKey(it.size) === sizeFilter);
+          if (!hasMatchingSize) return false;
+        }
         if (searchFilter) {
           const hay = `${o.folio} ${o.clientName} ${o.clientPhone} ${o.school}`.toLowerCase();
           if (!hay.includes(searchFilter)) return false;
@@ -1788,7 +1812,10 @@
       });
 
       if (byId('otGeneratedDate')) byId('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
-      if (byId('otSubtitleScope')) byId('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter}`;
+      if (byId('otSubtitleScope')) {
+        const sizeLabel = sizeFilter === 'ALL' ? 'Todas las tallas' : `Talla ${sizeFilter}`;
+        byId('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter} · Filtro Talla: ${sizeLabel}`;
+      }
 
       const matrixMap = {};
       let totalGarmentsCount = 0;
@@ -1797,6 +1824,9 @@
         const items = parseItemsFromSummary(order.itemsSummary);
         items.forEach(it => {
           const sizeKey = normalizeSizeKey(it.size);
+          // Si hay filtro de talla activo, sumar solo las piezas de esa talla en la matriz
+          if (sizeFilter !== 'ALL' && sizeKey !== sizeFilter) return;
+
           if (!matrixMap[it.product]) {
             matrixMap[it.product] = { total: 0 };
             ALL_SIZES_ORDER.forEach(sz => matrixMap[it.product][sz] = 0);
@@ -1830,7 +1860,14 @@
                 <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
                 ${ALL_SIZES_ORDER.map(sz => {
                   const v = row[sz];
-                  return `<td class="p-2 ${v > 0 ? 'bg-amber-50/80 text-slate-900 font-black' : 'text-slate-300'}">${v > 0 ? v : '·'}</td>`;
+                  const isHighlighted = sizeFilter !== 'ALL' && sz === sizeFilter;
+                  let cellClass = 'text-slate-300';
+                  if (v > 0) {
+                    cellClass = isHighlighted
+                      ? 'bg-emerald-200 text-emerald-950 font-black ring-1 ring-emerald-500'
+                      : 'bg-amber-50/80 text-slate-900 font-black';
+                  }
+                  return `<td class="p-2 ${cellClass}">${v > 0 ? v : '·'}</td>`;
                 }).join('')}
                 <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
               </tr>
@@ -1840,7 +1877,7 @@
           const totalRowHtml = `
             <tr class="bg-slate-900 text-white font-black">
               <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
-              ${ALL_SIZES_ORDER.map(sz => `<td class="p-2">${colTotals[sz] || 0}</td>`).join('')}
+              ${ALL_SIZES_ORDER.map(sz => `<td class="p-2 ${sizeFilter === sz ? 'bg-emerald-600 text-white' : ''}">${colTotals[sz] || 0}</td>`).join('')}
               <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
             </tr>
           `;
