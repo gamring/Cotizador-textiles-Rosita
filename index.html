@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
-<style>
+  <style>
     body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
     .brand-serif { font-family: 'Playfair Display', serif; }
     .stitch-border {
@@ -32,10 +32,12 @@
       body.printing-ot #viewCotizador,
       body.printing-ot #viewRegistro,
       body.printing-ot .admin-non-ot,
-      body.printing-ot #toastBox { display: none !important; }
+      body.printing-ot #toastBox,
+      body.printing-ot #adminLoginModal { display: none !important; }
 
       body.printing-ot main {
         max-width: 100% !important;
+        width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
       }
@@ -428,7 +430,7 @@
             </button>
           </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
             <div class="sm:col-span-3">
               <label class="block text-[11px] font-bold text-slate-300 mb-1">1. Ciclo / Fecha de Entrega</label>
               <select id="otFilterDelivery" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
@@ -465,6 +467,7 @@
               <input id="otFilterSearch" type="text" oninput="renderWorkOrder()" placeholder="Ej. ROS-0004 o María..." class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white" />
             </div>
           </div>
+        </div>
 
         <!-- HOJA IMPRIMIBLE DE ORDEN DE TRABAJO -->
         <div id="otPrintableArea" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-7">
@@ -514,11 +517,12 @@
                     <th class="p-2">L</th>
                     <th class="p-2">XL</th>
                     <th class="p-2">XXL</th>
+                    <th class="p-2" title="Registros sin talla especificada">S/T</th>
                     <th class="p-2.5 bg-amber-600 text-white">TOTAL</th>
                   </tr>
                 </thead>
                 <tbody id="otCuttingMatrixBody" class="divide-y divide-slate-200 font-semibold">
-                  <tr><td colspan="15" class="p-6 text-slate-400">Cargando pedidos desde la nube...</td></tr>
+                  <tr><td colspan="16" class="p-6 text-slate-400">Cargando pedidos desde la nube...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -815,14 +819,15 @@
     // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v10';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v11';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
+    const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
 
     const DEFAULT_SCHOOLS = [
       'Polivalente María Pinto',
@@ -1800,31 +1805,65 @@
       if (notify) showToast('ℹ️ Mostrando pedidos locales (publica Nueva Versión en Código.gs para leer toda la nube).');
     }
 
+    function normalizeSizeKey(rawSize) {
+      let s = String(rawSize || '')
+        .toUpperCase()
+        .replace(/TALLA/g, '')
+        .replace(/TRAMO/g, '')
+        .replace(/[^A-Z0-9]/g, '')
+        .trim();
+
+      if (ALL_SIZES_ORDER.includes(s)) return s;
+      return null;
+    }
+
     function parseItemsFromSummary(itemsSummary) {
       const parsed = [];
       if (!itemsSummary || itemsSummary === 'Sin prendas base' || itemsSummary === 'Sin prendas') return parsed;
-      const chunks = String(itemsSummary).split('|');
+
+      const chunks = String(itemsSummary).split(/\||\n/);
       chunks.forEach(chunk => {
         const clean = chunk.trim();
-        const match = clean.match(/^(\d+)x\s+(.+?)\s+\((?:Talla\s*)?([^)]+)\)/i);
+        if (!clean) return;
+
+        // 1. Formato con paréntesis o corchetes: "2x Buzo Fantasía (Talla 10)" o "2x Buzo Fantasía [10]"
+        let match = clean.match(/^(\d+)\s*x\s+(.+?)\s*[\(\[]([^\)\]]+)[\)\]]/i);
         if (match) {
           const qty = parseInt(match[1], 10) || 0;
           const product = stripLeadingNumber(match[2]);
-          const size = String(match[3]).trim().toUpperCase();
+          const size = normalizeSizeKey(match[3]) || 'S/T';
           if (qty > 0 && product) {
             parsed.push({ qty, product, size });
+            return;
+          }
+        }
+
+        // 2. Formato sin paréntesis: "2x Buzo Fantasía Talla 10"
+        match = clean.match(/^(\d+)\s*x\s+(.+?)\s+Talla\s+([A-Z0-9]+)/i);
+        if (match) {
+          const qty = parseInt(match[1], 10) || 0;
+          const product = stripLeadingNumber(match[2]);
+          const size = normalizeSizeKey(match[3]) || 'S/T';
+          if (qty > 0 && product) {
+            parsed.push({ qty, product, size });
+            return;
+          }
+        }
+
+        // 3. Respaldo si no viene talla especificada: "2x Buzo Fantasía"
+        match = clean.match(/^(\d+)\s*x\s+([^=$]+)/i);
+        if (match) {
+          const qty = parseInt(match[1], 10) || 0;
+          const product = stripLeadingNumber(match[2]);
+          if (qty > 0 && product) {
+            parsed.push({ qty, product, size: 'S/T' });
           }
         }
       });
       return parsed;
     }
 
-    function normalizeSizeKey(rawSize) {
-      const s = String(rawSize || '').toUpperCase().replace(/^TALLA\s*/i, '').trim();
-      return ALL_SIZES_ORDER.includes(s) ? s : null;
-    }
-
-function renderWorkOrder() {
+    function renderWorkOrder() {
       const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
       const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
       const sizeFilter = (byId('otFilterSize') && byId('otFilterSize').value) || 'ALL';
@@ -1835,7 +1874,7 @@ function renderWorkOrder() {
         if (schoolFilter !== 'ALL' && o.school !== schoolFilter) return false;
         if (sizeFilter !== 'ALL') {
           const items = parseItemsFromSummary(o.itemsSummary);
-          const hasMatchingSize = items.some(it => normalizeSizeKey(it.size) === sizeFilter);
+          const hasMatchingSize = items.some(it => it.size === sizeFilter);
           if (!hasMatchingSize) return false;
         }
         if (searchFilter) {
@@ -1857,17 +1896,14 @@ function renderWorkOrder() {
       filtered.forEach(order => {
         const items = parseItemsFromSummary(order.itemsSummary);
         items.forEach(it => {
-          const sizeKey = normalizeSizeKey(it.size);
-          // Si hay filtro de talla activo, sumar solo las piezas de esa talla en la matriz
-          if (sizeFilter !== 'ALL' && sizeKey !== sizeFilter) return;
+          const colKey = ALL_MATRIX_COLS.includes(it.size) ? it.size : 'S/T';
+          if (sizeFilter !== 'ALL' && colKey !== sizeFilter) return;
 
           if (!matrixMap[it.product]) {
             matrixMap[it.product] = { total: 0 };
-            ALL_SIZES_ORDER.forEach(sz => matrixMap[it.product][sz] = 0);
+            ALL_MATRIX_COLS.forEach(sz => matrixMap[it.product][sz] = 0);
           }
-          if (sizeKey) {
-            matrixMap[it.product][sizeKey] += it.qty;
-          }
+          matrixMap[it.product][colKey] += it.qty;
           matrixMap[it.product].total += it.qty;
           totalGarmentsCount += it.qty;
         });
@@ -1878,28 +1914,32 @@ function renderWorkOrder() {
 
       if (matrixBody) {
         if (!productNames.length) {
-          matrixBody.innerHTML = `<tr><td colspan="15" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
+          matrixBody.innerHTML = `<tr><td colspan="16" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
         } else {
           const colTotals = {};
-          ALL_SIZES_ORDER.forEach(sz => colTotals[sz] = 0);
+          ALL_MATRIX_COLS.forEach(sz => colTotals[sz] = 0);
           let grandTotalGarments = 0;
 
           const rowsHtml = productNames.map(prodName => {
             const row = matrixMap[prodName];
-            ALL_SIZES_ORDER.forEach(sz => colTotals[sz] += row[sz]);
+            ALL_MATRIX_COLS.forEach(sz => colTotals[sz] += row[sz]);
             grandTotalGarments += row.total;
 
             return `
               <tr class="hover:bg-slate-50">
                 <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
-                ${ALL_SIZES_ORDER.map(sz => {
+                ${ALL_MATRIX_COLS.map(sz => {
                   const v = row[sz];
                   const isHighlighted = sizeFilter !== 'ALL' && sz === sizeFilter;
                   let cellClass = 'text-slate-300';
                   if (v > 0) {
-                    cellClass = isHighlighted
-                      ? 'bg-emerald-200 text-emerald-950 font-black ring-1 ring-emerald-500'
-                      : 'bg-amber-50/80 text-slate-900 font-black';
+                    if (sz === 'S/T') {
+                      cellClass = 'bg-slate-100 text-slate-700 font-bold';
+                    } else if (isHighlighted) {
+                      cellClass = 'bg-emerald-200 text-emerald-950 font-black ring-1 ring-emerald-500';
+                    } else {
+                      cellClass = 'bg-amber-50/80 text-slate-900 font-black';
+                    }
                   }
                   return `<td class="p-2 ${cellClass}">${v > 0 ? v : '·'}</td>`;
                 }).join('')}
@@ -1911,7 +1951,7 @@ function renderWorkOrder() {
           const totalRowHtml = `
             <tr class="bg-slate-900 text-white font-black">
               <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
-              ${ALL_SIZES_ORDER.map(sz => `<td class="p-2 ${sizeFilter === sz ? 'bg-emerald-600 text-white' : ''}">${colTotals[sz] || 0}</td>`).join('')}
+              ${ALL_MATRIX_COLS.map(sz => `<td class="p-2 ${sizeFilter === sz ? 'bg-emerald-600 text-white' : ''}">${colTotals[sz] || 0}</td>`).join('')}
               <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
             </tr>
           `;
@@ -1986,9 +2026,17 @@ function renderWorkOrder() {
 
     function printWorkOrder() {
       document.body.classList.add('printing-ot');
-      window.print();
-      setTimeout(() => document.body.classList.remove('printing-ot'), 500);
+      renderWorkOrder();
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.print();
+        }, 150);
+      });
     }
+
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('printing-ot');
+    });
 
     function saveAppsScriptUrl() {
       const url = byId('appsScriptUrlInput').value.trim();
