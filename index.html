@@ -25,6 +25,7 @@
         print-color-adjust: exact !important;
       }
       .no-print { display: none !important; }
+      .print-only-cell { display: table-cell !important; }
       body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
       .print-shadow-none { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
 
@@ -62,6 +63,7 @@
         break-inside: avoid;
       }
     }
+    .print-only-cell { display: none; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -412,7 +414,7 @@
         </button>
       </div>
 
-      <!-- ==================== SUBVISTA ADMIN A: ORDEN DE TRABAJO OPTIMIZADA (OPCIÓN 1) ==================== -->
+      <!-- ==================== SUBVISTA ADMIN A: ORDEN DE TRABAJO OPTIMIZADA ==================== -->
       <div id="adminPanelOT" class="space-y-6">
 
         <!-- BARRA DE FILTROS DE PRODUCCIÓN -->
@@ -420,31 +422,39 @@
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
-                Planificación de Taller · Opción 1
+                Planificación de Taller · Control de Avance en Vivo
               </span>
               <h2 class="text-lg font-extrabold mt-1">Generador de Orden de Trabajo (OT) Optimizada</h2>
-              <p class="text-xs text-slate-300">Consolida automáticamente los pedidos recibidos por ciclo de entrega, establecimiento y talla para optimizar el corte en tela.</p>
+              <p class="text-xs text-slate-300">Consolida automáticamente los pedidos pendientes o finalizados por ciclo, establecimiento y talla para optimizar el corte en tela.</p>
             </div>
             <button type="button" onclick="printWorkOrder()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow flex items-center gap-2">
               <span>🖨️ Imprimir Orden de Trabajo (A4)</span>
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2 border-t border-slate-800">
-            <div class="sm:col-span-3">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">1. Ciclo / Fecha de Entrega</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 border-t border-slate-800">
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-300 mb-1">1. Estado de Producción</label>
+              <select id="otFilterStatus" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-emerald-500/50 px-3 py-2 text-xs text-emerald-300 font-extrabold">
+                <option value="PENDING">⏳ Pendientes (Por hacer)</option>
+                <option value="DONE">✅ Finalizados y Entregados</option>
+                <option value="ALL">📋 Todos los pedidos</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">2. Ciclo / Fecha de Entrega</label>
               <select id="otFilterDelivery" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
                 <option value="ALL">Todos los ciclos de entrega</option>
               </select>
             </div>
-            <div class="sm:col-span-3">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">2. Establecimiento Educacional</label>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">3. Establecimiento Educacional</label>
               <select id="otFilterSchool" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white font-semibold">
                 <option value="ALL">Todos los establecimientos</option>
               </select>
             </div>
-            <div class="sm:col-span-3">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">3. Filtrar por Talla</label>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">4. Filtrar por Talla</label>
               <select id="otFilterSize" onchange="renderWorkOrder()" class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-amber-300 font-bold">
                 <option value="ALL">Todas las tallas (3 a XXL)</option>
                 <option value="3">Talla 3</option>
@@ -462,8 +472,8 @@
                 <option value="XXL">Talla XXL</option>
               </select>
             </div>
-            <div class="sm:col-span-3">
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">4. Buscar Folio o Apoderado</label>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">5. Buscar Folio o Apoderado</label>
               <input id="otFilterSearch" type="text" oninput="renderWorkOrder()" placeholder="Ej. ROS-0004 o María..." class="w-full rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-xs text-white" />
             </div>
           </div>
@@ -477,7 +487,7 @@
             <div>
               <div class="text-xs font-extrabold tracking-widest text-amber-800 uppercase">TEXTILES ROSITA · TALLER DE CONFECCIÓN</div>
               <h3 class="text-xl font-black text-slate-900">ORDEN DE TRABAJO (OT) — CORTE, BORDADO Y EMPAQUE</h3>
-              <p id="otSubtitleScope" class="text-xs font-semibold text-slate-600 mt-1">Lote: Todos los ciclos · Todos los colegios</p>
+              <p id="otSubtitleScope" class="text-xs font-semibold text-slate-600 mt-1">Estado: Pendientes (Por hacer) · Todos los ciclos · Todos los colegios</p>
             </div>
             <div class="text-right text-xs space-y-1">
               <div class="font-extrabold text-slate-900" id="otGeneratedDate">Fecha emisión: —</div>
@@ -557,12 +567,12 @@
             </div>
           </div>
 
-          <!-- BLOQUE 3: CHECKLIST DE EMPAQUE Y CONTROL DE SALDO CONTRA ENTREGA -->
+          <!-- BLOQUE 3: CHECKLIST DE EMPAQUE, ESTADO EN NUBE Y SALDO CONTRA ENTREGA -->
           <div class="space-y-2.5">
             <div class="flex items-center justify-between">
               <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded bg-emerald-700 text-white text-xs">BLOQUE 3</span>
-                Checklist de Empaque Individual y Saldo 50% por Cobrar
+                Control de Avance en Taller, Empaque y Saldo 50% por Cobrar
               </h4>
               <span id="otTotalBalancePending" class="text-xs font-extrabold text-emerald-800">Saldo total lote: $0</span>
             </div>
@@ -571,7 +581,8 @@
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr class="bg-slate-100 text-slate-800 border-b border-slate-300 font-extrabold">
-                    <th class="p-2.5 text-center w-10">OK</th>
+                    <th class="p-2.5 no-print">Estado Taller</th>
+                    <th class="p-2.5 print-only-cell text-center">OK</th>
                     <th class="p-2.5">Folio</th>
                     <th class="p-2.5">Apoderado / Teléfono</th>
                     <th class="p-2.5">Colegio / Entrega</th>
@@ -581,7 +592,7 @@
                   </tr>
                 </thead>
                 <tbody id="otPackingListBody" class="divide-y divide-slate-200">
-                  <tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>
+                  <tr><td colspan="8" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -825,7 +836,7 @@
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
 
     // Reemplaza esta URL si generas una nueva implementación en Apps Script
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
     const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
@@ -1026,27 +1037,32 @@
         if (badge) badge.textContent = '↻ Sincronizando nube...';
         const res = await fetch(url, { method: 'GET', redirect: 'follow', credentials: 'omit' });
         const data = await res.json();
-        if (data && data.ok && data.settings) {
-          if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) {
-            settings.catalog = sanitizeCatalogList(data.settings.catalog);
+        if (data && data.ok) {
+          if (data.nextFolioPreview && byId('folioHeaderBadge')) {
+            byId('folioHeaderBadge').textContent = 'Folio: ' + data.nextFolioPreview;
           }
-          if (Array.isArray(data.settings.extras) && data.settings.extras.length) {
-            settings.extras = sanitizeExtrasList(data.settings.extras);
+          if (data.settings) {
+            if (Array.isArray(data.settings.catalog) && data.settings.catalog.length) {
+              settings.catalog = sanitizeCatalogList(data.settings.catalog);
+            }
+            if (Array.isArray(data.settings.extras) && data.settings.extras.length) {
+              settings.extras = sanitizeExtrasList(data.settings.extras);
+            }
+            if (Array.isArray(data.settings.banks) && data.settings.banks.length) {
+              settings.banks = data.settings.banks;
+            }
+            if (Array.isArray(data.settings.schools) && data.settings.schools.length) {
+              settings.schools = data.settings.schools;
+            }
+            if (Array.isArray(data.settings.deliveryWindows) && data.settings.deliveryWindows.length) {
+              settings.deliveryWindows = data.settings.deliveryWindows;
+            }
+            if (data.settings.sectionTitles && typeof data.settings.sectionTitles === 'object') {
+              settings.sectionTitles = { ...DEFAULT_SECTION_TITLES, ...data.settings.sectionTitles };
+            }
+            saveLocalSettings();
+            refreshAllViews();
           }
-          if (Array.isArray(data.settings.banks) && data.settings.banks.length) {
-            settings.banks = data.settings.banks;
-          }
-          if (Array.isArray(data.settings.schools) && data.settings.schools.length) {
-            settings.schools = data.settings.schools;
-          }
-          if (Array.isArray(data.settings.deliveryWindows) && data.settings.deliveryWindows.length) {
-            settings.deliveryWindows = data.settings.deliveryWindows;
-          }
-          if (data.settings.sectionTitles && typeof data.settings.sectionTitles === 'object') {
-            settings.sectionTitles = { ...DEFAULT_SECTION_TITLES, ...data.settings.sectionTitles };
-          }
-          saveLocalSettings();
-          refreshAllViews();
           if (notify) showToast('✅ Precios y datos actualizados desde la nube.');
         }
         if (badge) {
@@ -1487,14 +1503,15 @@
         deposit50,
         balance50,
         receiptUrl: cloudReceiptUrl,
-        status: cloudSaved ? '✅ Guardado en Nube' : '⚠️ Respaldo local'
+        status: cloudSaved ? 'Abono 50% Recibido' : 'Respaldo local'
       };
 
       const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
       orders.unshift(orderRecord);
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
 
-      const nextSeq = (parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10)) + 1;
+      const numMatch = String(folio).match(/(\d+)/);
+      const nextSeq = numMatch ? (parseInt(numMatch[1], 10) + 1) : ((parseInt(localStorage.getItem(STORAGE_KEY_SEQ) || '1', 10)) + 1);
       localStorage.setItem(STORAGE_KEY_SEQ, String(nextSeq));
       refreshFolioBadge();
       renderOrdersRegistry();
@@ -1747,7 +1764,7 @@
     }
 
     // =========================================================================
-    // 8. ORDEN DE TRABAJO OPTIMIZADA (OPCIÓN 1 — CONSOLIDACIÓN POR TALLA Y COLEGIO)
+    // 8. ORDEN DE TRABAJO OPTIMIZADA (CONSOLIDACIÓN POR TALLA, COLEGIO Y ESTADO)
     // =========================================================================
     function populateOTFilterOptions() {
       const delSel = byId('otFilterDelivery');
@@ -1804,6 +1821,35 @@
       populateOTFilterOptions();
       renderWorkOrder();
       if (notify) showToast('ℹ️ Mostrando pedidos locales (publica Nueva Versión en Código.gs para leer toda la nube).');
+    }
+
+    async function changeOrderStatusCloud(folio, newStatus) {
+      showToast(`⏳ Guardando estado de ${folio}...`);
+      try {
+        const res = await fetch(getAppsScriptUrl(), {
+          method: 'POST',
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'update_order_status',
+            passwordHash: activeSessionHash,
+            folio: folio,
+            status: newStatus
+          })
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+          const item = cloudOrdersCache.find(x => x.folio === folio);
+          if (item) item.status = newStatus;
+          renderWorkOrder();
+          showToast(`✅ ${folio} actualizado a "${newStatus}" en Google Sheets.`);
+        } else {
+          showToast('❌ ' + (data.error || 'No se pudo actualizar el estado.'));
+        }
+      } catch (err) {
+        showToast('❌ Error de red al actualizar estado.');
+      }
     }
 
     function normalizeSizeKey(rawSize) {
@@ -1865,12 +1911,18 @@
     }
 
     function renderWorkOrder() {
+      const statusFilter = (byId('otFilterStatus') && byId('otFilterStatus').value) || 'PENDING';
       const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
       const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
       const sizeFilter = (byId('otFilterSize') && byId('otFilterSize').value) || 'ALL';
       const searchFilter = ((byId('otFilterSearch') && byId('otFilterSearch').value) || '').trim().toLowerCase();
 
       const filtered = cloudOrdersCache.filter(o => {
+        const st = String(o.status || '').toLowerCase();
+        const isCompleted = st.includes('finalizado') || st.includes('listo') || st.includes('entregado');
+
+        if (statusFilter === 'PENDING' && isCompleted) return false;
+        if (statusFilter === 'DONE' && !isCompleted) return false;
         if (deliveryFilter !== 'ALL' && o.deliveryWindow !== deliveryFilter) return false;
         if (schoolFilter !== 'ALL' && o.school !== schoolFilter) return false;
         if (sizeFilter !== 'ALL') {
@@ -1887,8 +1939,9 @@
 
       if (byId('otGeneratedDate')) byId('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
       if (byId('otSubtitleScope')) {
+        const statusLabel = statusFilter === 'PENDING' ? 'Pendientes (Por hacer)' : (statusFilter === 'DONE' ? 'Finalizados y Entregados' : 'Todos los estados');
         const sizeLabel = sizeFilter === 'ALL' ? 'Todas las tallas' : `Talla ${sizeFilter}`;
-        byId('otSubtitleScope').textContent = `Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Establecimiento: ${schoolFilter === 'ALL' ? 'Todos los colegios' : schoolFilter} · Filtro Talla: ${sizeLabel}`;
+        byId('otSubtitleScope').textContent = `Estado: ${statusLabel} · Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Colegio: ${schoolFilter === 'ALL' ? 'Todos' : schoolFilter} · Talla: ${sizeLabel}`;
       }
 
       const matrixMap = {};
@@ -1989,14 +2042,28 @@
 
       if (packBody) {
         if (!filtered.length) {
-          packBody.innerHTML = `<tr><td colspan="7" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
+          packBody.innerHTML = `<tr><td colspan="8" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
         } else {
           packBody.innerHTML = filtered.map(o => {
             const bal = Number(o.balance50) || Math.max(0, (Number(o.total) || 0) - (Number(o.deposit50) || 0));
             totalBalancePending += bal;
+            const currentSt = o.status || 'Abono 50% Recibido';
+            const isDone = /finalizado|listo|entregado/i.test(currentSt);
+
             return `
-              <tr class="hover:bg-slate-50">
-                <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-500 rounded"></span></td>
+              <tr class="hover:bg-slate-50 ${isDone ? 'bg-emerald-50/30' : ''}">
+                <td class="p-2.5 no-print">
+                  <select onchange="changeOrderStatusCloud('${escapeHtml(o.folio)}', this.value)"
+                    class="rounded-lg border px-2 py-1 text-[11px] font-extrabold cursor-pointer ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-amber-50 border-amber-300 text-amber-900'}">
+                    <option value="Abono 50% Recibido" ${currentSt === 'Abono 50% Recibido' ? 'selected' : ''}>🟡 Por hacer</option>
+                    <option value="En Confección" ${currentSt === 'En Confección' ? 'selected' : ''}>🧵 En taller</option>
+                    <option value="Finalizado / Listo" ${currentSt === 'Finalizado / Listo' ? 'selected' : ''}>✅ Finalizado</option>
+                    <option value="Entregado" ${currentSt === 'Entregado' ? 'selected' : ''}>📦 Entregado</option>
+                  </select>
+                </td>
+                <td class="p-2.5 print-only-cell text-center">
+                  <span class="inline-block w-4 h-4 border-2 border-slate-500 rounded">${isDone ? '✓' : ''}</span>
+                </td>
                 <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
                 <td class="p-2.5">
                   <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
