@@ -279,10 +279,10 @@
 
       </div>
 
-      <!-- COLUMNA DERECHA (4 COLS): RESUMEN FINANCIERO, BANCOS Y CONFIRMACIÓN 50% -->
+      <!-- COLUMNA DERECHA (4 COLS): RESUMEN FINANCIERO, BANCOS Y CONFIRMACIÓN -->
       <div class="lg:col-span-4 space-y-6">
 
-        <!-- RESUMEN FINANCIERO Y ABONO 50% -->
+        <!-- RESUMEN FINANCIERO Y MONTO SEGÚN PORCENTAJE -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <h3 class="text-base font-extrabold text-slate-900 mb-4">Resumen del Pedido</h3>
 
@@ -311,11 +311,11 @@
 
             <div class="mt-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5">
               <div class="flex justify-between items-center text-amber-900">
-                <span class="text-xs font-extrabold uppercase">Abono 50% para Reservar:</span>
+                <span id="summaryPaidLabel" class="text-xs font-extrabold uppercase">A Pagar Hoy (50%):</span>
                 <span id="summaryDeposit50" class="text-lg font-black">$0</span>
               </div>
               <div class="flex justify-between items-center text-xs text-amber-800/80">
-                <span>Saldo 50% contra entrega:</span>
+                <span id="summaryBalanceLabel">Saldo pendiente (50%):</span>
                 <span id="summaryBalance50" class="font-bold">$0</span>
               </div>
             </div>
@@ -325,71 +325,71 @@
         <!-- DATOS DE TRANSFERENCIA BANCARIA -->
         <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
           <h3 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
-            <span>🏦</span> Cuentas Oficiales para Transferencia (Abono 50%)
+            <span>🏦</span> Cuentas Oficiales para Transferencia
           </h3>
           <div id="bankAccountsContainer" class="space-y-3"></div>
         </div>
 
         <!-- MEDIO DE PAGO, MONTO (50% / 100%) Y ENVÍO WHATSAPP -->
-<div class="bg-white rounded-2xl border-2 border-emerald-600/30 shadow-sm p-5 sm:p-6 space-y-4 no-print">
-  <h3 class="text-sm font-extrabold text-slate-900">Medio de Pago, Monto y Confirmación</h3>
+        <div class="bg-white rounded-2xl border-2 border-emerald-600/30 shadow-sm p-5 sm:p-6 space-y-4 no-print">
+          <h3 class="text-sm font-extrabold text-slate-900">Medio de Pago, Monto y Confirmación</h3>
 
-  <!-- Selector clickable de Medio de Pago -->
-  <div>
-    <label class="block text-xs font-bold text-slate-700 mb-1.5">Medio de Pago *</label>
-    <div class="grid grid-cols-2 gap-2">
-      <button id="btnPayTransfer" type="button" onclick="setPaymentMethod('Transferencia')"
-        class="py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-xs font-extrabold transition flex items-center justify-center gap-1.5">
-        <span>🏦</span>
-        <span>Transferencia</span>
-      </button>
-      <button id="btnPayCash" type="button" onclick="setPaymentMethod('Efectivo')"
-        class="py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5">
-        <span>💵</span>
-        <span>Efectivo</span>
-      </button>
-    </div>
-  </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Medio de Pago *</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnPayTransfer" type="button" onclick="setPaymentMethod('Transferencia')"
+                class="py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-xs font-extrabold transition flex items-center justify-center gap-1.5">
+                <span>🏦</span>
+                <span>Transferencia</span>
+              </button>
+              <button id="btnPayCash" type="button" onclick="setPaymentMethod('Efectivo')"
+                class="py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <span>💵</span>
+                <span>Efectivo</span>
+              </button>
+            </div>
+          </div>
 
-  <!-- Selector clickable de Porcentaje (50% o 100%) -->
-  <div>
-    <label class="block text-xs font-bold text-slate-700 mb-1.5">Porcentaje a Pagar Ahora *</label>
-    <div class="grid grid-cols-2 gap-2">
-      <button id="btnPct50" type="button" onclick="setPaymentPercent(50)"
-        class="py-2.5 px-3 rounded-xl border-2 border-amber-600 bg-amber-50 text-amber-950 text-xs font-extrabold transition text-center">
-        50% · Abono Reserva
-      </button>
-      <button id="btnPct100" type="button" onclick="setPaymentPercent(100)"
-        class="py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition text-center">
-        100% · Pago Total
-      </button>
-    </div>
-  </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Porcentaje a Pagar Ahora *</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnPct50" type="button" onclick="setPaymentPercent(50)"
+                class="py-2.5 px-3 rounded-xl border-2 border-amber-600 bg-amber-50 text-amber-950 text-xs font-extrabold transition text-center">
+                50% · Abono Reserva
+              </button>
+              <button id="btnPct100" type="button" onclick="setPaymentPercent(100)"
+                class="py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition text-center">
+                100% · Pago Total
+              </button>
+            </div>
+          </div>
 
-  <!-- Comprobante (obligatorio solo en Transferencia, opcional en Efectivo) -->
-  <div id="receiptBoxWrapper">
-    <label id="receiptLabel" class="block text-xs font-bold text-slate-700 mb-1">
-      Comprobante Transferencia (Imagen o PDF) *
-    </label>
-    <input id="receiptInput" type="file" accept="image/*,.pdf" onchange="handleReceiptChange()" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5" />
-    <p id="receiptFileStatus" class="text-[11px] text-slate-500 mt-1">Ningún archivo seleccionado aún.</p>
-  </div>
+          <div id="receiptBoxWrapper">
+            <label id="receiptLabel" class="block text-xs font-bold text-slate-700 mb-1">
+              Comprobante Transferencia (Imagen o PDF) *
+            </label>
+            <input id="receiptInput" type="file" accept="image/*,.pdf" onchange="handleReceiptChange()" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-200 rounded-xl p-1.5" />
+            <p id="receiptFileStatus" class="text-[11px] text-slate-500 mt-1">Ningún archivo seleccionado aún.</p>
+          </div>
 
-  <label class="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer bg-slate-50 p-3 rounded-xl border border-slate-200">
-    <input id="confirmReceiptCheck" type="checkbox" onchange="updateConfirmButtonState()" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500" />
-    <span id="confirmCheckText">Confirmo el pago del <strong id="confirmPctLabel">50%</strong> mediante <strong id="confirmMethodLabel">Transferencia</strong> para registrar y enviar mi pedido por WhatsApp.</span>
-  </label>
+          <label class="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <input id="confirmReceiptCheck" type="checkbox" onchange="updateConfirmButtonState()" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500" />
+            <span>Confirmo el pago del <strong id="confirmPctLabel">50%</strong> mediante <strong id="confirmMethodLabel">Transferencia</strong> para registrar y enviar mi pedido por WhatsApp.</span>
+          </label>
 
-  <button id="btnConfirmWhatsApp" type="button" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
-    <span>📲 Confirmar y Enviar por WhatsApp</span>
-  </button>
+          <button id="btnConfirmWhatsApp" type="button" onclick="confirmAndSendOrder()" disabled class="w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-slate-300 cursor-not-allowed transition flex items-center justify-center gap-2 shadow-sm">
+            <span>📲 Confirmar y Enviar por WhatsApp</span>
+          </button>
 
-  <div id="cloudOrderFeedback" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-semibold"></div>
+          <div id="cloudOrderFeedback" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-semibold"></div>
 
-  <button type="button" onclick="window.print()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
-    🖨️ Imprimir / Guardar Comprobante PDF
-  </button>
-</div>
+          <button type="button" onclick="window.print()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+            🖨️ Imprimir / Guardar Comprobante PDF
+          </button>
+        </div>
+
+      </div>
+    </section>
 
     <!-- ==================== PESTAÑA 2: REGISTRO DE PEDIDOS (SOLO LOCAL CLIENTE) ==================== -->
     <section id="viewRegistro" class="hidden space-y-4">
@@ -416,8 +416,8 @@
                 <th class="p-3">Colegio / Entrega</th>
                 <th class="p-3">Detalle</th>
                 <th class="p-3 text-right">Total</th>
-                <th class="p-3 text-right">Abono 50%</th>
-                <th class="p-3">Comprobante / Estado</th>
+                <th class="p-3 text-right">Pagado Hoy</th>
+                <th class="p-3">Pago / Estado</th>
               </tr>
             </thead>
             <tbody id="ordersRegistryBody" class="divide-y divide-slate-100"></tbody>
@@ -602,7 +602,7 @@
             <div class="flex items-center justify-between">
               <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded bg-emerald-700 text-white text-xs">BLOQUE 3</span>
-                Control de Avance en Taller, Empaque y Saldo 50% por Cobrar
+                Control de Avance en Taller, Empaque y Saldo por Cobrar
               </h4>
               <span id="otTotalBalancePending" class="text-xs font-extrabold text-emerald-800">Saldo total lote: $0</span>
             </div>
@@ -617,7 +617,7 @@
                     <th class="p-2.5">Apoderado / Teléfono</th>
                     <th class="p-2.5">Colegio / Entrega</th>
                     <th class="p-2.5">Contenido de Bolsa</th>
-                    <th class="p-2.5 text-right">Abono 50%</th>
+                    <th class="p-2.5 text-right">Pagado</th>
                     <th class="p-2.5 text-right">Cobrar Entrega</th>
                   </tr>
                 </thead>
@@ -866,8 +866,7 @@
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
     const API_TIMEOUT_MS       = 15000;
 
-    // Reemplaza esta URL si generas una nueva implementación en Apps Script
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
     const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
@@ -948,7 +947,7 @@
     }
 
     function escapeHtml(str) {
-      return String(str || '')
+      return String(str == null ? '' : str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -985,6 +984,8 @@
     let settings = loadLocalSettings();
     let cart = [];
     let extraQuantities = {};
+    let paymentMethod = 'Transferencia';
+    let paymentPercent = 50;
     let isAdminAuthenticated = false;
     let activeSessionHash = '';
     let inactivityTimer = null;
@@ -1156,6 +1157,8 @@
         const urlInput = byId('appsScriptUrlInput');
         if (urlInput) urlInput.value = getAppsScriptUrl();
         refreshFolioBadge();
+        setPaymentMethod(paymentMethod);
+        setPaymentPercent(paymentPercent);
         refreshAllViews();
         pullFromCloudAppsScript(false);
       } catch (err) {
@@ -1358,23 +1361,75 @@
       const applyIva = Boolean(byId('ivaToggle') && byId('ivaToggle').checked);
       const ivaAmount = applyIva ? Math.round(subtotal * 0.19) : 0;
       const grandTotal = subtotal + ivaAmount;
-      const deposit50 = Math.round(grandTotal * 0.5);
-      const balance50 = grandTotal - deposit50;
+      const pctFactor = paymentPercent === 100 ? 1 : 0.5;
+      const paidNow = Math.round(grandTotal * pctFactor);
+      const balancePending = grandTotal - paidNow;
 
       if (byId('extrasSubtotalBadge')) byId('extrasSubtotalBadge').textContent = `Extras: ${formatCLP(extrasTotal)}`;
       if (byId('summaryGarments')) byId('summaryGarments').textContent = formatCLP(garmentsTotal);
       if (byId('summaryExtras')) byId('summaryExtras').textContent = formatCLP(extrasTotal);
       if (byId('summaryIva')) byId('summaryIva').textContent = formatCLP(ivaAmount);
       if (byId('summaryTotal')) byId('summaryTotal').textContent = formatCLP(grandTotal);
-      if (byId('summaryDeposit50')) byId('summaryDeposit50').textContent = formatCLP(deposit50);
-      if (byId('summaryBalance50')) byId('summaryBalance50').textContent = formatCLP(balance50);
+      if (byId('summaryPaidLabel')) byId('summaryPaidLabel').textContent = `A Pagar Hoy (${paymentPercent}%):`;
+      if (byId('summaryBalanceLabel')) byId('summaryBalanceLabel').textContent = `Saldo pendiente (${100 - paymentPercent}%):`;
+      if (byId('summaryDeposit50')) byId('summaryDeposit50').textContent = formatCLP(paidNow);
+      if (byId('summaryBalance50')) byId('summaryBalance50').textContent = formatCLP(balancePending);
 
       updateConfirmButtonState();
     }
 
     // =========================================================================
-    // 5. DATOS BANCARIOS, COMPRESIÓN DE COMPROBANTE Y ENVÍO A NUBE + WHATSAPP
+    // 5. MEDIO DE PAGO, PORCENTAJE (50% / 100%), COMPROBANTE Y ENVÍO
     // =========================================================================
+    function setPaymentMethod(method) {
+      paymentMethod = method === 'Efectivo' ? 'Efectivo' : 'Transferencia';
+      const btnTr = byId('btnPayTransfer');
+      const btnCa = byId('btnPayCash');
+      const recLabel = byId('receiptLabel');
+      const recStatus = byId('receiptFileStatus');
+
+      if (btnTr) {
+        btnTr.className = paymentMethod === 'Transferencia'
+          ? 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-xs font-extrabold transition flex items-center justify-center gap-1.5'
+          : 'py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5';
+      }
+      if (btnCa) {
+        btnCa.className = paymentMethod === 'Efectivo'
+          ? 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-xs font-extrabold transition flex items-center justify-center gap-1.5'
+          : 'py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5';
+      }
+      if (recLabel) {
+        recLabel.textContent = paymentMethod === 'Efectivo'
+          ? 'Comprobante / Respaldo Efectivo (Opcional)'
+          : 'Comprobante Transferencia (Imagen o PDF) *';
+      }
+      if (recStatus && paymentMethod === 'Efectivo' && (!byId('receiptInput') || !byId('receiptInput').files.length)) {
+        recStatus.textContent = 'Pago en efectivo seleccionado: comprobante opcional.';
+        recStatus.className = 'text-[11px] text-emerald-700 mt-1';
+      }
+      if (byId('confirmMethodLabel')) byId('confirmMethodLabel').textContent = paymentMethod;
+      updateConfirmButtonState();
+    }
+
+    function setPaymentPercent(pct) {
+      paymentPercent = pct === 100 ? 100 : 50;
+      const btn50 = byId('btnPct50');
+      const btn100 = byId('btnPct100');
+
+      if (btn50) {
+        btn50.className = paymentPercent === 50
+          ? 'py-2.5 px-3 rounded-xl border-2 border-amber-600 bg-amber-50 text-amber-950 text-xs font-extrabold transition text-center'
+          : 'py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition text-center';
+      }
+      if (btn100) {
+        btn100.className = paymentPercent === 100
+          ? 'py-2.5 px-3 rounded-xl border-2 border-amber-600 bg-amber-50 text-amber-950 text-xs font-extrabold transition text-center'
+          : 'py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition text-center';
+      }
+      if (byId('confirmPctLabel')) byId('confirmPctLabel').textContent = `${paymentPercent}%`;
+      recalculateAll();
+    }
+
     function renderBankCards() {
       const container = byId('bankAccountsContainer');
       if (!container) return;
@@ -1424,8 +1479,12 @@
           status.className = 'text-[11px] font-bold text-emerald-700 mt-1';
         }
       } else {
-        status.textContent = 'Ningún archivo seleccionado aún.';
-        status.className = 'text-[11px] text-slate-500 mt-1';
+        status.textContent = paymentMethod === 'Efectivo'
+          ? 'Pago en efectivo seleccionado: comprobante opcional.'
+          : 'Ningún archivo seleccionado aún.';
+        status.className = paymentMethod === 'Efectivo'
+          ? 'text-[11px] text-emerald-700 mt-1'
+          : 'text-[11px] text-slate-500 mt-1';
       }
       updateConfirmButtonState();
     }
@@ -1437,9 +1496,10 @@
       const receiptEl = byId('receiptInput');
       const checkEl = byId('confirmReceiptCheck');
       const hasFile = Boolean(receiptEl && receiptEl.files && receiptEl.files.length > 0);
+      const receiptOk = paymentMethod === 'Efectivo' ? true : hasFile;
       const checked = Boolean(checkEl && checkEl.checked);
 
-      const enabled = hasItems && hasFile && checked;
+      const enabled = hasItems && receiptOk && checked;
       btn.disabled = !enabled;
       btn.className = enabled
         ? 'w-full py-3.5 px-4 rounded-xl font-extrabold text-sm text-white bg-emerald-600 hover:bg-emerald-700 cursor-pointer transition flex items-center justify-center gap-2 shadow-md'
@@ -1537,14 +1597,14 @@
       const btn = byId('btnConfirmWhatsApp');
       const feedbackBox = byId('cloudOrderFeedback');
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳ Preparando comprobante y registrando pedido...</span>';
+      btn.innerHTML = '<span>⏳ Registrando pedido...</span>';
 
       const schoolSel = byId('schoolSelect').value;
       const school = schoolSel === 'OTRO' ? (byId('customSchoolInput').value.trim() || 'Otro establecimiento') : schoolSel;
       const grade = byId('studentGrade').value.trim();
       const deliveryWindow = byId('deliveryWindow').value;
       const notes = byId('orderNotes').value.trim();
-      const receiptFile = byId('receiptInput').files[0];
+      const receiptFile = (byId('receiptInput') && byId('receiptInput').files && byId('receiptInput').files[0]) || null;
 
       const garmentsTotal = cart.reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
       const selectedExtras = settings.extras.filter(e => (extraQuantities[e.id] || 0) > 0).map(e => ({
@@ -1557,13 +1617,15 @@
       const totalConIva = Math.round(subtotalParticular * 1.19);
       const applyIva = byId('ivaToggle').checked;
       const totalFinal = applyIva ? totalConIva : subtotalParticular;
-      const deposit50 = Math.round(totalFinal * 0.5);
-      const balance50 = totalFinal - deposit50;
+      const pctFactor = paymentPercent === 100 ? 1 : 0.5;
+      const paidAmount = Math.round(totalFinal * pctFactor);
+      const balance50 = totalFinal - paidAmount;
 
       let folio = getCurrentFolio();
       const itemsSummary = cart.map(i => `${i.qty}x ${stripLeadingNumber(i.name)} (${i.size}) = ${formatCLP(i.qty * i.unitPrice)}`).join(' | ');
       const extrasSummary = selectedExtras.map(e => `${e.qty}x ${e.name} = ${formatCLP(e.qty * e.price)}`).join(' | ');
       const receiptPayload = await prepareReceiptPayload(receiptFile);
+      const defaultStatusText = `${paymentMethod} · ${paymentPercent === 100 ? 'Pagado 100%' : 'Abono 50%'}`;
 
       const payload = {
         action: 'register_order',
@@ -1579,7 +1641,10 @@
           subtotalParticular,
           totalConIva,
           total: totalFinal,
-          deposit50,
+          paymentMethod,
+          paymentPercent,
+          paidAmount,
+          deposit50: paidAmount,
           balance50,
           notes,
           receiptBase64: receiptPayload.base64,
@@ -1617,10 +1682,13 @@
         extrasSummary: extrasSummary || 'Sin extras',
         notes,
         total: totalFinal,
-        deposit50,
+        paymentMethod,
+        paymentPercent,
+        paidAmount,
+        deposit50: paidAmount,
         balance50,
         receiptUrl: cloudReceiptUrl,
-        status: cloudSaved ? 'Abono 50% Recibido' : 'Respaldo local'
+        status: cloudSaved ? defaultStatusText : 'Respaldo local'
       };
 
       const orders = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
@@ -1646,12 +1714,10 @@
         ...(notes ? ['', `\u{1F4DD} *Observaciones:* ${notes}`] : []),
         ``,
         `\u{1F4B0} *TOTAL PEDIDO:* ${formatCLP(totalFinal)}`,
-        `\u2705 *ABONO 50% TRANSFERIDO:* ${formatCLP(deposit50)}`,
-        `\u23F3 *SALDO 50% CONTRA ENTREGA:* ${formatCLP(balance50)}`,
-        ``,
-        cloudReceiptUrl
-          ? `\u{1F9FE} *Ver Comprobante 50% (Drive):* ${cloudReceiptUrl}`
-          : `\u{1F4CE} *Comprobante:* ${receiptFile ? receiptFile.name : 'Adjunto en chat'}`
+        `\u{1F4B3} *MEDIO DE PAGO:* ${paymentMethod} (${paymentPercent}%)`,
+        `\u2705 *PAGADO HOY (${paymentPercent}%):* ${formatCLP(paidAmount)}`,
+        `\u23F3 *SALDO PENDIENTE (${100 - paymentPercent}%):* ${formatCLP(balance50)}`,
+        ...(cloudReceiptUrl ? ['', `\u{1F9FE} *Comprobante (Drive):* ${cloudReceiptUrl}`] : (receiptFile ? ['', `\u{1F4CE} *Comprobante:* ${receiptFile.name}`] : []))
       ];
 
       const waUrl = `https://wa.me/${WHATSAPP_TALLER}?text=${encodeURIComponent(lines.join('\n'))}`;
@@ -1660,7 +1726,7 @@
       feedbackBox.innerHTML = `
         <div class="space-y-2">
           <div>${cloudSaved
-            ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> y comprobante guardados en la nube.`
+            ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> (${escapeHtml(paymentMethod)} ${paymentPercent}%) guardado en la nube.`
             : `⚠️ Pedido <strong>${escapeHtml(folio)}</strong> guardado localmente (${escapeHtml(cloudErrorMsg)}).`}</div>
           ${cloudReceiptUrl ? `<div><a href="${escapeHtml(cloudReceiptUrl)}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-700 font-extrabold">🧾 Ver Comprobante Subido en Drive</a></div>` : ''}
           <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-block w-full text-center py-2.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow">
@@ -1689,21 +1755,25 @@
         return;
       }
 
-      tbody.innerHTML = orders.map(o => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-3 font-extrabold text-amber-800">${escapeHtml(o.folio)}</td>
-          <td class="p-3 text-slate-500">${escapeHtml(o.date)}</td>
-          <td class="p-3"><div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div><div class="text-slate-500">${escapeHtml(o.clientPhone)}</div></td>
-          <td class="p-3"><div class="font-semibold">${escapeHtml(o.school)}</div><div class="text-slate-500">${escapeHtml(o.deliveryWindow)}</div></td>
-          <td class="p-3 max-w-xs"><div class="truncate" title="${escapeHtml(o.itemsSummary)}">${escapeHtml(o.itemsSummary)}</div><div class="text-emerald-700 truncate">${escapeHtml(o.extrasSummary)}</div></td>
-          <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
-          <td class="p-3 text-right font-bold text-amber-800">${formatCLP(o.deposit50)}</td>
-          <td class="p-3 space-y-1">
-            <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${escapeHtml(o.status)}</span></div>
-            ${o.receiptUrl ? `<div><a href="${escapeHtml(o.receiptUrl)}" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = orders.map(o => {
+        const paidVal = o.paidAmount != null ? o.paidAmount : o.deposit50;
+        const payLabel = o.paymentMethod ? `${o.paymentMethod} (${o.paymentPercent || 50}%)` : o.status;
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 font-extrabold text-amber-800">${escapeHtml(o.folio)}</td>
+            <td class="p-3 text-slate-500">${escapeHtml(o.date)}</td>
+            <td class="p-3"><div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div><div class="text-slate-500">${escapeHtml(o.clientPhone)}</div></td>
+            <td class="p-3"><div class="font-semibold">${escapeHtml(o.school)}</div><div class="text-slate-500">${escapeHtml(o.deliveryWindow)}</div></td>
+            <td class="p-3 max-w-xs"><div class="truncate" title="${escapeHtml(o.itemsSummary)}">${escapeHtml(o.itemsSummary)}</div><div class="text-emerald-700 truncate">${escapeHtml(o.extrasSummary)}</div></td>
+            <td class="p-3 text-right font-extrabold">${formatCLP(o.total)}</td>
+            <td class="p-3 text-right font-bold text-amber-800">${formatCLP(paidVal)}</td>
+            <td class="p-3 space-y-1">
+              <div><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold">${escapeHtml(payLabel)}</span></div>
+              ${o.receiptUrl ? `<div><a href="${escapeHtml(o.receiptUrl)}" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline font-bold">🧾 Ver Comprobante</a></div>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function exportOrdersCSV() {
@@ -1712,10 +1782,12 @@
         showToast('No hay pedidos locales para exportar.');
         return;
       }
-      const headers = ['Numero_pedido', 'Fecha', 'Nombre_cliente', 'Numero_telefonico', 'Colegio', 'Entrega', 'Detalle_pedido', 'Extras', 'Total', 'Abono_50', 'Saldo_50', 'Comprobante_URL', 'Estado'];
+      const headers = ['Numero_pedido', 'Fecha', 'Nombre_cliente', 'Numero_telefonico', 'Colegio', 'Entrega', 'Detalle_pedido', 'Extras', 'Total', 'Medio_pago', 'Porcentaje_pagado', 'Monto_pagado', 'Saldo_pendiente', 'Comprobante_URL', 'Estado'];
       const rows = orders.map(o => [
         o.folio, o.date, o.clientName, o.clientPhone, o.school, o.deliveryWindow,
-        o.itemsSummary, o.extrasSummary, o.total, o.deposit50, o.balance50, o.receiptUrl || '', o.status
+        o.itemsSummary, o.extrasSummary, o.total, o.paymentMethod || 'Transferencia',
+        (o.paymentPercent || 50) + '%', o.paidAmount != null ? o.paidAmount : o.deposit50,
+        o.balance50, o.receiptUrl || '', o.status
       ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
 
       const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
@@ -1778,7 +1850,7 @@
         switchMainTab('admin');
         switchAdminSubTab('ot');
         resetAdminInactivityTimer();
-        loadCloudOrdersForOT(false);
+        await loadCloudOrdersForOT(false);
         showToast('🔓 Sesión de Administrador iniciada.');
       } catch (e) {
         if (errEl) {
@@ -1832,9 +1904,17 @@
         handleAdminButtonClick();
         return;
       }
-      if (byId('viewCotizador')) byId('viewCotizador').classList.toggle('hidden', tab !== 'cotizador');
-      if (byId('viewRegistro')) byId('viewRegistro').classList.toggle('hidden', tab !== 'registro');
-      if (byId('viewAdmin')) byId('viewAdmin').classList.toggle('hidden', tab !== 'admin');
+
+      const vCot = byId('viewCotizador');
+      const vReg = byId('viewRegistro');
+      const vAdm = byId('viewAdmin');
+
+      if (vCot) vCot.classList.toggle('hidden', tab !== 'cotizador');
+      if (vReg) vReg.classList.toggle('hidden', tab !== 'registro');
+      if (vAdm) {
+        vAdm.classList.toggle('hidden', tab !== 'admin');
+        if (tab === 'admin') vAdm.style.display = 'block';
+      }
 
       if (byId('tabBtnCotizador')) {
         byId('tabBtnCotizador').className = tab === 'cotizador'
@@ -1847,11 +1927,19 @@
           ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-sm'
           : 'px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100';
       }
+
+      if (byId('tabBtnAdmin') && isAdminAuthenticated) {
+        byId('tabBtnAdmin').className = tab === 'admin'
+          ? 'px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow-sm'
+          : 'px-4 py-1.5 rounded-lg text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100';
+      }
     }
 
     function switchAdminSubTab(subTab) {
-      if (byId('adminPanelOT')) byId('adminPanelOT').classList.toggle('hidden', subTab !== 'ot');
-      if (byId('adminPanelConfig')) byId('adminPanelConfig').classList.toggle('hidden', subTab !== 'config');
+      const panelOT = byId('adminPanelOT');
+      const panelCfg = byId('adminPanelConfig');
+      if (panelOT) panelOT.classList.toggle('hidden', subTab !== 'ot');
+      if (panelCfg) panelCfg.classList.toggle('hidden', subTab !== 'config');
 
       if (byId('adminSubTabOT')) {
         byId('adminSubTabOT').className = subTab === 'ot'
@@ -1863,6 +1951,11 @@
         byId('adminSubTabConfig').className = subTab === 'config'
           ? 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white shadow-sm flex items-center gap-1.5'
           : 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 flex items-center gap-1.5';
+      }
+
+      if (subTab === 'ot') {
+        populateOTFilterOptions();
+        renderWorkOrder();
       }
     }
 
@@ -1876,14 +1969,15 @@
 
       const prevDel = delSel.value;
       const prevSch = schSel.value;
+      const safeOrders = Array.isArray(cloudOrdersCache) ? cloudOrdersCache : [];
 
       const allDeliveries = Array.from(new Set([
-        ...settings.deliveryWindows,
-        ...cloudOrdersCache.map(o => o.deliveryWindow).filter(Boolean)
+        ...(settings.deliveryWindows || []),
+        ...safeOrders.map(o => o && o.deliveryWindow).filter(Boolean)
       ]));
       const allSchools = Array.from(new Set([
-        ...settings.schools,
-        ...cloudOrdersCache.map(o => o.school).filter(Boolean)
+        ...(settings.schools || []),
+        ...safeOrders.map(o => o && o.school).filter(Boolean)
       ]));
 
       delSel.innerHTML = `<option value="ALL">Todos los ciclos de entrega</option>` +
@@ -1910,10 +2004,17 @@
           if (notify) showToast(`✅ ${cloudOrdersCache.length} pedidos cargados desde Google Sheets.`);
           return;
         }
-      } catch (err) {}
+      } catch (err) {
+        console.warn('Fallo lectura nube OT, usando respaldo local:', err);
+      }
 
-      const localFallback = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
-      cloudOrdersCache = localFallback;
+      let localFallback = [];
+      try {
+        localFallback = JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]');
+      } catch (e) {
+        localFallback = [];
+      }
+      cloudOrdersCache = Array.isArray(localFallback) ? localFallback : [];
       populateOTFilterOptions();
       renderWorkOrder();
       if (notify) showToast('ℹ️ Mostrando pedidos locales (publica Nueva Versión en Código.gs para leer toda la nube).');
@@ -1952,7 +2053,6 @@
       if (!cleaned) return null;
       if (ALL_SIZES_ORDER.includes(cleaned)) return cleaned;
 
-      // Extrae token válido si viene combinado, ej. "10M" o "XXL"
       const match = cleaned.match(/(XXL|XL|16|14|12|10|8|6|4|3|M|L|S)$/);
       if (match && ALL_SIZES_ORDER.includes(match[1])) {
         return match[1];
@@ -1969,7 +2069,6 @@
         const clean = chunk.trim();
         if (!clean) return;
 
-        // Formato esperado: "1x Buzo Completo con Polera (Algodón) (Talla M) = $42.600"
         const headMatch = clean.match(/^(\d+)\s*x\s+(.+?)(?:\s*=\s*\$[\d.,]+)?$/i);
         if (!headMatch) return;
 
@@ -1979,7 +2078,6 @@
 
         let detectedSize = 'S/T';
 
-        // 1. Buscar explícitamente "(Talla X)" o "[Talla X]" en cualquier posición del ítem
         const explicitTallaMatch = desc.match(/[\(\[]\s*Talla\s+([A-Z0-9]+)\s*[\)\]]/i);
         if (explicitTallaMatch) {
           const norm = normalizeSizeKey(explicitTallaMatch[1]);
@@ -1988,7 +2086,6 @@
             desc = desc.replace(explicitTallaMatch[0], '').trim();
           }
         } else {
-          // 2. Si no dice "Talla", revisar el último grupo entre paréntesis/corchetes (ej. "(M)" o "(10)")
           const groupMatches = [...desc.matchAll(/[\(\[]([^\)\]]+)[\)\]]/g)];
           if (groupMatches.length > 0) {
             const last = groupMatches[groupMatches.length - 1];
@@ -1998,7 +2095,6 @@
               desc = (desc.slice(0, last.index) + desc.slice(last.index + last[0].length)).trim();
             }
           } else {
-            // 3. Formato sin paréntesis: "... Talla M" al final
             const trailingTalla = desc.match(/^(.*?)\s+Talla\s+([A-Z0-9]+)$/i);
             if (trailingTalla) {
               const norm = normalizeSizeKey(trailingTalla[2]);
@@ -2019,185 +2115,201 @@
     }
 
     function renderWorkOrder() {
-      const statusFilter = (byId('otFilterStatus') && byId('otFilterStatus').value) || 'PENDING';
-      const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
-      const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
-      const sizeFilter = (byId('otFilterSize') && byId('otFilterSize').value) || 'ALL';
-      const searchFilter = ((byId('otFilterSearch') && byId('otFilterSearch').value) || '').trim().toLowerCase();
-
-      const filtered = cloudOrdersCache.filter(o => {
-        const st = String(o.status || '').toLowerCase();
-        const isCompleted = st.includes('finalizado') || st.includes('listo') || st.includes('entregado');
-
-        if (statusFilter === 'PENDING' && isCompleted) return false;
-        if (statusFilter === 'DONE' && !isCompleted) return false;
-        if (deliveryFilter !== 'ALL' && o.deliveryWindow !== deliveryFilter) return false;
-        if (schoolFilter !== 'ALL' && o.school !== schoolFilter) return false;
-        if (sizeFilter !== 'ALL') {
-          const items = parseItemsFromSummary(o.itemsSummary);
-          const hasMatchingSize = items.some(it => it.size === sizeFilter);
-          if (!hasMatchingSize) return false;
-        }
-        if (searchFilter) {
-          const hay = `${o.folio} ${o.clientName} ${o.clientPhone} ${o.school}`.toLowerCase();
-          if (!hay.includes(searchFilter)) return false;
-        }
-        return true;
-      });
-
-      if (byId('otGeneratedDate')) byId('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
-      if (byId('otSubtitleScope')) {
-        const statusLabel = statusFilter === 'PENDING' ? 'Pendientes (Por hacer)' : (statusFilter === 'DONE' ? 'Finalizados y Entregados' : 'Todos los estados');
-        const sizeLabel = sizeFilter === 'ALL' ? 'Todas las tallas' : `Talla ${sizeFilter}`;
-        byId('otSubtitleScope').textContent = `Estado: ${statusLabel} · Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Colegio: ${schoolFilter === 'ALL' ? 'Todos' : schoolFilter} · Talla: ${sizeLabel}`;
-      }
-
-      const matrixMap = {};
-      let totalGarmentsCount = 0;
-
-      filtered.forEach(order => {
-        const items = parseItemsFromSummary(order.itemsSummary);
-        items.forEach(it => {
-          const colKey = ALL_MATRIX_COLS.includes(it.size) ? it.size : 'S/T';
-          if (sizeFilter !== 'ALL' && colKey !== sizeFilter) return;
-
-          if (!matrixMap[it.product]) {
-            matrixMap[it.product] = { total: 0 };
-            ALL_MATRIX_COLS.forEach(sz => matrixMap[it.product][sz] = 0);
-          }
-          matrixMap[it.product][colKey] += it.qty;
-          matrixMap[it.product].total += it.qty;
-          totalGarmentsCount += it.qty;
-        });
-      });
-
       const matrixBody = byId('otCuttingMatrixBody');
-      const productNames = Object.keys(matrixMap);
-
-      if (matrixBody) {
-        if (!productNames.length) {
-          matrixBody.innerHTML = `<tr><td colspan="16" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
-        } else {
-          const colTotals = {};
-          ALL_MATRIX_COLS.forEach(sz => colTotals[sz] = 0);
-          let grandTotalGarments = 0;
-
-          const rowsHtml = productNames.map(prodName => {
-            const row = matrixMap[prodName];
-            ALL_MATRIX_COLS.forEach(sz => colTotals[sz] += row[sz]);
-            grandTotalGarments += row.total;
-
-            return `
-              <tr class="hover:bg-slate-50">
-                <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
-                ${ALL_MATRIX_COLS.map(sz => {
-                  const v = row[sz];
-                  const isHighlighted = sizeFilter !== 'ALL' && sz === sizeFilter;
-                  let cellClass = 'text-slate-300';
-                  if (v > 0) {
-                    if (sz === 'S/T') {
-                      cellClass = 'bg-slate-100 text-slate-700 font-bold';
-                    } else if (isHighlighted) {
-                      cellClass = 'bg-emerald-200 text-emerald-950 font-black ring-1 ring-emerald-500';
-                    } else {
-                      cellClass = 'bg-amber-50/80 text-slate-900 font-black';
-                    }
-                  }
-                  return `<td class="p-2 ${cellClass}">${v > 0 ? v : '·'}</td>`;
-                }).join('')}
-                <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
-              </tr>
-            `;
-          }).join('');
-
-          const totalRowHtml = `
-            <tr class="bg-slate-900 text-white font-black">
-              <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
-              ${ALL_MATRIX_COLS.map(sz => `<td class="p-2 ${sizeFilter === sz ? 'bg-emerald-600 text-white' : ''}">${colTotals[sz] || 0}</td>`).join('')}
-              <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
-            </tr>
-          `;
-          matrixBody.innerHTML = rowsHtml + totalRowHtml;
-        }
-      }
-
-      const specialOrders = filtered.filter(o => {
-        const hasExtras = o.extrasSummary && o.extrasSummary !== 'Sin extras';
-        const hasNotes = o.notes && o.notes.trim().length > 0;
-        return hasExtras || hasNotes;
-      });
-
       const persBody = byId('otPersonalizationBody');
-      if (persBody) {
-        if (!specialOrders.length) {
-          persBody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Ningún pedido de este lote requiere bordados, insignias o ajustes especiales.</td></tr>`;
-        } else {
-          persBody.innerHTML = specialOrders.map(o => `
-            <tr class="hover:bg-amber-50/30">
-              <td class="p-2.5 font-extrabold text-amber-900">${escapeHtml(o.folio)}</td>
-              <td class="p-2.5 font-semibold text-slate-700">${escapeHtml(o.school)}</td>
-              <td class="p-2.5 text-slate-700">${escapeHtml(o.itemsSummary)}</td>
-              <td class="p-2.5 font-bold text-emerald-800">${escapeHtml(o.extrasSummary || '—')}</td>
-              <td class="p-2.5 font-semibold text-slate-900">${escapeHtml(o.notes || '—')}</td>
-              <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-400 rounded"></span></td>
-            </tr>
-          `).join('');
-        }
-      }
-
       const packBody = byId('otPackingListBody');
-      let totalBalancePending = 0;
 
-      if (packBody) {
-        if (!filtered.length) {
-          packBody.innerHTML = `<tr><td colspan="8" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
-        } else {
-          packBody.innerHTML = filtered.map(o => {
-            const bal = Number(o.balance50) || Math.max(0, (Number(o.total) || 0) - (Number(o.deposit50) || 0));
-            totalBalancePending += bal;
-            const currentSt = o.status || 'Abono 50% Recibido';
-            const isDone = /finalizado|listo|entregado/i.test(currentSt);
+      try {
+        const statusFilter = (byId('otFilterStatus') && byId('otFilterStatus').value) || 'PENDING';
+        const deliveryFilter = (byId('otFilterDelivery') && byId('otFilterDelivery').value) || 'ALL';
+        const schoolFilter = (byId('otFilterSchool') && byId('otFilterSchool').value) || 'ALL';
+        const sizeFilter = (byId('otFilterSize') && byId('otFilterSize').value) || 'ALL';
+        const searchFilter = ((byId('otFilterSearch') && byId('otFilterSearch').value) || '').trim().toLowerCase();
 
-            return `
-              <tr class="hover:bg-slate-50 ${isDone ? 'bg-emerald-50/30' : ''}">
-                <td class="p-2.5 no-print">
-                  <select onchange="changeOrderStatusCloud('${escapeHtml(o.folio)}', this.value)"
-                    class="rounded-lg border px-2 py-1 text-[11px] font-extrabold cursor-pointer ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-amber-50 border-amber-300 text-amber-900'}">
-                    <option value="Abono 50% Recibido" ${currentSt === 'Abono 50% Recibido' ? 'selected' : ''}>🟡 Por hacer</option>
-                    <option value="En Confección" ${currentSt === 'En Confección' ? 'selected' : ''}>🧵 En taller</option>
-                    <option value="Finalizado / Listo" ${currentSt === 'Finalizado / Listo' ? 'selected' : ''}>✅ Finalizado</option>
-                    <option value="Entregado" ${currentSt === 'Entregado' ? 'selected' : ''}>📦 Entregado</option>
-                  </select>
-                </td>
-                <td class="p-2.5 print-only-cell text-center">
-                  <span class="inline-block w-4 h-4 border-2 border-slate-500 rounded">${isDone ? '✓' : ''}</span>
-                </td>
-                <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
-                <td class="p-2.5">
-                  <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
-                  <div class="text-slate-500">${escapeHtml(o.clientPhone)}</div>
-                </td>
-                <td class="p-2.5">
-                  <div class="font-semibold text-slate-800">${escapeHtml(o.school)}${o.grade ? ' (' + escapeHtml(o.grade) + ')' : ''}</div>
-                  <div class="text-[11px] text-amber-800 font-semibold">${escapeHtml(o.deliveryWindow)}</div>
-                </td>
-                <td class="p-2.5">
-                  <div class="text-slate-800">${escapeHtml(o.itemsSummary)}</div>
-                  ${o.extrasSummary && o.extrasSummary !== 'Sin extras' ? `<div class="text-emerald-700 font-semibold">+ ${escapeHtml(o.extrasSummary)}</div>` : ''}
-                  ${o.notes ? `<div class="text-amber-900 italic">Nota: ${escapeHtml(o.notes)}</div>` : ''}
-                </td>
-                <td class="p-2.5 text-right text-slate-600 font-semibold">${formatCLP(o.deposit50)}</td>
-                <td class="p-2.5 text-right font-black text-emerald-800">${formatCLP(bal)}</td>
+        const sourceList = Array.isArray(cloudOrdersCache) ? cloudOrdersCache : [];
+
+        const filtered = sourceList.filter(o => {
+          if (!o || typeof o !== 'object') return false;
+          const st = String(o.status || '').toLowerCase();
+          const isCompleted = st.includes('finalizado') || st.includes('listo') || st.includes('entregado');
+
+          if (statusFilter === 'PENDING' && isCompleted) return false;
+          if (statusFilter === 'DONE' && !isCompleted) return false;
+          if (deliveryFilter !== 'ALL' && String(o.deliveryWindow || '') !== deliveryFilter) return false;
+          if (schoolFilter !== 'ALL' && String(o.school || '') !== schoolFilter) return false;
+          if (sizeFilter !== 'ALL') {
+            const items = parseItemsFromSummary(o.itemsSummary);
+            const hasMatchingSize = items.some(it => it.size === sizeFilter);
+            if (!hasMatchingSize) return false;
+          }
+          if (searchFilter) {
+            const hay = `${o.folio || ''} ${o.clientName || ''} ${o.clientPhone || ''} ${o.school || ''}`.toLowerCase();
+            if (!hay.includes(searchFilter)) return false;
+          }
+          return true;
+        });
+
+        if (byId('otGeneratedDate')) byId('otGeneratedDate').textContent = `Fecha emisión: ${new Date().toLocaleString('es-CL')}`;
+        if (byId('otSubtitleScope')) {
+          const statusLabel = statusFilter === 'PENDING' ? 'Pendientes (Por hacer)' : (statusFilter === 'DONE' ? 'Finalizados y Entregados' : 'Todos los estados');
+          const sizeLabel = sizeFilter === 'ALL' ? 'Todas las tallas' : `Talla ${sizeFilter}`;
+          byId('otSubtitleScope').textContent = `Estado: ${statusLabel} · Ciclo: ${deliveryFilter === 'ALL' ? 'Todos los ciclos' : deliveryFilter} · Colegio: ${schoolFilter === 'ALL' ? 'Todos' : schoolFilter} · Talla: ${sizeLabel}`;
+        }
+
+        const matrixMap = {};
+        let totalGarmentsCount = 0;
+
+        filtered.forEach(order => {
+          const items = parseItemsFromSummary(order.itemsSummary);
+          items.forEach(it => {
+            const colKey = ALL_MATRIX_COLS.includes(it.size) ? it.size : 'S/T';
+            if (sizeFilter !== 'ALL' && colKey !== sizeFilter) return;
+
+            if (!matrixMap[it.product]) {
+              matrixMap[it.product] = { total: 0 };
+              ALL_MATRIX_COLS.forEach(sz => matrixMap[it.product][sz] = 0);
+            }
+            matrixMap[it.product][colKey] += it.qty;
+            matrixMap[it.product].total += it.qty;
+            totalGarmentsCount += it.qty;
+          });
+        });
+
+        const productNames = Object.keys(matrixMap);
+
+        if (matrixBody) {
+          if (!productNames.length) {
+            matrixBody.innerHTML = `<tr><td colspan="16" class="p-6 text-center text-slate-400">No hay prendas para consolidar con los filtros actuales.</td></tr>`;
+          } else {
+            const colTotals = {};
+            ALL_MATRIX_COLS.forEach(sz => colTotals[sz] = 0);
+            let grandTotalGarments = 0;
+
+            const rowsHtml = productNames.map(prodName => {
+              const row = matrixMap[prodName];
+              ALL_MATRIX_COLS.forEach(sz => colTotals[sz] += row[sz]);
+              grandTotalGarments += row.total;
+
+              return `
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 text-left font-extrabold text-slate-900">${escapeHtml(prodName)}</td>
+                  ${ALL_MATRIX_COLS.map(sz => {
+                    const v = row[sz];
+                    const isHighlighted = sizeFilter !== 'ALL' && sz === sizeFilter;
+                    let cellClass = 'text-slate-300';
+                    if (v > 0) {
+                      if (sz === 'S/T') {
+                        cellClass = 'bg-slate-100 text-slate-700 font-bold';
+                      } else if (isHighlighted) {
+                        cellClass = 'bg-emerald-200 text-emerald-950 font-black ring-1 ring-emerald-500';
+                      } else {
+                        cellClass = 'bg-amber-50/80 text-slate-900 font-black';
+                      }
+                    }
+                    return `<td class="p-2 ${cellClass}">${v > 0 ? v : '·'}</td>`;
+                  }).join('')}
+                  <td class="p-2.5 bg-amber-100/80 font-black text-amber-950">${row.total}</td>
+                </tr>
+              `;
+            }).join('');
+
+            const totalRowHtml = `
+              <tr class="bg-slate-900 text-white font-black">
+                <td class="p-2.5 text-left">TOTAL PIEZAS A CORTAR</td>
+                ${ALL_MATRIX_COLS.map(sz => `<td class="p-2 ${sizeFilter === sz ? 'bg-emerald-600 text-white' : ''}">${colTotals[sz] || 0}</td>`).join('')}
+                <td class="p-2.5 bg-amber-600 text-white">${grandTotalGarments}</td>
               </tr>
             `;
-          }).join('');
+            matrixBody.innerHTML = rowsHtml + totalRowHtml;
+          }
+        }
+
+        const specialOrders = filtered.filter(o => {
+          const hasExtras = o.extrasSummary && String(o.extrasSummary).trim() !== '' && o.extrasSummary !== 'Sin extras';
+          const hasNotes = o.notes && String(o.notes).trim().length > 0;
+          return hasExtras || hasNotes;
+        });
+
+        if (persBody) {
+          if (!specialOrders.length) {
+            persBody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Ningún pedido de este lote requiere bordados, insignias o ajustes especiales.</td></tr>`;
+          } else {
+            persBody.innerHTML = specialOrders.map(o => `
+              <tr class="hover:bg-amber-50/30">
+                <td class="p-2.5 font-extrabold text-amber-900">${escapeHtml(o.folio)}</td>
+                <td class="p-2.5 font-semibold text-slate-700">${escapeHtml(o.school)}</td>
+                <td class="p-2.5 text-slate-700">${escapeHtml(o.itemsSummary)}</td>
+                <td class="p-2.5 font-bold text-emerald-800">${escapeHtml(o.extrasSummary || '—')}</td>
+                <td class="p-2.5 font-semibold text-slate-900">${escapeHtml(o.notes || '—')}</td>
+                <td class="p-2.5 text-center"><span class="inline-block w-4 h-4 border-2 border-slate-400 rounded"></span></td>
+              </tr>
+            `).join('');
+          }
+        }
+
+        let totalBalancePending = 0;
+
+        if (packBody) {
+          if (!filtered.length) {
+            packBody.innerHTML = `<tr><td colspan="8" class="p-5 text-center text-slate-400">No hay pedidos que coincidan con el filtro seleccionado.</td></tr>`;
+          } else {
+            packBody.innerHTML = filtered.map(o => {
+              const paidVal = Number(o.paidAmount != null ? o.paidAmount : o.deposit50) || 0;
+              const bal = Number(o.balance50 != null ? o.balance50 : Math.max(0, (Number(o.total) || 0) - paidVal)) || 0;
+              totalBalancePending += bal;
+              const currentSt = String(o.status || 'Abono 50% Recibido');
+              const isDone = /finalizado|listo|entregado/i.test(currentSt);
+              const payInfo = o.paymentMethod ? `${o.paymentMethod} (${o.paymentPercent || 50}%)` : '';
+
+              return `
+                <tr class="hover:bg-slate-50 ${isDone ? 'bg-emerald-50/30' : ''}">
+                  <td class="p-2.5 no-print">
+                    <select onchange="changeOrderStatusCloud('${escapeHtml(o.folio)}', this.value)"
+                      class="rounded-lg border px-2 py-1 text-[11px] font-extrabold cursor-pointer ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-amber-50 border-amber-300 text-amber-900'}">
+                      <option value="Abono 50% Recibido" ${currentSt === 'Abono 50% Recibido' ? 'selected' : ''}>🟡 Por hacer</option>
+                      <option value="En Confección" ${currentSt === 'En Confección' ? 'selected' : ''}>🧵 En taller</option>
+                      <option value="Finalizado / Listo" ${currentSt === 'Finalizado / Listo' ? 'selected' : ''}>✅ Finalizado</option>
+                      <option value="Entregado" ${currentSt === 'Entregado' ? 'selected' : ''}>📦 Entregado</option>
+                    </select>
+                  </td>
+                  <td class="p-2.5 print-only-cell text-center">
+                    <span class="inline-block w-4 h-4 border-2 border-slate-500 rounded">${isDone ? '✓' : ''}</span>
+                  </td>
+                  <td class="p-2.5 font-extrabold text-slate-900">${escapeHtml(o.folio)}</td>
+                  <td class="p-2.5">
+                    <div class="font-bold text-slate-900">${escapeHtml(o.clientName)}</div>
+                    <div class="text-slate-500">${escapeHtml(o.clientPhone)}</div>
+                  </td>
+                  <td class="p-2.5">
+                    <div class="font-semibold text-slate-800">${escapeHtml(o.school)}${o.grade ? ' (' + escapeHtml(o.grade) + ')' : ''}</div>
+                    <div class="text-[11px] text-amber-800 font-semibold">${escapeHtml(o.deliveryWindow)}</div>
+                  </td>
+                  <td class="p-2.5">
+                    <div class="text-slate-800">${escapeHtml(o.itemsSummary)}</div>
+                    ${o.extrasSummary && o.extrasSummary !== 'Sin extras' ? `<div class="text-emerald-700 font-semibold">+ ${escapeHtml(o.extrasSummary)}</div>` : ''}
+                    ${o.notes ? `<div class="text-amber-900 italic">Nota: ${escapeHtml(o.notes)}</div>` : ''}
+                  </td>
+                  <td class="p-2.5 text-right text-slate-700 font-semibold">
+                    <div>${formatCLP(paidVal)}</div>
+                    ${payInfo ? `<div class="text-[10px] text-slate-500">${escapeHtml(payInfo)}</div>` : ''}
+                  </td>
+                  <td class="p-2.5 text-right font-black text-emerald-800">${formatCLP(bal)}</td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+
+        if (byId('otKpiOrders')) byId('otKpiOrders').textContent = `${filtered.length} ${filtered.length === 1 ? 'Pedido' : 'Pedidos'}`;
+        if (byId('otKpiGarments')) byId('otKpiGarments').textContent = `${totalGarmentsCount} ${totalGarmentsCount === 1 ? 'Prenda' : 'Prendas'}`;
+        if (byId('otKpiExtras')) byId('otKpiExtras').textContent = `${specialOrders.length} con Especiales`;
+        if (byId('otTotalBalancePending')) byId('otTotalBalancePending').textContent = `Saldo por cobrar en este lote: ${formatCLP(totalBalancePending)}`;
+      } catch (err) {
+        console.error('Error al renderizar Orden de Trabajo:', err);
+        if (matrixBody) {
+          matrixBody.innerHTML = `<tr><td colspan="16" class="p-6 text-center text-red-600 font-bold">Error al renderizar la Orden de Trabajo: ${escapeHtml(err.message)}</td></tr>`;
         }
       }
-
-      if (byId('otKpiOrders')) byId('otKpiOrders').textContent = `${filtered.length} ${filtered.length === 1 ? 'Pedido' : 'Pedidos'}`;
-      if (byId('otKpiGarments')) byId('otKpiGarments').textContent = `${totalGarmentsCount} ${totalGarmentsCount === 1 ? 'Prenda' : 'Prendas'}`;
-      if (byId('otKpiExtras')) byId('otKpiExtras').textContent = `${specialOrders.length} con Especiales`;
-      if (byId('otTotalBalancePending')) byId('otTotalBalancePending').textContent = `Saldo 50% por cobrar en este lote: ${formatCLP(totalBalancePending)}`;
     }
 
     function printWorkOrder() {
