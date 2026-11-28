@@ -279,7 +279,7 @@
 
       </div>
 
-      <!-- COLUMNA DERECHA (4 COLS): RESUMEN FINANCIERO, BANCOS Y CONFIRMACIÓN -->
+      <!-- COLUMNA DERECHA (4 COLS): RESUMEN FINANCIERO, BANCOS PROTEGIDOS Y CONFIRMACIÓN -->
       <div class="lg:col-span-4 space-y-6">
 
         <!-- RESUMEN FINANCIERO Y MONTO SEGÚN PORCENTAJE -->
@@ -322,12 +322,23 @@
           </div>
         </div>
 
-        <!-- DATOS DE TRANSFERENCIA BANCARIA -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none">
-          <h3 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
-            <span>🏦</span> Cuentas Oficiales para Transferencia
-          </h3>
-          <div id="bankAccountsContainer" class="space-y-3"></div>
+        <!-- DATOS DE TRANSFERENCIA BANCARIA (PROTEGIDOS BAJO DEMANDA) -->
+        <div id="bankCardWrapper" class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6 print-shadow-none space-y-3">
+          <button id="btnToggleBankAccounts" type="button" onclick="toggleBankAccounts()"
+            class="w-full py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-extrabold shadow-sm transition flex items-center justify-center gap-2 no-print">
+            <span>🔒</span>
+            <span id="btnToggleBankText">Ir a Pagar · Ver Datos de Transferencia</span>
+          </button>
+          <p id="bankSecurityHint" class="text-[11px] text-slate-500 text-center no-print">
+            Por seguridad, los datos bancarios se cargan desde la nube únicamente al iniciar el pago.
+          </p>
+
+          <div id="bankAccountsSection" class="hidden pt-3 border-t border-slate-100 space-y-3">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <span>🏦</span> Cuentas Oficiales para Transferencia
+            </h3>
+            <div id="bankAccountsContainer" class="space-y-3"></div>
+          </div>
         </div>
 
         <!-- MEDIO DE PAGO, MONTO (50% / 100%) Y ENVÍO WHATSAPP -->
@@ -817,7 +828,10 @@
         <!-- GESTIÓN DE CUENTAS BANCARIAS -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias</h3>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias (Protegidas en Nube)</h3>
+              <p class="text-xs text-slate-500">Estas cuentas se guardan en <code>config_admin</code> y solo se envían al cliente cuando hace clic en "Ir a Pagar".</p>
+            </div>
             <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Cuentas en la Nube
             </button>
@@ -857,16 +871,16 @@
 
   <script>
     // =========================================================================
-    // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL
+    // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL (SIN DATOS BANCARIOS EXPUESTOS)
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v11';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v12';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
     const API_TIMEOUT_MS       = 15000;
 
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
     const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
@@ -921,25 +935,9 @@
       { id: 'e22', name: 'Basta de falda a mano', price: 5000 }
     ];
 
-    const DEFAULT_BANKS = [
-      {
-        label: 'Opción 1 — Banco Estado',
-        holder: 'ELBA ROSA MESA RETAMALES',
-        rut: '11.697.230-1',
-        bank: 'Banco Estado',
-        accountType: 'CuentaRUT',
-        accountNumber: '00011697230',
-        email: 'rosa.mesaretamales@gmail.com'
-      },
-      {
-        label: 'Opción 2 — Banco Falabella',
-        holder: 'Elba Rosa Mesa',
-        rut: '11.697.230-1',
-        bank: 'Banco Falabella',
-        accountType: 'Cuenta Corriente',
-        accountNumber: '1-553-007790-3',
-        email: 'rosa.mesaretamales@gmail.com'
-      }
+    const DEFAULT_BANK_SLOTS = [
+      { label: 'Opción 1 — Banco Principal', holder: '', rut: '', bank: '', accountType: '', accountNumber: '', email: '' },
+      { label: 'Opción 2 — Banco Alternativo', holder: '', rut: '', bank: '', accountType: '', accountNumber: '', email: '' }
     ];
 
     function byId(id) {
@@ -986,6 +984,8 @@
     let extraQuantities = {};
     let paymentMethod = 'Transferencia';
     let paymentPercent = 50;
+    let isBankAccountsVisible = false;
+    let banksLoadedForSession = false;
     let isAdminAuthenticated = false;
     let activeSessionHash = '';
     let inactivityTimer = null;
@@ -1081,7 +1081,7 @@
           return {
             catalog: sanitizeCatalogList(parsed.catalog),
             extras: sanitizeExtrasList(parsed.extras),
-            banks: Array.isArray(parsed.banks) && parsed.banks.length ? parsed.banks : JSON.parse(JSON.stringify(DEFAULT_BANKS)),
+            banks: [],
             schools: Array.isArray(parsed.schools) && parsed.schools.length ? parsed.schools : [...DEFAULT_SCHOOLS],
             deliveryWindows: Array.isArray(parsed.deliveryWindows) && parsed.deliveryWindows.length ? parsed.deliveryWindows : [...DEFAULT_DELIVERY_WINDOWS],
             sectionTitles: (parsed.sectionTitles && typeof parsed.sectionTitles === 'object')
@@ -1093,7 +1093,7 @@
       return {
         catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)),
         extras: JSON.parse(JSON.stringify(DEFAULT_EXTRAS)),
-        banks: JSON.parse(JSON.stringify(DEFAULT_BANKS)),
+        banks: [],
         schools: [...DEFAULT_SCHOOLS],
         deliveryWindows: [...DEFAULT_DELIVERY_WINDOWS],
         sectionTitles: { ...DEFAULT_SECTION_TITLES }
@@ -1102,7 +1102,15 @@
 
     function saveLocalSettings() {
       try {
-        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+        // Nunca persistir datos bancarios en localStorage público
+        const safePublicCopy = {
+          catalog: settings.catalog,
+          extras: settings.extras,
+          schools: settings.schools,
+          deliveryWindows: settings.deliveryWindows,
+          sectionTitles: settings.sectionTitles
+        };
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(safePublicCopy));
       } catch (e) {}
     }
 
@@ -1121,9 +1129,6 @@
             }
             if (Array.isArray(data.settings.extras) && data.settings.extras.length) {
               settings.extras = sanitizeExtrasList(data.settings.extras);
-            }
-            if (Array.isArray(data.settings.banks) && data.settings.banks.length) {
-              settings.banks = data.settings.banks;
             }
             if (Array.isArray(data.settings.schools) && data.settings.schools.length) {
               settings.schools = data.settings.schools;
@@ -1379,14 +1384,68 @@
     }
 
     // =========================================================================
-    // 5. MEDIO DE PAGO, PORCENTAJE (50% / 100%), COMPROBANTE Y ENVÍO
+    // 5. PROTECCIÓN DE DATOS BANCARIOS BAJO DEMANDA, PAGO Y ENVÍO WHATSAPP
     // =========================================================================
+    async function fetchProtectedBanksFromCloud() {
+      if (banksLoadedForSession && Array.isArray(settings.banks) && settings.banks.length > 0) {
+        return true;
+      }
+      const data = await apiPost({ action: 'get_payment_details' });
+      if (data && data.ok && Array.isArray(data.banks) && data.banks.length > 0) {
+        settings.banks = data.banks;
+        banksLoadedForSession = true;
+        renderBankCards();
+        return true;
+      }
+      return false;
+    }
+
+    async function toggleBankAccounts(forceShow = null) {
+      const nextState = forceShow !== null ? Boolean(forceShow) : !isBankAccountsVisible;
+      const section = byId('bankAccountsSection');
+      const btnText = byId('btnToggleBankText');
+
+      if (!nextState) {
+        isBankAccountsVisible = false;
+        if (section) section.classList.add('hidden');
+        if (btnText) btnText.textContent = 'Ir a Pagar · Ver Datos de Transferencia';
+        return;
+      }
+
+      const hasItems = cart.length > 0 || Object.values(extraQuantities).some(q => q > 0);
+      if (!hasItems) {
+        showToast('⚠️ Primero agrega al menos una prenda o servicio al pedido para ver los datos de pago.');
+        return;
+      }
+
+      if (!banksLoadedForSession) {
+        if (btnText) btnText.textContent = '⏳ Cargando datos seguros desde la nube...';
+        try {
+          const ok = await fetchProtectedBanksFromCloud();
+          if (!ok) {
+            showToast('⚠️ No hay cuentas bancarias configuradas en la nube.');
+            if (btnText) btnText.textContent = 'Ir a Pagar · Ver Datos de Transferencia';
+            return;
+          }
+        } catch (err) {
+          showToast('❌ ' + (err.message || 'Error al cargar datos bancarios seguros.'));
+          if (btnText) btnText.textContent = 'Ir a Pagar · Ver Datos de Transferencia';
+          return;
+        }
+      }
+
+      isBankAccountsVisible = true;
+      if (section) section.classList.remove('hidden');
+      if (btnText) btnText.textContent = 'Ocultar Datos de Transferencia';
+    }
+
     function setPaymentMethod(method) {
       paymentMethod = method === 'Efectivo' ? 'Efectivo' : 'Transferencia';
       const btnTr = byId('btnPayTransfer');
       const btnCa = byId('btnPayCash');
       const recLabel = byId('receiptLabel');
       const recStatus = byId('receiptFileStatus');
+      const bankWrapper = byId('bankCardWrapper');
 
       if (btnTr) {
         btnTr.className = paymentMethod === 'Transferencia'
@@ -1397,6 +1456,12 @@
         btnCa.className = paymentMethod === 'Efectivo'
           ? 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-950 text-xs font-extrabold transition flex items-center justify-center gap-1.5'
           : 'py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5';
+      }
+      if (paymentMethod === 'Efectivo') {
+        toggleBankAccounts(false);
+        if (bankWrapper) bankWrapper.classList.add('opacity-60');
+      } else {
+        if (bankWrapper) bankWrapper.classList.remove('opacity-60');
       }
       if (recLabel) {
         recLabel.textContent = paymentMethod === 'Efectivo'
@@ -1433,6 +1498,10 @@
     function renderBankCards() {
       const container = byId('bankAccountsContainer');
       if (!container) return;
+      if (!Array.isArray(settings.banks) || !settings.banks.length) {
+        container.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500">Haz clic en "Ir a Pagar" para cargar los datos bancarios protegidos.</div>`;
+        return;
+      }
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
           <div class="flex items-center justify-between">
@@ -1846,6 +1915,10 @@
         isAdminAuthenticated = true;
         activeSessionHash = hash;
         closeAdminModal();
+
+        // Cargar cuentas bancarias protegidas en memoria para edición en panel admin
+        await fetchProtectedBanksFromCloud().catch(() => {});
+
         updateAdminUIState();
         switchMainTab('admin');
         switchAdminSubTab('ot');
@@ -2531,19 +2604,22 @@
     function renderAdminBanks() {
       const container = byId('adminBanksEditor');
       if (!container) return;
+      if (!Array.isArray(settings.banks) || !settings.banks.length) {
+        settings.banks = JSON.parse(JSON.stringify(DEFAULT_BANK_SLOTS));
+      }
       container.innerHTML = settings.banks.map((b, idx) => `
         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2 text-xs">
           <div class="font-extrabold text-slate-800">${escapeHtml(b.label)}</div>
-          <input type="text" value="${escapeHtml(b.holder)}" onchange="settings.banks[${idx}].holder=this.value; saveLocalSettings(); renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <input type="text" value="${escapeHtml(b.holder)}" onchange="settings.banks[${idx}].holder=this.value; renderBankCards();" placeholder="Titular" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(b.rut)}" onchange="settings.banks[${idx}].rut=this.value; saveLocalSettings(); renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
-            <input type="text" value="${escapeHtml(b.bank)}" onchange="settings.banks[${idx}].bank=this.value; saveLocalSettings(); renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.rut)}" onchange="settings.banks[${idx}].rut=this.value; renderBankCards();" placeholder="RUT" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.bank)}" onchange="settings.banks[${idx}].bank=this.value; renderBankCards();" placeholder="Banco" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(b.accountType)}" onchange="settings.banks[${idx}].accountType=this.value; saveLocalSettings(); renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
-            <input type="text" value="${escapeHtml(b.accountNumber)}" onchange="settings.banks[${idx}].accountNumber=this.value; saveLocalSettings(); renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.accountType)}" onchange="settings.banks[${idx}].accountType=this.value; renderBankCards();" placeholder="Tipo Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+            <input type="text" value="${escapeHtml(b.accountNumber)}" onchange="settings.banks[${idx}].accountNumber=this.value; renderBankCards();" placeholder="N° Cuenta" class="rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
           </div>
-          <input type="email" value="${escapeHtml(b.email)}" onchange="settings.banks[${idx}].email=this.value; saveLocalSettings(); renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
+          <input type="email" value="${escapeHtml(b.email)}" onchange="settings.banks[${idx}].email=this.value; renderBankCards();" placeholder="Correo" class="w-full rounded border border-slate-300 px-2.5 py-1.5 bg-white" />
         </div>
       `).join('');
     }
