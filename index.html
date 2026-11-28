@@ -830,7 +830,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="text-base font-extrabold text-slate-900">🏦 Edición de Cuentas Bancarias (Protegidas en Nube)</h3>
-              <p class="text-xs text-slate-500">Estas cuentas se guardan en <code>config_admin</code> y solo se envían al cliente cuando hace clic en "Ir a Pagar".</p>
+              <p class="text-xs text-slate-500">Estas cuentas se guardan en <code>config_admin</code> y solo se envían al cliente cuando inicia el pago. Recuerda pulsar <strong>Grabar Cuentas en la Nube</strong> al terminar.</p>
             </div>
             <button type="button" onclick="pushSettingsToCloud()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm">
               ☁️ Grabar Cuentas en la Nube
@@ -874,13 +874,13 @@
     // 1. CONSTANTES Y CONFIGURACIÓN OFICIAL (SIN DATOS BANCARIOS EXPUESTOS)
     // =========================================================================
     const WHATSAPP_TALLER = '56989510679';
-    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v12';
+    const STORAGE_KEY_SETTINGS = 'textiles_rosita_settings_v13';
     const STORAGE_KEY_ORDERS   = 'textiles_rosita_orders_v8';
     const STORAGE_KEY_SEQ      = 'textiles_rosita_seq_v8';
     const STORAGE_KEY_SCRIPT   = 'textiles_rosita_apps_script_url_v8';
     const API_TIMEOUT_MS       = 15000;
 
-    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1Vd4UUtXuPePxmY0qUzkxmkYQ826il_TO4HrnUPfNcSYmV4-tx2AoB4KlUz0IyTU87A/exec';
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwrWbWiG5RbqTQBaxkpWrKz3gHhiInpJNREd1lVC4mTRXx6LftTTcA8xKqaS2ZIWesHNQ/exec';
 
     const ALL_SIZES_ORDER = ['3', '4', '6', '8', '10', '12', '14', '16', 'S', 'M', 'L', 'XL', 'XXL'];
     const ALL_MATRIX_COLS = [...ALL_SIZES_ORDER, 'S/T'];
@@ -1102,7 +1102,6 @@
 
     function saveLocalSettings() {
       try {
-        // Nunca persistir datos bancarios en localStorage público
         const safePublicCopy = {
           catalog: settings.catalog,
           extras: settings.extras,
@@ -1793,13 +1792,13 @@
 
       feedbackBox.classList.remove('hidden');
       feedbackBox.innerHTML = `
-        <div class="space-y-2">
+        <div class="space-y-2.5">
           <div>${cloudSaved
             ? `✅ Pedido <strong>${escapeHtml(folio)}</strong> (${escapeHtml(paymentMethod)} ${paymentPercent}%) guardado en la nube.`
             : `⚠️ Pedido <strong>${escapeHtml(folio)}</strong> guardado localmente (${escapeHtml(cloudErrorMsg)}).`}</div>
           ${cloudReceiptUrl ? `<div><a href="${escapeHtml(cloudReceiptUrl)}" target="_blank" rel="noopener noreferrer" class="underline text-emerald-700 font-extrabold">🧾 Ver Comprobante Subido en Drive</a></div>` : ''}
-          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="inline-block w-full text-center py-2.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow">
-            📲 Abrir Chat de WhatsApp y Enviar Pedido (${escapeHtml(folio)})
+          <a id="directWhatsAppLink" href="${waUrl}" target="_blank" rel="noopener noreferrer" class="block w-full text-center py-3 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow">
+            📲 Abrir WhatsApp y Enviar Pedido (${escapeHtml(folio)})
           </a>
         </div>
       `;
@@ -1807,7 +1806,15 @@
       btn.innerHTML = '<span>📲 Confirmar y Enviar por WhatsApp</span>';
       updateConfirmButtonState();
 
-      window.location.assign(waUrl);
+      // Intento no intrusivo: en escritorio abre pestaña; en móvil el enlace directo queda visible y listo
+      try {
+        const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+        if (!win) {
+          window.location.href = waUrl;
+        }
+      } catch (e) {
+        window.location.href = waUrl;
+      }
     }
 
     // =========================================================================
@@ -1916,7 +1923,6 @@
         activeSessionHash = hash;
         closeAdminModal();
 
-        // Cargar cuentas bancarias protegidas en memoria para edición en panel admin
         await fetchProtectedBanksFromCloud().catch(() => {});
 
         updateAdminUIState();
@@ -2033,7 +2039,7 @@
     }
 
     // =========================================================================
-    // 8. ORDEN DE TRABAJO OPTIMIZADA (PARSER DETERMINISTA + ESTADO EN NUBE)
+    // 8. ORDEN DE TRABAJO OPTIMIZADA (PARSER ROBUSTO + ESTADO EN NUBE)
     // =========================================================================
     function populateOTFilterOptions() {
       const delSel = byId('otFilterDelivery');
@@ -2090,7 +2096,7 @@
       cloudOrdersCache = Array.isArray(localFallback) ? localFallback : [];
       populateOTFilterOptions();
       renderWorkOrder();
-      if (notify) showToast('ℹ️ Mostrando pedidos locales (publica Nueva Versión en Código.gs para leer toda la nube).');
+      if (notify) showToast('ℹ️ Mostrando pedidos locales.');
     }
 
     async function changeOrderStatusCloud(folio, newStatus) {
@@ -2118,19 +2124,16 @@
     function normalizeSizeKey(rawSize) {
       const cleaned = String(rawSize || '')
         .toUpperCase()
-        .replace(/TALLA/g, '')
-        .replace(/TRAMO/g, '')
-        .replace(/[^A-Z0-9]/g, '')
+        .replace(/\bTALLA\b/g, '')
+        .replace(/\bTRAMO\b/g, '')
         .trim();
 
       if (!cleaned) return null;
       if (ALL_SIZES_ORDER.includes(cleaned)) return cleaned;
 
-      const match = cleaned.match(/(XXL|XL|16|14|12|10|8|6|4|3|M|L|S)$/);
-      if (match && ALL_SIZES_ORDER.includes(match[1])) {
-        return match[1];
-      }
-      return null;
+      // Solo acepta tokens exactos de talla (evita confundir "10 años" o números dentro del nombre)
+      const exactToken = cleaned.match(/^(XXL|XL|16|14|12|10|8|6|4|3|M|L|S)$/);
+      return exactToken ? exactToken[1] : null;
     }
 
     function parseItemsFromSummary(itemsSummary) {
@@ -2151,30 +2154,25 @@
 
         let detectedSize = 'S/T';
 
-        const explicitTallaMatch = desc.match(/[\(\[]\s*Talla\s+([A-Z0-9]+)\s*[\)\]]/i);
-        if (explicitTallaMatch) {
-          const norm = normalizeSizeKey(explicitTallaMatch[1]);
+        // Busca el último grupo (...) o [...] al final de la descripción que represente una talla válida
+        const groupMatches = [...desc.matchAll(/[\(\[]([^\)\]]+)[\)\]]/g)];
+        for (let i = groupMatches.length - 1; i >= 0; i--) {
+          const m = groupMatches[i];
+          const norm = normalizeSizeKey(m[1]);
           if (norm) {
             detectedSize = norm;
-            desc = desc.replace(explicitTallaMatch[0], '').trim();
+            desc = (desc.slice(0, m.index) + desc.slice(m.index + m[0].length)).trim();
+            break;
           }
-        } else {
-          const groupMatches = [...desc.matchAll(/[\(\[]([^\)\]]+)[\)\]]/g)];
-          if (groupMatches.length > 0) {
-            const last = groupMatches[groupMatches.length - 1];
-            const norm = normalizeSizeKey(last[1]);
+        }
+
+        if (detectedSize === 'S/T') {
+          const trailingTalla = desc.match(/^(.*?)\s+Talla\s+([A-Z0-9]+)$/i);
+          if (trailingTalla) {
+            const norm = normalizeSizeKey(trailingTalla[2]);
             if (norm) {
               detectedSize = norm;
-              desc = (desc.slice(0, last.index) + desc.slice(last.index + last[0].length)).trim();
-            }
-          } else {
-            const trailingTalla = desc.match(/^(.*?)\s+Talla\s+([A-Z0-9]+)$/i);
-            if (trailingTalla) {
-              const norm = normalizeSizeKey(trailingTalla[2]);
-              if (norm) {
-                detectedSize = norm;
-                desc = trailingTalla[1].trim();
-              }
+              desc = trailingTalla[1].trim();
             }
           }
         }
@@ -2205,8 +2203,9 @@
           if (!o || typeof o !== 'object') return false;
           const st = String(o.status || '').toLowerCase();
           const isCompleted = st.includes('finalizado') || st.includes('listo') || st.includes('entregado');
+          const isCancelled = st.includes('anulado') || st.includes('cancelado');
 
-          if (statusFilter === 'PENDING' && isCompleted) return false;
+          if (statusFilter === 'PENDING' && (isCompleted || isCancelled)) return false;
           if (statusFilter === 'DONE' && !isCompleted) return false;
           if (deliveryFilter !== 'ALL' && String(o.deliveryWindow || '') !== deliveryFilter) return false;
           if (schoolFilter !== 'ALL' && String(o.school || '') !== schoolFilter) return false;
@@ -2451,6 +2450,7 @@
           showToast('❌ ' + (data.error || 'No autorizado para guardar en la nube.'));
           return;
         }
+        banksLoadedForSession = true;
         showToast('☁️ ¡Cambios publicados en la nube! Todos los dispositivos verán los nuevos datos.');
       } catch (e) {
         showToast('❌ ' + (e.message || 'Error al publicar cambios en Google Apps Script.'));
